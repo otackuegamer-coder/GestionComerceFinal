@@ -1,0 +1,326 @@
+<Window x:Class="GestionComerce.WKeyboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Title="Floating Keyboard" 
+        Height="510" 
+        Width="1000"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        Focusable="False"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        MouseMove="Window_MouseMove"
+        MouseLeftButtonUp="Window_MouseLeftButtonUp">
+
+    <Window.Resources>
+        <Style x:Key="KeyButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#1A1A1A"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" Opacity="0.08" BlurRadius="8" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F5F5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#E8E8E8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SpecialKeyButtonStyle" TargetType="Button" BasedOn="{StaticResource KeyButtonStyle}">
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E0E0E0"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D0D0D0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LangButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#E8F0FE"/>
+            <Setter Property="Foreground" Value="#1A73E8"/>
+            <Setter Property="BorderBrush" Value="#C5D8FA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#D2E3FC"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#AECBFA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="LangButtonActiveStyle" TargetType="Button" BasedOn="{StaticResource LangButtonStyle}">
+            <Setter Property="Background" Value="#1A73E8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1A73E8"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="30">
+        <Border Background="#FCFCFC" CornerRadius="16" BorderBrush="Transparent" BorderThickness="0">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.3" BlurRadius="50" ShadowDepth="0"/>
+            </Border.Effect>
+
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <Border Background="Transparent" CornerRadius="8" Padding="12,8">
+                        <Grid>
+                            <TextBlock Text="{x:Static res:Resources.General_VirtualKeyboard}" 
+                                 FontWeight="Bold" FontSize="13" Foreground="#666666"
+                                 VerticalAlignment="Center"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="×" Width="32" Height="32"
+                                  Background="#FF4444" BorderBrush="Transparent"
+                                  Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"
+                                  Cursor="Hand" Focusable="False" Click="CloseButton_Click">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                              BorderBrush="{TemplateBinding BorderBrush}"
+                                              BorderThickness="0" CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Language Switcher Row -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Static res:Resources.Keyboard_Language}"
+                                   FontSize="13" FontWeight="SemiBold" Foreground="#666666"
+                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <Button x:Name="BtnLangFR" Content="{x:Static res:Resources.Keyboard_FR}"
+                                Style="{StaticResource LangButtonActiveStyle}"
+                                Height="30" Click="BtnLangFR_Click"/>
+                        <Button x:Name="BtnLangEN" Content="{x:Static res:Resources.Keyboard_EN}"
+                                Style="{StaticResource LangButtonStyle}"
+                                Height="30" Click="BtnLangEN_Click"/>
+                        <Button x:Name="BtnLangAR" Content="{x:Static res:Resources.Keyboard_AR}"
+                                Style="{StaticResource LangButtonStyle}"
+                                Height="30" Click="BtnLangAR_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Keyboard Rows -->
+                <StackPanel Grid.Row="2" x:Name="KeyboardPanel">
+
+                    <!-- === LATIN KEYBOARD (FR / EN) === -->
+                    <StackPanel x:Name="LatinKeyboard">
+                        <!-- Row 1: Numbers -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="`" Tag="`" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="1" Tag="1" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="2" Tag="2" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="3" Tag="3" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="4" Tag="4" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="5" Tag="5" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="6" Tag="6" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="7" Tag="7" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="8" Tag="8" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="9" Tag="9" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="0" Tag="0" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="=" Tag="=" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="⌫" Tag="Backspace" Style="{StaticResource SpecialKeyButtonStyle}" Width="115" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Row 2: QWERTY/AZERTY -->
+                        <StackPanel x:Name="LatinRow2" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="Tab" Tag="Tab" Style="{StaticResource SpecialKeyButtonStyle}" Width="85" Height="50" Click="Key_Click"/>
+                            <Button x:Name="KeyQ" Content="Q" Tag="q" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button x:Name="KeyW" Content="W" Tag="w" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="E" Tag="e" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="R" Tag="r" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="T" Tag="t" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button x:Name="KeyY" Content="Y" Tag="y" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="U" Tag="u" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="I" Tag="i" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="O" Tag="o" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="P" Tag="p" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="[" Tag="[" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="]" Tag="]" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="\" Tag="\" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Row 3: ASDF -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="CapsButton" Content="Caps" Tag="CapsLock" Style="{StaticResource SpecialKeyButtonStyle}" Width="100" Height="50" Click="Key_Click"/>
+                            <Button Content="A" Tag="a" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="S" Tag="s" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="D" Tag="d" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="F" Tag="f" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="G" Tag="g" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="H" Tag="h" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="J" Tag="j" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="K" Tag="k" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="L" Tag="l" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content=";" Tag=";" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="'" Tag="'" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="↵" Tag="Enter" Style="{StaticResource SpecialKeyButtonStyle}" Width="115" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Row 4: ZXCV -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button x:Name="ShiftButton1" Content="⇧ Shift" Tag="Shift" Style="{StaticResource SpecialKeyButtonStyle}" Width="130" Height="50" Click="Key_Click"/>
+                            <Button Content="Z" Tag="z" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="X" Tag="x" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="C" Tag="c" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="V" Tag="v" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="B" Tag="b" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="N" Tag="n" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="M" Tag="m" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="," Tag="," Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="." Tag="." Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="/" Tag="/" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button x:Name="ShiftButton2" Content="⇧ Shift" Tag="Shift" Style="{StaticResource SpecialKeyButtonStyle}" Width="130" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Row 5: Space -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="Space" Tag="Space" Style="{StaticResource KeyButtonStyle}" Width="640" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- === ARABIC KEYBOARD === -->
+                    <StackPanel x:Name="ArabicKeyboard" Visibility="Collapsed" FlowDirection="RightToLeft">
+                        <!-- Numbers row (LTR numbers stay the same) -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" FlowDirection="LeftToRight">
+                            <Button Content="⌫" Tag="Backspace" Style="{StaticResource SpecialKeyButtonStyle}" Width="115" Height="50" Click="Key_Click"/>
+                            <Button Content="=" Tag="=" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="0" Tag="0" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="9" Tag="9" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="8" Tag="8" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="7" Tag="7" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="6" Tag="6" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="5" Tag="5" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="4" Tag="4" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="3" Tag="3" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="2" Tag="2" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="1" Tag="1" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="`" Tag="`" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Arabic Row 1: ض ص ث ق ف غ ع ه خ ح ج د -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" FlowDirection="LeftToRight">
+                            <Button Content="↵" Tag="Enter" Style="{StaticResource SpecialKeyButtonStyle}" Width="115" Height="50" Click="Key_Click"/>
+                            <Button Content="د" Tag="د" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ج" Tag="ج" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ح" Tag="ح" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="خ" Tag="خ" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ه" Tag="ه" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ع" Tag="ع" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="غ" Tag="غ" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ف" Tag="ف" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ق" Tag="ق" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ث" Tag="ث" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ص" Tag="ص" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ض" Tag="ض" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="Tab" Tag="Tab" Style="{StaticResource SpecialKeyButtonStyle}" Width="85" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Arabic Row 2: ش س ي ب ل ا ت ن م ك ط -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" FlowDirection="LeftToRight">
+                            <Button Content="↵" Tag="Enter" Style="{StaticResource SpecialKeyButtonStyle}" Width="115" Height="50" Click="Key_Click"/>
+                            <Button Content="ط" Tag="ط" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ك" Tag="ك" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="م" Tag="م" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ن" Tag="ن" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ت" Tag="ت" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ا" Tag="ا" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ل" Tag="ل" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ب" Tag="ب" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ي" Tag="ي" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="س" Tag="س" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ش" Tag="ش" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button x:Name="ArabicCapsButton" Content="Caps" Tag="CapsLock" Style="{StaticResource SpecialKeyButtonStyle}" Width="100" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Arabic Row 3: ئ ء ؤ ر لا ى ة و ز ظ -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" FlowDirection="LeftToRight">
+                            <Button x:Name="ArabicShiftButton2" Content="⇧" Tag="Shift" Style="{StaticResource SpecialKeyButtonStyle}" Width="130" Height="50" Click="Key_Click"/>
+                            <Button Content="ظ" Tag="ظ" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ز" Tag="ز" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="و" Tag="و" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ة" Tag="ة" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ى" Tag="ى" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="لا" Tag="لا" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ر" Tag="ر" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ؤ" Tag="ؤ" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ء" Tag="ء" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button Content="ئ" Tag="ئ" Style="{StaticResource KeyButtonStyle}" Width="55" Height="50" Click="Key_Click"/>
+                            <Button x:Name="ArabicShiftButton1" Content="⇧" Tag="Shift" Style="{StaticResource SpecialKeyButtonStyle}" Width="130" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+
+                        <!-- Space -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="مسافة" Tag="Space" Style="{StaticResource KeyButtonStyle}" Width="640" Height="50" Click="Key_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

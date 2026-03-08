@@ -1,0 +1,448 @@
+<UserControl x:Class="GestionComerce.Main.CMain"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+             Background="#F8FAFC">
+
+    <UserControl.Resources>
+        <Style x:Key="ModuleButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="Height" Value="220"/>
+            <Setter Property="Margin" Value="16"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="24"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <TranslateTransform Y="0"/>
+                                </Border.RenderTransform>
+                                <Border.Effect>
+                                    <DropShadowEffect x:Name="shadowEffect"
+                                                      Color="#0F172A" 
+                                                      BlurRadius="16" 
+                                                      ShadowDepth="4" 
+                                                      Opacity="0.08"
+                                                      Direction="270"/>
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                           To="-12" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="ShadowDepth"
+                                                           To="16" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0.20" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="BlurRadius"
+                                                           To="32" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="border"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                                           To="0" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="ShadowDepth"
+                                                           To="4" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0.08" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="shadowEffect"
+                                                           Storyboard.TargetProperty="BlurRadius"
+                                                           To="16" Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="36"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#1E293B" Offset="0"/>
+                        <GradientStop Color="#475569" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModuleLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+        </Style>
+
+        <Style x:Key="StatusBadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="#DCFCE7"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12,6"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header — draggable when windowed -->
+        <Border Grid.Row="0" Padding="56,32" BorderThickness="0,0,0,1" BorderBrush="#E2E8F0"
+                MouseLeftButtonDown="Header_MouseLeftButtonDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FFFFFF" Offset="0"/>
+                    <GradientStop Color="#F8FAFC" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="52" Height="52" CornerRadius="16" Margin="0,0,20,0" Background="Transparent">
+                        <Image Source="/Main/images/BM-Logo.ico" Stretch="Uniform"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Gestion Commerce" Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Text="{x:Static res:Resources.General_Description}" 
+                                   FontFamily="Segoe UI" FontSize="14" Foreground="#64748B" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <!-- Windowed / Full-Screen toggle pill -->
+                    <Button x:Name="WinStateBtn" Height="48" Margin="0,0,14,0"
+                            Cursor="Hand" Click="WinStateBtn_Click" BorderThickness="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="btnBorder" CornerRadius="24" Padding="22,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#3B82F6" Offset="0"/>
+                                            <GradientStop Color="#2563EB" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#2563EB" BlurRadius="18"
+                                                          ShadowDepth="0" Opacity="0.40"/>
+                                    </Border.Effect>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <!-- Icon drawn with Segoe MDL2 Assets — E922=Maximize, E923=BackToWindow -->
+                                        <TextBlock x:Name="WinStateIcon"
+                                                   Text="&#xE922;"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="17"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="WinStateLabel"
+                                                   Text="Plein écran"
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background">
+                                            <Setter.Value>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#60A5FA" Offset="0"/>
+                                                    <GradientStop Color="#3B82F6" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background">
+                                            <Setter.Value>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#1D4ED8" Offset="0"/>
+                                                    <GradientStop Color="#1E40AF" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Border Background="#F1F5F9" CornerRadius="24" Padding="20,10" Margin="0,0,16,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#0F172A" BlurRadius="10" ShadowDepth="0" Opacity="0.05"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="40" Height="40" CornerRadius="20" Background="#F1F5F9" Margin="0,0,12,0">
+                                <TextBlock Text="👤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{x:Static res:Resources.About_Tagline}" 
+                                           FontFamily="Segoe UI" FontSize="11" Foreground="#64748B"/>
+                                <TextBlock x:Name="Name" Text="Jean Dupont" 
+                                           FontFamily="Segoe UI" FontSize="15" FontWeight="SemiBold" Foreground="#1E293B"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Button Width="48" Height="48" Click="Button_Click_6" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Border x:Name="buttonBorder" CornerRadius="24">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#EF4444" Offset="0"/>
+                                                <GradientStop Color="#DC2626" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="#EF4444" BlurRadius="15" ShadowDepth="0" Opacity="0.3"/>
+                                        </Border.Effect>
+                                        <TextBlock Text="⏻" FontSize="20" FontWeight="Bold" Foreground="White"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer.Resources>
+                <!-- Prevent the ScrollViewer from constraining content width -->
+                <Style TargetType="ScrollContentPresenter">
+                    <Setter Property="CanContentScroll" Value="True"/>
+                </Style>
+            </ScrollViewer.Resources>
+            <Grid Margin="56,15,56,20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1" HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Row 1 -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="12">
+                        <Button Style="{StaticResource ModuleButtonStyle}" Name="VenteBtn" Click="Button_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="images/revenu.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Text="{x:Static res:Resources.Sale}" Style="{StaticResource ModuleLabelStyle}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.About_SalesManagementDesc}" FontSize="12"
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="12">
+                        <Button Style="{StaticResource ModuleButtonStyle}" Name="InventoryBtn" Click="Button_Click_2">
+                            <Button.Background>
+                                <ImageBrush ImageSource="images/inventaire.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Text="{x:Static res:Resources.Stock}" Style="{StaticResource ModuleLabelStyle}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.ManageInventoryInOut}" FontSize="12"
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="12">
+                        <Button Style="{StaticResource ModuleButtonStyle}" Name="ClientBtn" Click="Button_Click_4">
+                            <Button.Background>
+                                <ImageBrush ImageSource="images/customer-review.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Text="{x:Static res:Resources.ClientManagement}" Style="{StaticResource ModuleLabelStyle}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.ClientManagementDescription}" FontSize="12"
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="3" Margin="12">
+                        <Button Style="{StaticResource ModuleButtonStyle}" Name="FournisseurBtn" Click="Button_Click_3">
+                            <Button.Background>
+                                <ImageBrush ImageSource="images/4866608.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Text="{x:Static res:Resources.SupplierManagement}" Style="{StaticResource ModuleLabelStyle}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.ManageTrackSuppliers}" FontSize="12"
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="4" Margin="12">
+                        <Button Style="{StaticResource ModuleButtonStyle}" Name="AccountabilityBtn" Click="AccountabilityBtn_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="images/accounting.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <TextBlock Text="{x:Static res:Resources.Finance}" Style="{StaticResource ModuleLabelStyle}"
+                                   HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.FinancialSummary}" FontSize="12"
+                                   Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Row 2 -->
+                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="0,24,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="12">
+                            <Button Style="{StaticResource ModuleButtonStyle}" Name="FacturationBtn" Click="FacturationBtn_Click">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="images/invoice.png" Stretch="Uniform"/>
+                                </Button.Background>
+                            </Button>
+                            <TextBlock Text="{x:Static res:Resources.Perm_Invoicing}" Style="{StaticResource ModuleLabelStyle}"
+                                       HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                            <TextBlock Text="{x:Static res:Resources.CreateInvoice}" FontSize="12"
+                                       Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="12">
+                            <Button Style="{StaticResource ModuleButtonStyle}" Name="LivraisonBtn" Click="LivraisonBtn_Click">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="images/livraison-express (2).png" Stretch="Uniform"/>
+                                </Button.Background>
+                            </Button>
+                            <TextBlock Text="{x:Static res:Resources.DeliveryManagement}" Style="{StaticResource ModuleLabelStyle}"
+                                       HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                            <TextBlock Text="{x:Static res:Resources.DeliveryManagementDescription}" FontSize="12"
+                                       Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Margin="12">
+                            <Button Style="{StaticResource ModuleButtonStyle}" Name="ProjectManagmentBtn" Click="Button_Click_5">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="images/management.png" Stretch="Uniform"/>
+                                </Button.Background>
+                            </Button>
+                            <TextBlock Text="{x:Static res:Resources.Perm_Operations}" Style="{StaticResource ModuleLabelStyle}"
+                                       HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                            <TextBlock Text="{x:Static res:Resources.Perm_Management}" FontSize="12"
+                                       Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3" Margin="12">
+                            <Button Style="{StaticResource ModuleButtonStyle}" Name="SettingsBtn" Click="Button_Click_1">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="images/parametres.png" Stretch="Uniform"/>
+                                </Button.Background>
+                            </Button>
+                            <TextBlock Text="{x:Static res:Resources.Settings_Title}" Style="{StaticResource ModuleLabelStyle}"
+                                       HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                            <TextBlock Text="{x:Static res:Resources.General_Description}" FontSize="12"
+                                       Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Padding="56,24" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FFFFFF" Offset="0"/>
+                    <GradientStop Color="#F8FAFC" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Border Style="{StaticResource StatusBadgeStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="#22C55E" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="#166534" VerticalAlignment="Center" Text="{x:Static res:Resources.Available}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="{x:Static res:Resources.About_Copyright}"
+                               FontFamily="Segoe UI" FontSize="13" Foreground="#94A3B8"
+                               VerticalAlignment="Center" Margin="20,0,0,0"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Text="Version 2.0.1" FontFamily="Segoe UI"
+                           FontSize="13" Foreground="#94A3B8" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

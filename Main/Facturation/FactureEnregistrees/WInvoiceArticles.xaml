@@ -1,0 +1,401 @@
+﻿<Window x:Class="GestionComerce.Main.Facturation.FacturesEnregistrees.WInvoiceArticles"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Articles de la Facture"
+        Height="600" Width="780"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        WindowStyle="None"
+        AllowsTransparency="True">
+
+    <Window.Resources>
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Background" Value="#3B82F6"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2563EB"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed"   Value="True">
+                                <Setter Property="Background" Value="#1D4ED8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled"   Value="False">
+                                <Setter Property="Background" Value="#93C5FD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SuccessBtn" TargetType="Button">
+            <Setter Property="Background" Value="#10B981"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#059669"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed"   Value="True">
+                                <Setter Property="Background" Value="#047857"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled"   Value="False">
+                                <Setter Property="Background" Value="#6EE7B7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerBtn" TargetType="Button">
+            <Setter Property="Background" Value="#EF4444"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#DC2626"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GrayBtn" TargetType="Button">
+            <Setter Property="Background" Value="#6B7280"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4B5563"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F3F4F6"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#DBEAFE"/>
+                    <Setter Property="Foreground" Value="#1E40AF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- header -->
+                <RowDefinition Height="Auto"/>
+                <!-- add-article form -->
+                <RowDefinition Height="*"/>
+                <!-- grid -->
+                <RowDefinition Height="Auto"/>
+                <!-- totals bar -->
+                <RowDefinition Height="Auto"/>
+                <!-- footer -->
+            </Grid.RowDefinitions>
+
+            <!-- ── HEADER ── -->
+            <Border Grid.Row="0" Background="#3B82F6" CornerRadius="12,12,0,0" Padding="22,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock x:Name="lblTitle"
+                                   Text="Articles de la Facture"
+                                   FontSize="16" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="lblSubtitle"
+                                   FontSize="12" Foreground="#BFDBFE" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <!-- article count badge -->
+                    <Border Grid.Column="1" Background="White" CornerRadius="20"
+                            Padding="12,4" VerticalAlignment="Center">
+                        <TextBlock x:Name="lblArticleCount"
+                                   FontSize="13" FontWeight="Bold" Foreground="#3B82F6"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ── ADD ARTICLE FORM ── -->
+            <Border Grid.Row="1" Background="#F8FAFC" BorderBrush="#E5E7EB"
+                    BorderThickness="0,0,0,1" Padding="18,14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MinWidth="120"/>
+                        <!-- name -->
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="110"/>
+                        <!-- prix -->
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="90"/>
+                        <!-- qte -->
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="90"/>
+                        <!-- tva -->
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- button -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- labels row -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Désignation *"    FontSize="11" Foreground="#6B7280" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Prix unitaire *"  FontSize="11" Foreground="#6B7280" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Quantité *"       FontSize="11" Foreground="#6B7280" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="0" Grid.Column="6" Text="TVA (%)"          FontSize="11" Foreground="#6B7280" FontWeight="SemiBold"/>
+
+                    <!-- inputs row -->
+                    <TextBox x:Name="txtArtName"  Grid.Row="2" Grid.Column="0"
+                             Height="34" Padding="8,6" FontSize="13"
+                             BorderBrush="#D1D5DB" BorderThickness="1" Background="White"/>
+                    <TextBox x:Name="txtArtPrix"  Grid.Row="2" Grid.Column="2"
+                             Height="34" Padding="8,6" FontSize="13"
+                             BorderBrush="#D1D5DB" BorderThickness="1" Background="White"
+                             PreviewTextInput="Decimal_PreviewTextInput"/>
+                    <TextBox x:Name="txtArtQte"   Grid.Row="2" Grid.Column="4"
+                             Height="34" Padding="8,6" FontSize="13"
+                             BorderBrush="#D1D5DB" BorderThickness="1" Background="White"
+                             PreviewTextInput="Decimal_PreviewTextInput"/>
+                    <TextBox x:Name="txtArtTva"   Grid.Row="2" Grid.Column="6"
+                             Height="34" Padding="8,6" FontSize="13" Text="0"
+                             BorderBrush="#D1D5DB" BorderThickness="1" Background="White"
+                             PreviewTextInput="Decimal_PreviewTextInput"/>
+                    <Button  x:Name="btnAddArticle" Grid.Row="2" Grid.Column="8"
+                             Content="+ Ajouter"
+                             Style="{StaticResource SuccessBtn}"
+                             VerticalAlignment="Bottom"
+                             Click="AddArticle_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- ── ARTICLES GRID (editable) ── -->
+            <DataGrid Grid.Row="2" x:Name="dgArticles"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="False"
+                      CanUserAddRows="False" CanUserDeleteRows="False"
+                      CanUserResizeRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      Background="White"
+                      BorderThickness="0"
+                      RowHeight="42" FontSize="13"
+                      SelectionUnit="Cell"
+                      Margin="0"
+                      CellEditEnding="dgArticles_CellEditEnding">
+
+                <DataGrid.Resources>
+                    <!-- highlight unsaved rows with a faint yellow tint -->
+                    <Style x:Key="DirtyRowStyle" TargetType="DataGridRow">
+                        <Setter Property="Background" Value="White"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDirty}" Value="True">
+                                <Setter Property="Background" Value="#FFFBEB"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#DBEAFE"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource DirtyRowStyle}"/>
+                </DataGrid.RowStyle>
+
+                <DataGrid.Columns>
+                    <!-- Editable columns -->
+                    <DataGridTextColumn Header="Désignation"
+                                        Binding="{Binding ArticleName, UpdateSourceTrigger=LostFocus}"
+                                        Width="*"/>
+                    <DataGridTextColumn Header="Prix unit."
+                                        Binding="{Binding PrixUnitaire, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:N2}'}"
+                                        Width="110"/>
+                    <DataGridTextColumn Header="Qté"
+                                        Binding="{Binding Quantite, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:N2}'}"
+                                        Width="80"/>
+                    <DataGridTextColumn Header="TVA %"
+                                        Binding="{Binding Tva, UpdateSourceTrigger=LostFocus, StringFormat='{}{0:N1}'}"
+                                        Width="70"/>
+
+                    <!-- Read-only computed columns -->
+                    <DataGridTextColumn Header="Total HT"
+                                        Binding="{Binding TotalHT, StringFormat='{}{0:N2}'}"
+                                        IsReadOnly="True" Width="110">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#374151"/>
+                                <Setter Property="FontStyle"  Value="Italic"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Total TTC"
+                                        Binding="{Binding TotalTTC, StringFormat='{}{0:N2}'}"
+                                        IsReadOnly="True" Width="110">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#059669"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- Save row button -->
+                    <DataGridTemplateColumn Header="" Width="70" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="💾"
+                                        Style="{StaticResource SuccessBtn}"
+                                        Padding="8,4" FontSize="13"
+                                        Visibility="{Binding SaveBtnVisibility}"
+                                        Click="SaveArticle_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Delete button column -->
+                    <DataGridTemplateColumn Header="" Width="50" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="🗑"
+                                        Style="{StaticResource DangerBtn}"
+                                        Padding="8,4"
+                                        Click="DeleteArticle_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- ── TOTALS BAR ── -->
+            <Border Grid.Row="3" Background="#F8FAFC" BorderBrush="#E5E7EB"
+                    BorderThickness="0,1,0,0" Padding="18,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Totaux calculés" FontSize="12" Foreground="#6B7280" VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Text="HT : " FontSize="13" FontWeight="SemiBold" Foreground="#374151" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="lblTotalHT" FontSize="13" Foreground="#1F2937" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" Orientation="Horizontal">
+                        <TextBlock Text="TVA : " FontSize="13" FontWeight="SemiBold" Foreground="#374151" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="lblTotalTVA" FontSize="13" Foreground="#1F2937" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="5" Orientation="Horizontal">
+                        <TextBlock Text="TTC : " FontSize="13" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="lblTotalTTC" FontSize="14" FontWeight="Bold" Foreground="#059669" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ── FOOTER ── -->
+            <Border Grid.Row="4" BorderBrush="#E5E7EB" BorderThickness="0,1,0,0" Padding="18,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="lblStatus" Grid.Column="0"
+                               FontSize="12" Foreground="#6B7280"
+                               VerticalAlignment="Center" TextWrapping="Wrap"/>
+                    <Button Grid.Column="1" Content="Fermer"
+                            Style="{StaticResource GrayBtn}"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

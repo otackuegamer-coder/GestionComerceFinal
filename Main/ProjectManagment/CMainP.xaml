@@ -1,0 +1,1285 @@
+﻿<UserControl x:Class="GestionComerce.Main.ProjectManagment.CMainP"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:p="clr-namespace:GestionComerce.Resources"
+             Background="#F8FAFC">
+
+    <UserControl.Resources>
+        <!-- Tab Button Style -->
+        <Style x:Key="TabButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Padding" Value="24,16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" 
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="0,0,0,3"
+                            BorderBrush="Transparent"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter x:Name="contentPresenter"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#374151"/>
+                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="#3B82F6"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#3B82F6"/>
+                                <Setter TargetName="border" Property="Background" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Card Style (Operations) -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Opacity="0.08" ShadowDepth="2" BlurRadius="12"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Action Button Style -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3B82F6"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2563EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Button Style -->
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E5E7EB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Report Filter Button Style -->
+        <Style x:Key="FilterButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F0F4FF"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#4A90E2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Selected Filter Button Style -->
+        <Style x:Key="SelectedFilterButtonStyle" TargetType="Button" BasedOn="{StaticResource FilterButtonStyle}">
+            <Setter Property="Background" Value="#4A90E2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4A90E2"/>
+        </Style>
+
+        <!-- CMainV-matching brushes & shadows -->
+        <SolidColorBrush x:Key="PrimaryBlue" Color="#3B82F6"/>
+        <SolidColorBrush x:Key="SurfaceWhite" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderLight" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#64748B"/>
+        <DropShadowEffect x:Key="ShadowLg" BlurRadius="32" ShadowDepth="0" Color="#000000" Opacity="0.08"/>
+
+        <!-- Modern ComboBox Item Style (from CMainV) -->
+        <Style x:Key="ModernComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F9FAFB"/>
+                                <Setter Property="Foreground" Value="#2563EB"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#EFF6FF"/>
+                                <Setter Property="Foreground" Value="#2563EB"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern ComboBox Style (from CMainV) -->
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceWhite}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderLight}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                Focusable="false"
+                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="border"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="32"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Grid.Column="0"
+                                                        Margin="14,0,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"/>
+                                                <Path Grid.Column="1"
+                                                      x:Name="Arrow"
+                                                      Data="M0,0 L4,4 L8,0"
+                                                      Stroke="{StaticResource TextSecondary}"
+                                                      StrokeThickness="2"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      RenderTransformOrigin="0.5,0.5">
+                                                    <Path.RenderTransform>
+                                                        <RotateTransform Angle="0"/>
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#F8FAFC"/>
+                                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBlue}"/>
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="Arrow"
+                                                                   Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                                   To="180" Duration="0:0:0.2"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="Arrow"
+                                                                   Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                                   To="0" Duration="0:0:0.2"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                    IsHitTestVisible="False"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                    Margin="14,0,32,0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"/>
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade">
+                                <Border Background="{StaticResource SurfaceWhite}"
+                                        BorderBrush="{StaticResource BorderLight}"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Margin="0,4,0,0"
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        Effect="{StaticResource ShadowLg}">
+                                    <ScrollViewer Margin="4,6" MaxHeight="300">
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Report Stat Card Style -->
+        <Style x:Key="StatCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.08" Color="Black"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header with Tabs -->
+            <RowDefinition Height="*"/>
+            <!-- Content Area -->
+        </Grid.RowDefinitions>
+
+        <!-- Header with Navigation Tabs -->
+        <!-- Header with Navigation Tabs -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Retour Button -->
+                <Button Grid.Column="0" 
+                Content="{Binding Source={x:Static p:Resources.Back}}" 
+                Style="{StaticResource SecondaryButtonStyle}"
+                x:Name="RetourButton"
+                Click="RetourButton_Click"
+                Margin="16,0,0,0"
+                VerticalAlignment="Center" HorizontalAlignment="Left" Width="99"/>
+
+                <!-- Operations Button -->
+                <Button 
+                Content="{Binding Source={x:Static p:Resources.Operations}}" 
+                x:Name="OperationsButton"
+                Click="OperationsButton_Click"
+                Padding="24,16"
+                FontSize="14"
+                FontWeight="Medium"
+                FontFamily="Segoe UI"
+                Background="White"
+                Foreground="#3B82F6"
+                BorderThickness="0,0,0,3"
+                BorderBrush="#3B82F6"
+                Cursor="Hand" Grid.ColumnSpan="2" Margin="120,0,0,0">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" 
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                    VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                                <Setter Property="Background" Value="#E5E7EB"/>
+                                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                <Setter Property="Cursor" Value="No"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Stock Movement Button -->
+                <Button Grid.Column="2" 
+                Content="{Binding Source={x:Static p:Resources.StockMovement}}" 
+                x:Name="StockButton"
+                Click="StockButton_Click"
+                Padding="24,16"
+                FontSize="14"
+                FontWeight="Medium"
+                FontFamily="Segoe UI"
+                Background="Transparent"
+                Foreground="#6B7280"
+                BorderThickness="0,0,0,3"
+                BorderBrush="Transparent"
+                Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" 
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                    VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                                                <Setter Property="Foreground" Value="#374151"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                                <Setter Property="Background" Value="#E5E7EB"/>
+                                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                <Setter Property="Cursor" Value="No"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+
+            </Grid>
+        </Border>
+
+        <!-- Content Area -->
+        <Grid Grid.Row="1" x:Name="OperationsContent">
+            <!-- Operations Content -->
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Filters -->
+                    <RowDefinition Height="*"/>
+                    <!-- Content -->
+                </Grid.RowDefinitions>
+
+                <!-- Filtering Section -->
+                <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="24,16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- First Row - Search Section -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Search Type Selector -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Rechercher par" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="SearchTypeFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="SearchTypeFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.OperationID}}" IsSelected="True" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Client}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Supplier}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.User}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Search Input -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Search}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <Border Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Height="40">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#000000" Opacity="0.03" ShadowDepth="1" BlurRadius="3"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <TextBox x:Name="SearchInput" Background="Transparent" BorderThickness="0" 
+                               Padding="16,0,48,0" FontSize="13" VerticalContentAlignment="Center" TextChanged="SearchInput_TextChanged" >
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsFocused" Value="True">
+                                                            <Setter Property="Background" Value="#F0F9FF"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+
+                                        <TextBlock Text="Tapez pour rechercher..." Foreground="#9CA3AF" 
+                                 Margin="16,0,48,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=SearchInput}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- Search Icon -->
+                                        <Button x:Name="SearchButton" 
+                              Width="36" Height="36" HorizontalAlignment="Right" Margin="2"
+                              Background="#F3F4F6" BorderThickness="0" Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#3B82F6"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <Ellipse Width="16" Height="16" Stroke="#6B7280" StrokeThickness="2" Fill="Transparent"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Second Row - Filter Controls -->
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Type Opération Filter -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.OperationType}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="TypeOperationFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="TypeOperationFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Sale}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Purchase}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.ClientCreditPayment}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.SupplierCreditPayment}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Modification}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Deletion}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Status Filter -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Status}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="StatusFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="StatusFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Normal}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Reversed}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Date Filter -->
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Date}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="DateFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="DateFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Today}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Week}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Month}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.SixMonths}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Year}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Clear Button -->
+                            <Border Grid.Column="6" Background="#F3F4F6" BorderBrush="#D1D5DB" BorderThickness="1" 
+                    Height="40" VerticalAlignment="Bottom">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#000000" Opacity="0.03" ShadowDepth="1" BlurRadius="3"/>
+                                </Border.Effect>
+                                <Button x:Name="ToutButton" Content="{Binding Source={x:Static p:Resources.ShowAll}}" Click="ToutButton_Click"
+                        Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        FontSize="13" FontWeight="SemiBold" Foreground="#374151" 
+                        Padding="20,0" VerticalContentAlignment="Center">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#E5E7EB"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background" Value="#D1D5DB"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Dashboard and Operations Content -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="24,24,24,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Dashboard Cards -->
+                        <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="24,16">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Margin="0,0,0,24">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Nombre de Vente Card -->
+                                    <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Nombre de Vente (Non Reverser)" 
+                          FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#10B981"/>
+                                            </Grid>
+                                            <TextBlock Text="127" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="VenteCountLabel"/>
+                                            <TextBlock Text="{Binding Source={x:Static p:Resources.TodayPlus}}" FontSize="12" Foreground="#10B981" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Nombre d'achat Card -->
+                                    <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Nombre d'achat (Non Reverser)" 
+                          FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#3B82F6"/>
+                                            </Grid>
+                                            <TextBlock Text="45" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="AchatCountLabel"/>
+                                            <TextBlock Text="+3 cette semaine" FontSize="12" Foreground="#3B82F6" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Finance Card -->
+                                    <Border Grid.Column="4" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Source={x:Static p:Resources.Finance}}" 
+                          FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#059669"/>
+                                            </Grid>
+                                            <TextBlock Text="€18,742.35" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="FinanceLabel"/>
+                                            <TextBlock Text="{Binding Source={x:Static p:Resources.NetProfit}}" FontSize="12" Foreground="#059669" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Second Row of Filters -->
+
+                            </Grid>
+                        </Border>
+
+                        <!-- Recent Operations -->
+                        <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Opérations récentes" 
+                      FontSize="18" FontWeight="SemiBold" Foreground="#1F2937"/>
+                                </Grid>
+                                <!-- Operations List -->
+                                <StackPanel Name="OperationsContainer">
+                                </StackPanel>
+
+                                <!-- View More Link -->
+                                <Border Height="27" Margin="0,12,0,0" Name="SeeMoreContainer">
+                                    <Button HorizontalAlignment="Center" VerticalAlignment="Top"
+        Background="Transparent" BorderThickness="0" Cursor="Hand"
+        Padding="12,6" Click="Button_Click" Height="30">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="#2563EB"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock Text="View More" Foreground="#3B82F6" 
+               FontSize="14" FontWeight="Medium"/>
+                                    </Button>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Stock Movement Content (Hidden by default) -->
+            <ScrollViewer x:Name="StockContent" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="24">
+                    <!-- Stock Movement Header -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.StockMovement}}" FontSize="24" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                                <TextBlock Text="Gérez les entrées et sorties de votre inventaire" FontSize="14" Foreground="#6B7280"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="{Binding Source={x:Static p:Resources.NewMovement}}" Style="{StaticResource ActionButtonStyle}" VerticalAlignment="Top"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Stock Summary -->
+                    <Grid Margin="0,0,0,24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Entrées aujourd'hui" FontSize="14" FontWeight="Medium" Foreground="#6B7280" Margin="0,0,0,12"/>
+                                <TextBlock Text="127 articles" FontSize="24" FontWeight="Bold" Foreground="#10B981" Margin="0,0,0,8"/>
+                                <TextBlock Text="Valeur: €1,847.23" FontSize="12" Foreground="#6B7280"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Sorties aujourd'hui" FontSize="14" FontWeight="Medium" Foreground="#6B7280" Margin="0,0,0,12"/>
+                                <TextBlock Text="89 articles" FontSize="24" FontWeight="Bold" Foreground="#EF4444" Margin="0,0,0,8"/>
+                                <TextBlock Text="Valeur: €1,234.56" FontSize="12" Foreground="#6B7280"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Recent Stock Movements -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Mouvements récents" FontSize="18" FontWeight="SemiBold" 
+                                      Foreground="#1F2937" Margin="0,0,0,20"/>
+
+                            <!-- Stock Movement Items -->
+                            <StackPanel>
+                                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Background="#10B981" Width="32" Height="32" CornerRadius="16" Margin="0,0,16,0">
+                                            <TextBlock Text="↗" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Réception marchandise" FontWeight="SemiBold" FontSize="14" Foreground="#1F2937"/>
+                                            <TextBlock Text="Produit ABC - Quantité: +50" FontSize="12" Foreground="#6B7280" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="+€750.00" FontSize="14" FontWeight="Bold" 
+                                                  Foreground="#059669" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                        <TextBlock Grid.Column="3" Text="10:30" FontSize="12" 
+                                                  Foreground="#9CA3AF" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border Background="#FEF2F2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Background="#EF4444" Width="32" Height="32" CornerRadius="16" Margin="0,0,16,0">
+                                            <TextBlock Text="↙" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Vente" FontWeight="SemiBold" FontSize="14" Foreground="#1F2937"/>
+                                            <TextBlock Text="Produit XYZ - Quantité: -15" FontSize="12" Foreground="#6B7280" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="-€225.00" FontSize="14" FontWeight="Bold" 
+                                                  Foreground="#DC2626" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                        <TextBlock Grid.Column="3" Text="09:15" FontSize="12" 
+                                                  Foreground="#9CA3AF" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Row="1" x:Name="MouvmentContent" Visibility="Collapsed">
+            <!-- Operations Content -->
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Filters -->
+                    <RowDefinition Height="*"/>
+                    <!-- Content -->
+                </Grid.RowDefinitions>
+
+                <!-- Filtering Section -->
+                <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="24,16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="16"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- First Row - Search Section -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Search Type Selector -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Rechercher par" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="SearchTypeMouvmentFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Article}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Client}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Supplier}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.User}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Search Input -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Search}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <Border Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Height="40">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#000000" Opacity="0.03" ShadowDepth="1" BlurRadius="3"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <TextBox x:Name="SearchMouvmentInput" Background="Transparent" BorderThickness="0" 
+                       Padding="16,0,48,0" FontSize="13" VerticalContentAlignment="Center" TextChanged="SearchMouvmentInput_TextChanged">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsFocused" Value="True">
+                                                            <Setter Property="Background" Value="#F0F9FF"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+
+                                        <TextBlock Text="Tapez pour rechercher..." Foreground="#9CA3AF" 
+                         Margin="16,0,48,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=SearchInput}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- Search Icon -->
+                                        <Button x:Name="SearchMouvmentButton" 
+                      Width="36" Height="36" HorizontalAlignment="Right" Margin="2"
+                      Background="#F3F4F6" BorderThickness="0" Cursor="Hand">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#3B82F6"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <Ellipse Width="16" Height="16" Stroke="#6B7280" StrokeThickness="2" Fill="Transparent"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Second Row - Filter Controls -->
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Type Opération Filter -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Type de mouvment" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="TypeMouvmentFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="TypeMouvmentFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Sale}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Purchase}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Modification}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Deletion}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Status}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="StatusMouvmenttFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="StatusMouvmentFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Normal}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="Supprime" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Reversed" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="StatusMouvmentReversedFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="ReversedMouvmentFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Normal}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Reversed}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <!-- Date Filter -->
+                            <StackPanel Grid.Column="6">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.Date}}" FontSize="13" FontWeight="Medium" Foreground="#374151" Margin="0,0,0,6"/>
+                                <ComboBox x:Name="DateMouvmentFilter"
+                                          Style="{StaticResource ModernComboBoxStyle}"
+                                          SelectionChanged="DateMouvmentFilter_SelectionChanged">
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.AllOperationTypes}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="{Binding Source={x:Static p:Resources.Today}}" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="Last Week" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="Last Month" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="Last 6 month" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                    <ComboBoxItem Content="Last Year" Style="{StaticResource ModernComboBoxItemStyle}"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Clear Button -->
+                            <Border Grid.Column="8" Background="#F3F4F6" BorderBrush="#D1D5DB" BorderThickness="1" 
+            Height="40" VerticalAlignment="Bottom">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#000000" Opacity="0.03" ShadowDepth="1" BlurRadius="3"/>
+                                </Border.Effect>
+                                <Button x:Name="ToutButtonMouvment_Click" Content="{Binding Source={x:Static p:Resources.ShowAll}}" Click="ToutMouvmentButton_Click"
+                Background="Transparent" BorderThickness="0" Cursor="Hand"
+                FontSize="13" FontWeight="SemiBold" Foreground="#374151" 
+                Padding="20,0" VerticalContentAlignment="Center">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#E5E7EB"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background" Value="#D1D5DB"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Dashboard and Operations Content -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="24,24,24,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Dashboard Cards -->
+                        <Border Grid.Row="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" Padding="24,16">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Margin="0,0,0,24">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Nombre de Vente Card -->
+                                    <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Mouvment de vente" 
+                  FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#10B981"/>
+                                            </Grid>
+                                            <TextBlock Text="127" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="MouvmentVente"/>
+                                            <TextBlock Text="{Binding Source={x:Static p:Resources.TodayPlus}}" FontSize="12" Foreground="#10B981" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Nombre d'achat Card -->
+                                    <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Mouvment d'achat" 
+                  FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#3B82F6"/>
+                                            </Grid>
+                                            <TextBlock Text="45" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="MouvmentAchat"/>
+                                            <TextBlock Text="+3 cette semaine" FontSize="12" Foreground="#3B82F6" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Finance Card -->
+                                    <Border Grid.Column="4" Style="{StaticResource CardStyle}">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Article vendus - Articles achetes" 
+                  FontSize="14" FontWeight="Medium" Foreground="#6B7280"/>
+                                                <Ellipse Grid.Column="1" Width="12" Height="12" Fill="#059669"/>
+                                            </Grid>
+                                            <TextBlock Text="€18,742.35" FontSize="28" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8" Name="MouvmentFinance"/>
+                                            <TextBlock Text="{Binding Source={x:Static p:Resources.NetProfit}}" FontSize="12" Foreground="#059669" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+
+                                <!-- Second Row of Filters -->
+
+                            </Grid>
+                        </Border>
+
+                        <!-- Recent Operations -->
+                        <Border Grid.Row="1" Style="{StaticResource CardStyle}" >
+                            <StackPanel>
+                                <Grid Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Mouvment" 
+                                      FontSize="18" FontWeight="SemiBold" Foreground="#1F2937"/>
+                                </Grid>
+
+                                <!-- Operations List -->
+                                <StackPanel Name="MouvmentContainer">
+                                </StackPanel>
+                                <Border Height="34" Margin="0,12,0,0" Name="ViewMoreContainer1">
+                                    <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,6"
+Background="Transparent" BorderThickness="0" Cursor="Hand"
+Padding="12,6" Click="Button1_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" 
+                        Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="#2563EB"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock Text="View More" Foreground="#3B82F6" 
+       FontSize="14" FontWeight="Medium"/>
+                                    </Button>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Stock Movement Content (Hidden by default) -->
+            <ScrollViewer x:Name="MouvmenttContent" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="24">
+                    <!-- Stock Movement Header -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Source={x:Static p:Resources.StockMovement}}" FontSize="24" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,8"/>
+                                <TextBlock Text="Gérez les entrées et sorties de votre inventaire" FontSize="14" Foreground="#6B7280"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="{Binding Source={x:Static p:Resources.NewMovement}}" Style="{StaticResource ActionButtonStyle}" VerticalAlignment="Top"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Stock Summary -->
+                    <Grid Margin="0,0,0,24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Entrées aujourd'hui" FontSize="14" FontWeight="Medium" Foreground="#6B7280" Margin="0,0,0,12"/>
+                                <TextBlock Text="127 articles" FontSize="24" FontWeight="Bold" Foreground="#10B981" Margin="0,0,0,8"/>
+                                <TextBlock Text="Valeur: €1,847.23" FontSize="12" Foreground="#6B7280"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Sorties aujourd'hui" FontSize="14" FontWeight="Medium" Foreground="#6B7280" Margin="0,0,0,12"/>
+                                <TextBlock Text="89 articles" FontSize="24" FontWeight="Bold" Foreground="#EF4444" Margin="0,0,0,8"/>
+                                <TextBlock Text="Valeur: €1,234.56" FontSize="12" Foreground="#6B7280"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Recent Stock Movements -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Mouvements récents" FontSize="18" FontWeight="SemiBold" 
+                              Foreground="#1F2937" Margin="0,0,0,20"/>
+
+                            <!-- Stock Movement Items -->
+                            <StackPanel>
+                                <Border Background="#F0FDF4" BorderBrush="#BBF7D0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Background="#10B981" Width="32" Height="32" CornerRadius="16" Margin="0,0,16,0">
+                                            <TextBlock Text="↗" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Réception marchandise" FontWeight="SemiBold" FontSize="14" Foreground="#1F2937"/>
+                                            <TextBlock Text="Produit ABC - Quantité: +50" FontSize="12" Foreground="#6B7280" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="+€750.00" FontSize="14" FontWeight="Bold" 
+                                          Foreground="#059669" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                        <TextBlock Grid.Column="3" Text="10:30" FontSize="12" 
+                                          Foreground="#9CA3AF" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border Background="#FEF2F2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Background="#EF4444" Width="32" Height="32" CornerRadius="16" Margin="0,0,16,0">
+                                            <TextBlock Text="↙" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Vente" FontWeight="SemiBold" FontSize="14" Foreground="#1F2937"/>
+                                            <TextBlock Text="Produit XYZ - Quantité: -15" FontSize="12" Foreground="#6B7280" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="-€225.00" FontSize="14" FontWeight="Bold" 
+                                          Foreground="#DC2626" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                        <TextBlock Grid.Column="3" Text="09:15" FontSize="12" 
+                                          Foreground="#9CA3AF" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,352 @@
+<UserControl x:Class="GestionComerce.Main.Inventory.CSingleArticleI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+             Height="40">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="BorderLight" Color="#E5E7EB"/>
+        <SolidColorBrush x:Key="PrimaryBlue" Color="#3B82F6"/>
+        <SolidColorBrush x:Key="SurfaceWhite" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#64748B"/>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                    <Setter Property="Background" Value="#E5E7EB"/>
+                    <Setter Property="Foreground" Value="#9CA3AF"/>
+                    <Setter Property="Cursor" Value="No"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- ROW LAYOUT -->
+        <Border x:Name="RowLayout" Background="#FAFBFC" Margin="0,0,0,0" CornerRadius="0" 
+                BorderBrush="{StaticResource BorderLight}" BorderThickness="0,0,0,1">
+            <Grid Margin="24,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="220"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" 
+                        Width="40" Height="32"
+                        CornerRadius="6"
+                        BorderBrush="{StaticResource BorderLight}"
+                        BorderThickness="1"
+                        Background="White"
+                        VerticalAlignment="Center"
+                        Margin="0,0,8,0">
+                    <Image x:Name="RowArticleImage" 
+                           Stretch="Uniform"/>
+                </Border>
+
+                <TextBlock Grid.Column="1" x:Name="ArticleName" 
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#1F2937" FontWeight="Medium"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="2" x:Name="Fournisseur" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#1F2937" FontWeight="Medium"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="3" x:Name="Famillee" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#374151"/>
+                <TextBlock Grid.Column="4" x:Name="PrixAchat" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#059669" FontWeight="Medium"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" x:Name="PrixVente" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#DC2626" FontWeight="Medium"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="6" x:Name="Quantite" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#374151"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="7" x:Name="DateExpiration" Margin="20,0,0,0"
+                           VerticalAlignment="Center" Height="15"
+                           FontSize="12" Foreground="#6B7280"
+                           HorizontalAlignment="Center"/>
+                <StackPanel Grid.Column="8" Orientation="Horizontal" HorizontalAlignment="Center" Width="220">
+                    <Button Content="{x:Static res:Resources.Details}" Background="#8B5CF6" Style="{StaticResource ActionButtonStyle}"
+                            Click="DetailsButton_Click" Width="70" x:Name="Detailsbtn"/>
+                    <Button Content="{x:Static res:Resources.Edit}" Background="#4A90E2" Style="{StaticResource ActionButtonStyle}"
+                            Click="EditButton_Click" Width="65" x:Name="Editbtn"/>
+                    <Button Content="{x:Static res:Resources.Delete}" Background="#E74C3C" Style="{StaticResource ActionButtonStyle}"
+                            Click="DeleteButton_Click" Width="65" Name="Deletebtn"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- CARD LAYOUT -->
+        <Border x:Name="CardLayout" 
+                Background="{StaticResource SurfaceWhite}"
+                CornerRadius="12"
+                BorderBrush="{StaticResource BorderLight}"
+                BorderThickness="1"
+                Padding="0"
+                Visibility="Collapsed">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="#000000" Opacity="0.06"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" 
+                        CornerRadius="12,12,0,0"
+                        Background="#F8FAFC"
+                        BorderBrush="{StaticResource BorderLight}"
+                        BorderThickness="0,0,0,1">
+                    <Image x:Name="CardArticleImage" 
+                           Stretch="Uniform"/>
+                </Border>
+
+                <StackPanel Grid.Row="1" Margin="16,16,16,16">
+                    <TextBlock x:Name="CardArticleName"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}"
+                               TextTrimming="CharacterEllipsis"
+                               TextAlignment="Center"
+                               Margin="0,0,0,12"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock Text="{x:Static res:Resources.PurchasePrice}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       TextAlignment="Center"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="CardPrixAchat"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Foreground="#059669"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                            <TextBlock Text="{x:Static res:Resources.SellingPrice}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       TextAlignment="Center"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="CardPrixVente"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Foreground="#DC2626"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Background="{StaticResource BorderLight}" Margin="0,0,0,12"/>
+
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Column="0" Grid.Row="0">
+                            <TextBlock Text="{x:Static res:Resources.Stock}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="CardQuantite"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimary}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Grid.Row="0">
+                            <TextBlock Text="{x:Static res:Resources.Family}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="CardFamillee"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+                            <TextBlock Text="{x:Static res:Resources.Supplier}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="CardFournisseur"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Content="{x:Static res:Resources.Details}" 
+                                Background="#8B5CF6" 
+                                Style="{StaticResource CardButtonStyle}"
+                                Click="DetailsButton_Click" 
+                                x:Name="CardDetailsbtn"
+                                Margin="0,0,4,0"/>
+                        <Button Grid.Column="1" Content="{x:Static res:Resources.Edit}" 
+                                Background="#4A90E2" 
+                                Style="{StaticResource CardButtonStyle}"
+                                Click="EditButton_Click" 
+                                x:Name="CardEditbtn"
+                                Margin="4,0,0,0"/>
+                    </Grid>
+
+                    <Button Content="{x:Static res:Resources.Delete}" 
+                            Background="#E74C3C" 
+                            Style="{StaticResource CardButtonStyle}"
+                            Click="DeleteButton_Click" 
+                            x:Name="CardDeletebtn"
+                            Margin="0,8,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- SMALL CARD LAYOUT -->
+        <Border x:Name="SmallCardLayout" 
+                Visibility="Collapsed"
+                Background="White" 
+                BorderBrush="#E5E7EB" 
+                BorderThickness="1" 
+                CornerRadius="8" 
+                Width="140" 
+                Cursor="Hand"
+                MouseLeftButtonDown="DetailsButton_Click">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#F9FAFB" CornerRadius="8,8,0,0">
+                    <Image x:Name="SmallArticleImage" Stretch="Uniform"/>
+                </Border>
+
+                <StackPanel Grid.Row="1" Margin="8">
+                    <TextBlock x:Name="SmallArticleName" 
+                               FontFamily="Segoe UI"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#111827"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="Wrap"
+                               MaxHeight="32"
+                               Margin="0,0,0,6"/>
+
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.Purchase}" 
+                                       FontFamily="Segoe UI" 
+                                       FontSize="8" 
+                                       Foreground="#6B7280"/>
+                            <TextBlock x:Name="SmallPrixAchat" 
+                                       FontFamily="Segoe UI" 
+                                       FontSize="10" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#059669"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Static res:Resources.Sale}" 
+                                       FontFamily="Segoe UI" 
+                                       FontSize="8" 
+                                       Foreground="#6B7280" 
+                                       TextAlignment="Right"/>
+                            <TextBlock x:Name="SmallPrixVente" 
+                                       FontFamily="Segoe UI" 
+                                       FontSize="10" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#DC2626" 
+                                       TextAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

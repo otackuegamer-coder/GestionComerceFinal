@@ -1,0 +1,87 @@
+﻿<Window x:Class="GestionComerce.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GestionComerce"
+        mc:Ignorable="d"
+        Title="A&amp;A Gestion Comerece "
+        Height="600"
+        Width="900"
+        MinWidth="1100"
+        MinHeight="720"
+        Background="#F8F9FA"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized" WindowStyle="None">
+
+    <DockPanel LastChildFill="True">
+
+        <!-- ══ CONNECTION BANNER — docked to the top, always on top of content ══ -->
+        <Border x:Name="ConnectionBanner"
+                DockPanel.Dock="Top"
+                Height="0"
+                Background="#EF4444"
+                Visibility="Collapsed">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <!-- Smooth height animation when shown/hidden -->
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Setter Property="Height" Value="40"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- left: wifi icon + message -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="BannerIcon"
+                               Text="⚡"
+                               FontSize="16" Foreground="White"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock x:Name="BannerMessage"
+                               Text="Connexion perdue — vérifiez votre réseau ou Wi-Fi"
+                               FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                               Foreground="White" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- center: spinner shown while reconnecting -->
+                <TextBlock x:Name="BannerSpinner"
+                           Grid.Column="1"
+                           Text="↻"
+                           FontSize="18" Foreground="White"
+                           VerticalAlignment="Center" Margin="12,0"
+                           Visibility="Collapsed">
+                    <TextBlock.RenderTransform>
+                        <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="9" CenterY="9"/>
+                    </TextBlock.RenderTransform>
+                    <TextBlock.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="SpinnerRotate"
+                                        Storyboard.TargetProperty="Angle"
+                                        From="0" To="360" Duration="0:0:1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </TextBlock.Triggers>
+                </TextBlock>
+
+            </Grid>
+        </Border>
+
+        <!-- ══ MAIN CONTENT ══ -->
+        <Grid x:Name="MainGrid"/>
+
+    </DockPanel>
+</Window>

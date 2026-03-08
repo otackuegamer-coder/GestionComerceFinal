@@ -1,0 +1,565 @@
+<UserControl x:Class="Superete.Main.Comptabilite.Expectation.CMainEx"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:p="clr-namespace:GestionComerce.Resources"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1400"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- Modern Card Style -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="12"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#CCCCCC" BlurRadius="15" ShadowDepth="3" Opacity="0.25"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Header Text Style -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1A237E"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <!-- KPI Value Style -->
+        <Style x:Key="KpiValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="36"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- KPI Label Style -->
+        <Style x:Key="KpiLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#616161"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,8,0,0"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <!-- Section Header Style -->
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#283593"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- Refresh Button Style -->
+        <Style x:Key="RefreshButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3949AB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#303F9F"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1A237E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Search Box Style -->
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="White" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                        Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#F5F7FA">
+        <!-- Loading Overlay -->
+        <Border Background="#DD000000" 
+                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}"
+                Panel.ZIndex="1000"
+                x:Name="LoadingOverlay">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="⏳" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                <TextBlock Text="{x:Static p:Resources.CMainEx_Loading}" 
+                          FontSize="20" 
+                          Foreground="White" 
+                          FontWeight="SemiBold"
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel>
+
+                <!-- Page Header -->
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="{x:Static p:Resources.CMainEx_Title}" 
+                                  Style="{StaticResource HeaderTextStyle}"/>
+                        <TextBlock Text="{x:Static p:Resources.CMainEx_Subtitle}"
+                                  FontSize="14"
+                                  Foreground="#757575"
+                                  Margin="0,-12,0,0"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="1" 
+                           Content="{x:Static p:Resources.CMainEx_Refresh}"
+                           Style="{StaticResource RefreshButtonStyle}"
+                           Click="RefreshButton_Click"
+                           VerticalAlignment="Top"/>
+                </Grid>
+
+                <Border Background="White" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        Margin="0,0,0,20"
+                        BorderBrush="#E0E0E0" 
+                        BorderThickness="1">
+
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+
+                        <!-- Period Selection Label -->
+                        <TextBlock Text="{x:Static p:Resources.CMainEx_PeriodLabel}" 
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Foreground="#424242"
+                                   Margin="0,0,15,0"/>
+
+                        <!-- Period Selector ComboBox -->
+                        <ComboBox x:Name="PeriodSelector"
+                                  Width="200"
+                                  Height="40"
+                                  FontSize="14"
+                                  VerticalContentAlignment="Center"
+                                  SelectedIndex="0"
+                                  SelectionChanged="PeriodSelector_SelectionChanged">
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_1Month}" Tag="1"/>
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_3Months}" Tag="3"/>
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_6Months}" Tag="6"/>
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_1Year}" Tag="12"/>
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_2Years}" Tag="24"/>
+                            <ComboBoxItem Content="{x:Static p:Resources.CMainEx_5Years}" Tag="60"/>
+                        </ComboBox>
+
+                        <!-- Info Icon/Tooltip -->
+                        <Border Background="#E3F2FD" 
+                                CornerRadius="15"
+                                Width="30"
+                                Height="30"
+                                Margin="15,0,0,0"
+                                ToolTip="{x:Static p:Resources.CMainEx_PeriodTooltip}">
+                            <TextBlock Text="ℹ️" 
+                                       FontSize="16"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI Cards Row -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Projected Revenue -->
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="💰" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="ProjectedRevenueText" 
+                                      Text="0.00 DH" 
+                                      Style="{StaticResource KpiValueStyle}"
+                                      Foreground="#2E7D32"/>
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_PotentialRevenue}" 
+                                      Style="{StaticResource KpiLabelStyle}"/>
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_StockTotalValue}" 
+                                      FontSize="11" 
+                                      Foreground="#9E9E9E" 
+                                      HorizontalAlignment="Center"
+                                      Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Potential Net Profit -->
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="📈" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="PotentialProfitText" 
+                                      Text="0.00 DH" 
+                                      Style="{StaticResource KpiValueStyle}"
+                                      Foreground="#1565C0"/>
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_PotentialProfit}" 
+                                      Style="{StaticResource KpiLabelStyle}"/>
+                            <TextBlock x:Name="ProfitMarginText" 
+                                      Text="Marge: 0%" 
+                                      FontSize="11" 
+                                      Foreground="#9E9E9E" 
+                                      HorizontalAlignment="Center"
+                                      Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Inventory Health -->
+                    <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="📦" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="InventoryHealthText" 
+                                      Text="0%" 
+                                      Style="{StaticResource KpiValueStyle}"
+                                      Foreground="#F57C00"/>
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_StockHealth}" 
+                                      Style="{StaticResource KpiLabelStyle}"/>
+                            <ProgressBar x:Name="InventoryHealthBar" 
+                                        Height="8" 
+                                        Minimum="0" 
+                                        Maximum="100"
+                                        Value="0"
+                                        Margin="0,12,0,0"
+                                        Foreground="#F57C00"
+                                        Background="#FFE0B2"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cash Flow Status -->
+                    <Border Grid.Column="3" Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="💳" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock x:Name="PendingChecksText" 
+                                      Text="0.00 DH" 
+                                      Style="{StaticResource KpiValueStyle}"
+                                      Foreground="#D32F2F"/>
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_PendingChecks}" 
+                                      Style="{StaticResource KpiLabelStyle}"/>
+                            <TextBlock x:Name="PendingChecksCountText" 
+                                      Text="0 chèques" 
+                                      FontSize="11" 
+                                      Foreground="#9E9E9E" 
+                                      HorizontalAlignment="Center"
+                                      Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Middle Section: Article Search & Projections -->
+                <Border Style="{StaticResource CardStyle}" Margin="12,0,12,20">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.CMainEx_ArticleAnalysis}" 
+                                  Style="{StaticResource SectionHeaderStyle}"/>
+                        
+                        <!-- Search Box -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBox x:Name="ArticleSearchBox" 
+                                    Grid.Column="0"
+                                    Style="{StaticResource SearchBoxStyle}"
+                                    TextChanged="ArticleSearchBox_TextChanged"/>
+                            
+                            <ListBox x:Name="ArticleSuggestionsList"
+                                    Grid.Column="0"
+                                    Margin="0,42,0,0"
+                                    MaxHeight="200"
+                                    Visibility="Collapsed"
+                                    Background="White"
+                                    BorderBrush="#BDBDBD"
+                                    BorderThickness="1"
+                                    SelectionChanged="ArticleSuggestionsList_SelectionChanged"
+                                    Panel.ZIndex="100"/>
+                            
+                            <TextBlock Grid.Column="1" 
+                                      Text="🔎" 
+                                      FontSize="18" 
+                                      VerticalAlignment="Center" 
+                                      Margin="12,0,12,0"
+                                      Foreground="#757575"/>
+                        </Grid>
+
+                        <!-- Article Details Card (Initially Collapsed) -->
+                        <Border x:Name="ArticleDetailsCard" 
+                               Visibility="Collapsed"
+                               Background="#F5F5F5" 
+                               CornerRadius="8" 
+                               Padding="20"
+                               BorderBrush="#E0E0E0"
+                               BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Article Name Header -->
+                                <TextBlock x:Name="SelectedArticleNameText" 
+                                          Grid.Row="0" 
+                                          Grid.ColumnSpan="3"
+                                          Text="{x:Static p:Resources.CMainEx_SelectedArticle}" 
+                                          FontSize="18" 
+                                          FontWeight="Bold"
+                                          Foreground="#1A237E"
+                                          Margin="0,0,0,20"/>
+
+                                <!-- Days Until Stockout -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,20,0">
+                                    <TextBlock Text="{x:Static p:Resources.CMainEx_DaysBeforeStockout}" 
+                                              FontSize="13" 
+                                              Foreground="#616161"
+                                              Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="DaysUntilStockoutText" 
+                                              Text="-- jours" 
+                                              FontSize="24" 
+                                              FontWeight="Bold"
+                                              Foreground="#F57C00"/>
+                                    <TextBlock x:Name="StockVelocityText" 
+                                              Text="Vélocité: --/semaine" 
+                                              FontSize="11" 
+                                              Foreground="#9E9E9E"
+                                              Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <!-- Restock Date -->
+                                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,20,0">
+                                    <TextBlock Text="{x:Static p:Resources.CMainEx_RestockDate}" 
+                                              FontSize="13" 
+                                              Foreground="#616161"
+                                              Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="RestockDateText" 
+                                              Text="--/--/----" 
+                                              FontSize="24" 
+                                              FontWeight="Bold"
+                                              Foreground="#1565C0"/>
+                                    <TextBlock Text="{x:Static p:Resources.CMainEx_OrderBefore}" 
+                                              FontSize="11" 
+                                              Foreground="#9E9E9E"
+                                              Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <!-- Profit Margin Gauge -->
+                                <StackPanel Grid.Row="1" Grid.Column="2">
+                                    <TextBlock Text="{x:Static p:Resources.CMainEx_ProfitMarginLabel}" 
+                                              FontSize="13" 
+                                              Foreground="#616161"
+                                              Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="ProfitMarginValueText" 
+                                              Text="0%" 
+                                              FontSize="24" 
+                                              FontWeight="Bold"
+                                              Foreground="#2E7D32"/>
+                                    <ProgressBar x:Name="ProfitMarginBar" 
+                                                Height="12" 
+                                                Minimum="0" 
+                                                Maximum="100"
+                                                Value="0"
+                                                Margin="0,8,0,0"
+                                                Foreground="#4CAF50"
+                                                Background="#E8F5E9"/>
+                                </StackPanel>
+
+                                <!-- Current Stock Info -->
+                                <Border Grid.Row="2" 
+                                       Grid.ColumnSpan="3" 
+                                       Background="White" 
+                                       CornerRadius="6" 
+                                       Padding="16"
+                                       Margin="0,20,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{x:Static p:Resources.CMainEx_CurrentStock}" 
+                                                  FontSize="14" 
+                                                  Foreground="#616161"/>
+                                        <TextBlock x:Name="CurrentStockText" 
+                                                  Text="0 unités" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold"
+                                                  Foreground="#1A237E"
+                                                  Margin="4,0,20,0"/>
+                                        <TextBlock Text="{x:Static p:Resources.CMainEx_SalePriceLabel}" 
+                                                  FontSize="14" 
+                                                  Foreground="#616161"/>
+                                        <TextBlock x:Name="SalePriceText" 
+                                                  Text="0.00 DH" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold"
+                                                  Foreground="#2E7D32"
+                                                  Margin="4,0,20,0"/>
+                                        <TextBlock Text="{x:Static p:Resources.CMainEx_StockValue}" 
+                                                  FontSize="14" 
+                                                  Foreground="#616161"/>
+                                        <TextBlock x:Name="StockValueText" 
+                                                  Text="0.00 DH" 
+                                                  FontSize="14" 
+                                                  FontWeight="SemiBold"
+                                                  Foreground="#1565C0"
+                                                  Margin="4,0,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="{x:Static p:Resources.CMainEx_ProjectedSales}" 
+                                               FontSize="14"
+                                               Foreground="#757575"
+                                               Width="150"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ProjectedSalesText" 
+                                               Text="N/A"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="#1976D2"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Smart Business Advisor -->
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                            <TextBlock Text="{x:Static p:Resources.CMainEx_SmartAdvisor}" 
+                                      Style="{StaticResource SectionHeaderStyle}"
+                                      Margin="0"/>
+                            <Border Background="#4CAF50" 
+                                   CornerRadius="12" 
+                                   Padding="8,4"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center">
+                                <TextBlock x:Name="RecommendationCountText" 
+                                          Text="0 recommandations" 
+                                          Foreground="White" 
+                                          FontSize="12"
+                                          FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Recommendations List -->
+                        <ItemsControl x:Name="RecommendationsPanel">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{Binding BackgroundColor}" 
+                                           CornerRadius="8" 
+                                           Padding="16" 
+                                           Margin="0,0,0,12"
+                                           BorderBrush="{Binding BorderColor}"
+                                           BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0" 
+                                                      Text="{Binding Icon}" 
+                                                      FontSize="32" 
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,16,0"/>
+
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding Title}" 
+                                                          FontSize="16" 
+                                                          FontWeight="Bold"
+                                                          Foreground="{Binding TitleColor}"
+                                                          Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding Message}" 
+                                                          FontSize="14" 
+                                                          Foreground="#424242"
+                                                          TextWrapping="Wrap"
+                                                          Margin="0,0,0,8"/>
+                                                <TextBlock Text="{Binding Action}" 
+                                                          FontSize="13" 
+                                                          FontWeight="SemiBold"
+                                                          Foreground="{Binding ActionColor}"
+                                                          TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- No Recommendations Message -->
+                        <Border x:Name="NoRecommendationsPanel" 
+                               Visibility="Visible"
+                               Background="#E8F5E9" 
+                               CornerRadius="8" 
+                               Padding="20"
+                               BorderBrush="#81C784"
+                               BorderThickness="1">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="✅" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                <TextBlock Text="{x:Static p:Resources.CMainEx_NoUrgentAction}" 
+                                          FontSize="16" 
+                                          FontWeight="SemiBold"
+                                          Foreground="#2E7D32"
+                                          HorizontalAlignment="Center"
+                                          Margin="0,0,0,4"/>
+                                <TextBlock Text="{x:Static p:Resources.CMainEx_HealthyStatus}" 
+                                          FontSize="14" 
+                                          Foreground="#558B2F"
+                                          HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

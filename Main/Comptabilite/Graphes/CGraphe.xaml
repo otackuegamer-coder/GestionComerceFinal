@@ -1,0 +1,948 @@
+<UserControl x:Class="Superete.Main.Comptabilite.Graphes.CGraphe"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Superete.Main.Comptabilite.Graphes"
+             xmlns:p="clr-namespace:GestionComerce.Resources"
+             mc:Ignorable="d"
+             d:DesignHeight="900" d:DesignWidth="1100"
+             Background="Transparent">
+
+    <UserControl.Resources>
+
+        <!-- ═══ COLOURS ═══ -->
+        <SolidColorBrush x:Key="AccentBlue"    Color="#667EEA"/>
+        <SolidColorBrush x:Key="AccentPurple"  Color="#764BA2"/>
+        <SolidColorBrush x:Key="TrendUp"       Color="#38A169"/>
+        <SolidColorBrush x:Key="TrendDown"     Color="#E53E3E"/>
+        <SolidColorBrush x:Key="TextPrimary"   Color="#1A202C"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#4A5568"/>
+        <SolidColorBrush x:Key="TextMuted"     Color="#A0AEC0"/>
+        <SolidColorBrush x:Key="BgInput"       Color="#F7FAFC"/>
+        <SolidColorBrush x:Key="BorderColor"   Color="#E2E8F0"/>
+
+        <LinearGradientBrush x:Key="AccentGrad" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#667EEA" Offset="0"/>
+            <GradientStop Color="#764BA2" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="TealGrad" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#38B2AC" Offset="0"/>
+            <GradientStop Color="#319795" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GoldGrad" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#ED8936" Offset="0"/>
+            <GradientStop Color="#DD6B20" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="RoseGrad" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FC8181" Offset="0"/>
+            <GradientStop Color="#E53E3E" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- ═══ SHADOWS ═══ -->
+        <DropShadowEffect x:Key="CardShadow"
+                          Color="#000000" Opacity="0.05"
+                          BlurRadius="15" ShadowDepth="3" Direction="270"/>
+        <DropShadowEffect x:Key="AccentGlow"
+                          Color="#667EEA" Opacity="0.35"
+                          BlurRadius="14" ShadowDepth="0"/>
+
+        <!-- ═══ CARDS ═══ -->
+        <Style x:Key="SettingsCard" TargetType="Border">
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="20"/>
+            <Setter Property="Margin"          Value="0,0,0,16"/>
+            <Setter Property="Effect"          Value="{StaticResource CardShadow}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style x:Key="KpiCard" TargetType="Border">
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="CornerRadius"    Value="12"/>
+            <Setter Property="Padding"         Value="18,14"/>
+            <Setter Property="Effect"          Value="{StaticResource CardShadow}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+
+        <!-- ═══ TYPOGRAPHY ═══ -->
+        <Style x:Key="SettingsLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="Margin"     Value="0,0,0,6"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+        <Style x:Key="KpiLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Margin"     Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="KpiValue" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="26"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+        <Style x:Key="BodyText" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+
+        <!-- ═══ COMBOBOX ═══ -->
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Padding"         Value="12,8"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="Background"      Value="{StaticResource BgInput}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextPrimary}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="bdr"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <Grid Margin="{TemplateBinding Padding}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="▾"
+                                               Foreground="{StaticResource TextMuted}"
+                                               FontSize="11" VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <ToggleButton x:Name="toggleButton"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Background="Transparent" BorderThickness="0" Opacity="0"/>
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{TemplateBinding ActualWidth}"
+                                        Background="White"
+                                        BorderBrush="{StaticResource BorderColor}"
+                                        BorderThickness="1" CornerRadius="8"
+                                        Effect="{StaticResource CardShadow}"
+                                        Margin="0,4,0,0">
+                                    <ScrollViewer MaxHeight="220">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bdr" Property="BorderBrush" Value="#CBD5E0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                        <Setter Property="Padding"    Value="14,9"/>
+                        <Setter Property="FontSize"   Value="13"/>
+                        <Setter Property="FontFamily" Value="Segoe UI"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="bg" Background="Transparent"
+                                            Padding="{TemplateBinding Padding}"
+                                            CornerRadius="5" Margin="4,2">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="#EBF4FF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="bg" Property="Background" Value="#E9D8FD"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ═══ DATEPICKER ═══ -->
+        <Style x:Key="ModernDatePicker" TargetType="DatePicker">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Padding"         Value="12,8"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="Background"      Value="{StaticResource BgInput}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- ═══ CHECKBOX ═══ -->
+        <Style x:Key="ModernCheckBox" TargetType="CheckBox">
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin"     Value="0,0,20,0"/>
+        </Style>
+
+        <!-- ═══ APPLY BUTTON ═══ -->
+        <Style x:Key="ApplyButton" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource AccentGrad}"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="Height"          Value="42"/>
+            <Setter Property="Padding"         Value="28,0"/>
+            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Effect"          Value="{StaticResource AccentGlow}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.72"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ═══ GHOST BUTTON ═══ -->
+        <Style x:Key="GhostBtn" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource BgInput}"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="10,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bg"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#EDF2F7"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#E2E8F0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ═══ CHART TAB ═══ -->
+        <Style x:Key="TabBtn" TargetType="RadioButton">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="GroupName"       Value="ChartTabs"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="bg" Background="{TemplateBinding Background}"
+                                CornerRadius="7" Padding="{TemplateBinding Padding}">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#EBF4FF"/>
+                                <Setter Property="Foreground" Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#F7FAFC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ═══ DATAGRID ═══ -->
+        <Style x:Key="LightGrid" TargetType="DataGrid">
+            <Setter Property="Background"           Value="Transparent"/>
+            <Setter Property="BorderThickness"       Value="0"/>
+            <Setter Property="RowBackground"         Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="#FAFBFC"/>
+            <Setter Property="GridLinesVisibility"   Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="RowHeight"             Value="46"/>
+            <Setter Property="SelectionMode"         Value="Single"/>
+            <Setter Property="FontFamily"            Value="Segoe UI"/>
+            <Setter Property="FontSize"              Value="13"/>
+            <Setter Property="SelectionUnit"         Value="FullRow"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="Foreground"            Value="{StaticResource TextPrimary}"/>
+        </Style>
+        <Style x:Key="LightGridHeader" TargetType="DataGridColumnHeader">
+            <Setter Property="Background"      Value="#F7FAFC"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextMuted}"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Padding"         Value="14,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush"     Value="{StaticResource BorderColor}"/>
+            <Setter Property="Height"          Value="38"/>
+        </Style>
+        <Style x:Key="LightGridRow" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#EBF4FF"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E9D8FD"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LightGridCell" TargetType="DataGridCell">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>  <!-- Settings card -->
+                <RowDefinition Height="Auto"/>  <!-- KPI row -->
+                <RowDefinition Height="Auto"/>  <!-- Chart card -->
+                <RowDefinition Height="Auto"/>  <!-- Table card -->
+            </Grid.RowDefinitions>
+
+            <!-- ══════════════════════════════════════════════════
+                 ROW 0 — SETTINGS CARD
+            ══════════════════════════════════════════════════ -->
+            <Border Grid.Row="0" Style="{StaticResource SettingsCard}">
+                <StackPanel>
+
+                    <!-- ROW A: View · Dates · Quick ranges -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- View (metric) -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_MetricLabel}" Style="{StaticResource SettingsLabel}"/>
+                            <ComboBox x:Name="MetricComboBox"
+                                      Style="{StaticResource ModernComboBox}"
+                                      SelectionChanged="MetricComboBox_SelectionChanged">
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_MonthlyRevenue}"       Tag="revenue"    IsSelected="True"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_ArticleVolume}"      Tag="stock"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_InvoiceGap}" Tag="invoicegap"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_ClientPerf}"   Tag="client"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_SupplierActivity}" Tag="supplier"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Date début -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_StartDate}" Style="{StaticResource SettingsLabel}"/>
+                            <DatePicker x:Name="StartDatePicker"
+                                        Style="{StaticResource ModernDatePicker}"
+                                        SelectedDateChanged="DatePicker_Changed"/>
+                        </StackPanel>
+
+                        <!-- Date fin -->
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_EndDate}" Style="{StaticResource SettingsLabel}"/>
+                            <DatePicker x:Name="EndDatePicker"
+                                        Style="{StaticResource ModernDatePicker}"
+                                        SelectedDateChanged="DatePicker_Changed"/>
+                        </StackPanel>
+
+                        <!-- Quick range chips -->
+                        <StackPanel Grid.Column="6" Orientation="Horizontal"
+                                    VerticalAlignment="Bottom">
+                            <Button Content="7J"  Tag="7"   Style="{StaticResource GhostBtn}"
+                                    Click="QuickRange_Click" Margin="0,0,4,0"/>
+                            <Button Content="30J" Tag="30"  Style="{StaticResource GhostBtn}"
+                                    Click="QuickRange_Click" Margin="0,0,4,0"/>
+                            <Button Content="90J" Tag="90"  Style="{StaticResource GhostBtn}"
+                                    Click="QuickRange_Click" Margin="0,0,4,0"/>
+                            <Button Content="1AN" Tag="365" Style="{StaticResource GhostBtn}"
+                                    Click="QuickRange_Click"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- DIVIDER -->
+                    <Border Height="1" Background="{StaticResource BorderColor}" Margin="0,0,0,16"/>
+
+                    <!-- ROW B: Entity type · Entity search · Graph type · Checkboxes -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Entity type selector -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_EntityType}" Style="{StaticResource SettingsLabel}"/>
+                            <ComboBox x:Name="EntityTypeComboBox"
+                                      Style="{StaticResource ModernComboBox}"
+                                      SelectionChanged="EntityTypeComboBox_SelectionChanged">
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_AllEntities}"    Tag=""           IsSelected="True"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_Article}"     Tag="article"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_Client}"      Tag="client"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_Supplier}" Tag="fournisseur"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Search within selected type -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_SearchLabel}" Style="{StaticResource SettingsLabel}"/>
+                            <Grid>
+                                <TextBox x:Name="EntitySearchBox"
+                                         Height="40" Padding="12,0,36,0"
+                                         FontSize="13" FontFamily="Segoe UI"
+                                         Background="#F7FAFC"
+                                         BorderBrush="#E2E8F0" BorderThickness="1"
+                                         VerticalContentAlignment="Center"
+                                         IsEnabled="False"
+                                         TextChanged="EntitySearchBox_TextChanged"/>
+                                <TextBlock Text="🔍" FontSize="13" Foreground="#A0AEC0"
+                                           IsHitTestVisible="False"
+                                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                                           Margin="0,0,12,0"/>
+                            </Grid>
+                            <ListBox x:Name="SearchResultsList"
+                                     MaxHeight="180" Margin="0,2,0,0"
+                                     Visibility="Collapsed"
+                                     Background="White"
+                                     BorderBrush="#E2E8F0" BorderThickness="1"
+                                     FontFamily="Segoe UI" FontSize="13"
+                                     SelectionChanged="SearchResultsList_SelectionChanged"/>
+                        </StackPanel>
+
+                        <!-- Graph type -->
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_GraphType}" Style="{StaticResource SettingsLabel}"/>
+                            <ComboBox x:Name="GraphTypeComboBox"
+                                      Style="{StaticResource ModernComboBox}"
+                                      SelectionChanged="GraphTypeComboBox_SelectionChanged">
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_AreaChart}"  Tag="area" IsSelected="True"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_LineChart}"  Tag="line"/>
+                                <ComboBoxItem Content="{x:Static p:Resources.CGraphe_BarChart}" Tag="bar"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Checkboxes -->
+                        <StackPanel Grid.Column="6" VerticalAlignment="Bottom">
+                            <CheckBox x:Name="OperationsCheckBox" IsChecked="True"
+                                      Style="{StaticResource ModernCheckBox}"
+                                      Checked="DataSource_Changed" Unchecked="DataSource_Changed"
+                                      Margin="0,0,0,6">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="8" Height="8" CornerRadius="1"
+                                            Background="{StaticResource AccentBlue}"
+                                            Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Static p:Resources.CGraphe_Operations}" Style="{StaticResource BodyText}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <CheckBox x:Name="FacturesCheckBox" IsChecked="True"
+                                      Style="{StaticResource ModernCheckBox}"
+                                      Checked="DataSource_Changed" Unchecked="DataSource_Changed">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="8" Height="8" CornerRadius="1"
+                                            Background="{StaticResource AccentPurple}"
+                                            Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Static p:Resources.CGraphe_Invoices}" Style="{StaticResource BodyText}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </CheckBox>
+                            <!-- Combiné: fusionne Opérations + Factures en une seule série -->
+                            <CheckBox x:Name="CombinedCheckBox" IsChecked="False"
+                                      Style="{StaticResource ModernCheckBox}"
+                                      Checked="DataSource_Changed" Unchecked="DataSource_Changed"
+                                      Margin="0,6,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="8" Height="8" CornerRadius="1"
+                                            Background="#38B2AC"
+                                            Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Static p:Resources.CGraphe_Combined}" Style="{StaticResource BodyText}"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </CheckBox>
+                        </StackPanel>
+
+                        <!-- Apply button -->
+                        <StackPanel Grid.Column="8" VerticalAlignment="Bottom">
+                            <Button x:Name="ApplyBtn" Content="{x:Static p:Resources.CGraphe_Generate}"
+                                    Style="{StaticResource ApplyButton}"
+                                    Click="ApplyButton_Click"/>
+                        </StackPanel>
+
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- ══════════════════════════════════════════════════
+                 ROW 1 — KPI CARDS
+            ══════════════════════════════════════════════════ -->
+            <UniformGrid Grid.Row="1" Rows="1" Columns="4" Margin="0,0,0,16">
+
+                <!-- KPI 1 — Total Revenu -->
+                <Border Style="{StaticResource KpiCard}" Margin="0,0,10,0">
+                    <StackPanel>
+                        <Border Height="3" CornerRadius="1.5" Background="{StaticResource AccentGrad}"
+                                Margin="-18,-14,-18,12"/>
+                        <TextBlock Text="{x:Static p:Resources.CGraphe_TotalRevenue}" Style="{StaticResource KpiLabel}"/>
+                        <TextBlock x:Name="Kpi1Value" Text="—" Style="{StaticResource KpiValue}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock x:Name="Kpi1Trend" Text="— %"
+                                       FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TrendUp}"/>
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_VsPrev}" Style="{StaticResource BodyText}"
+                                       FontSize="11" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 2 — Nb Opérations -->
+                <Border Style="{StaticResource KpiCard}" Margin="0,0,10,0">
+                    <StackPanel>
+                        <Border Height="3" CornerRadius="1.5" Background="{StaticResource TealGrad}"
+                                Margin="-18,-14,-18,12"/>
+                        <TextBlock Text="{x:Static p:Resources.CGraphe_NbOperations}" Style="{StaticResource KpiLabel}"/>
+                        <TextBlock x:Name="Kpi2Value" Text="—" Style="{StaticResource KpiValue}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock x:Name="Kpi2Trend" Text="— %"
+                                       FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TrendUp}"/>
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_VsPrev}" Style="{StaticResource BodyText}"
+                                       FontSize="11" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 3 — Panier Moyen -->
+                <Border Style="{StaticResource KpiCard}" Margin="0,0,10,0">
+                    <StackPanel>
+                        <Border Height="3" CornerRadius="1.5" Background="{StaticResource GoldGrad}"
+                                Margin="-18,-14,-18,12"/>
+                        <TextBlock Text="{x:Static p:Resources.CGraphe_AverageCart}" Style="{StaticResource KpiLabel}"/>
+                        <TextBlock x:Name="Kpi3Value" Text="—" Style="{StaticResource KpiValue}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock x:Name="Kpi3Trend" Text="— %"
+                                       FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TrendUp}"/>
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_VsPrev}" Style="{StaticResource BodyText}"
+                                       FontSize="11" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 4 — Écart -->
+                <Border Style="{StaticResource KpiCard}">
+                    <StackPanel>
+                        <Border Height="3" CornerRadius="1.5" Background="{StaticResource RoseGrad}"
+                                Margin="-18,-14,-18,12"/>
+                        <TextBlock Text="{x:Static p:Resources.CGraphe_BillingGap}" Style="{StaticResource KpiLabel}"/>
+                        <TextBlock x:Name="Kpi4Value" Text="—" Style="{StaticResource KpiValue}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock x:Name="Kpi4Trend" Text="— %"
+                                       FontFamily="Segoe UI" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TrendDown}"/>
+                            <TextBlock Text="{x:Static p:Resources.CGraphe_ToFill}" Style="{StaticResource BodyText}"
+                                       FontSize="11" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </UniformGrid>
+
+            <!-- ══════════════════════════════════════════════════
+                 ROW 2 — CHART CARD
+            ══════════════════════════════════════════════════ -->
+            <Border Grid.Row="2" Style="{StaticResource SettingsCard}" MinHeight="420">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="380"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Chart header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock x:Name="GraphTitle" Text="Graphique des Données"
+                                       Style="{StaticResource SectionTitle}"/>
+                            <TextBlock x:Name="GraphSubtitle"
+                                       Text="Opérations (bleu) vs Factures (violet)"
+                                       Style="{StaticResource BodyText}" FontSize="11" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <!-- Chart type tabs (mirrors GraphTypeComboBox) -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <RadioButton x:Name="TabArea"  Content="Aires"  Style="{StaticResource TabBtn}"
+                                         IsChecked="True" Checked="TabBtn_Checked" Margin="0,0,2,0"/>
+                            <RadioButton x:Name="TabLine"  Content="Ligne"  Style="{StaticResource TabBtn}"
+                                         Checked="TabBtn_Checked" Margin="0,0,2,0"/>
+                            <RadioButton x:Name="TabBar"   Content="Barres" Style="{StaticResource TabBtn}"
+                                         Checked="TabBtn_Checked"/>
+                            <TextBlock x:Name="LastRefreshText" Text=""
+                                       Style="{StaticResource BodyText}" FontSize="11"
+                                       Foreground="{StaticResource TextMuted}"
+                                       VerticalAlignment="Center" Margin="16,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Chart canvases -->
+                    <Border Grid.Row="1" ClipToBounds="True">
+                        <Grid>
+                            <Canvas x:Name="YAxisCanvas" Width="52" HorizontalAlignment="Left"/>
+                            <Canvas x:Name="GraphCanvas"
+                                    Margin="52,0,0,28"
+                                    SizeChanged="GraphCanvas_SizeChanged"
+                                    Background="Transparent"
+                                    ClipToBounds="True"
+                                    MouseMove="GraphCanvas_MouseMove"
+                                    MouseLeave="GraphCanvas_MouseLeave"/>
+                            <Canvas x:Name="XAxisCanvas"
+                                    Height="28" VerticalAlignment="Bottom"
+                                    Margin="52,0,0,0"/>
+                            <!-- CrosshairCanvas owns both the crosshair line AND the tooltip.
+                                 Canvas children use Canvas.SetLeft/Top for positioning, so the
+                                 tooltip never participates in Grid layout and cannot trigger
+                                 GraphCanvas.SizeChanged when it becomes Visible. -->
+                            <Canvas x:Name="CrosshairCanvas"
+                                    Margin="52,0,0,28"
+                                    IsHitTestVisible="False">
+
+                                <!-- Tooltip lives INSIDE CrosshairCanvas - Canvas.SetLeft/Top work here -->
+                                <Border x:Name="ChartTooltip"
+                                        Visibility="Collapsed"
+                                        Background="White"
+                                        BorderBrush="{StaticResource BorderColor}"
+                                        BorderThickness="1" CornerRadius="10" Padding="12,10"
+                                        Effect="{StaticResource CardShadow}"
+                                        IsHitTestVisible="False">
+                                    <StackPanel>
+                                        <TextBlock x:Name="TooltipDate"
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                            <Border Width="8" Height="8" CornerRadius="1"
+                                                    Background="{StaticResource AccentBlue}"
+                                                    Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TooltipOps"
+                                                       FontFamily="Cascadia Code, Consolas" FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Width="8" Height="8" CornerRadius="1"
+                                                    Background="{StaticResource AccentPurple}"
+                                                    Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TooltipFact"
+                                                       FontFamily="Cascadia Code, Consolas" FontSize="12"
+                                                       Foreground="{StaticResource TextPrimary}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                            </Canvas>
+
+                            <!-- Empty state -->
+                            <StackPanel x:Name="EmptyState"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Visibility="Visible">
+                                <TextBlock Text="📊" FontSize="60"
+                                           HorizontalAlignment="Center" Opacity="0.25"/>
+                                <TextBlock Text="{x:Static p:Resources.CGraphe_Configure}"
+                                           FontFamily="Segoe UI" FontSize="14"
+                                           Foreground="{StaticResource TextMuted}"
+                                           HorizontalAlignment="Center" Margin="0,12,0,4"/>
+                                <TextBlock Text="{x:Static p:Resources.CGraphe_GenerateHint}"
+                                           FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource AccentBlue}"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- Loading overlay -->
+                            <Grid x:Name="LoadingOverlay" Visibility="Collapsed"
+                                  Background="#80FFFFFF">
+                                <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Background="White" CornerRadius="12" Padding="32,24"
+                                        Effect="{StaticResource CardShadow}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="⟳" FontSize="32"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource AccentBlue}">
+                                            <TextBlock.RenderTransform>
+                                                <RotateTransform x:Name="SpinTransform" CenterX="16" CenterY="16"/>
+                                            </TextBlock.RenderTransform>
+                                            <TextBlock.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard>
+                                                        <Storyboard RepeatBehavior="Forever">
+                                                            <DoubleAnimation Storyboard.TargetName="SpinTransform"
+                                                                             Storyboard.TargetProperty="Angle"
+                                                                             From="0" To="360" Duration="0:0:1"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </TextBlock.Triggers>
+                                        </TextBlock>
+                                        <TextBlock Text="{x:Static p:Resources.CGraphe_Loading}"
+                                                   FontFamily="Segoe UI" FontSize="13"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                        <ProgressBar Width="180" Height="3" Margin="0,8,0,0"
+                                                     IsIndeterminate="True"
+                                                     Background="#E2E8F0"
+                                                     Foreground="{StaticResource AccentBlue}"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ══════════════════════════════════════════════════
+                 ROW 3 — DONNÉES DÉTAILLÉES TABLE
+            ══════════════════════════════════════════════════ -->
+            <Border Grid.Row="3" Style="{StaticResource SettingsCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="300"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Static p:Resources.CGraphe_DetailedData}" Style="{StaticResource SectionTitle}"/>
+                        <TextBlock x:Name="RowCountText" Grid.Column="1"
+                                   Text="0 lignes" Style="{StaticResource BodyText}"
+                                   FontSize="12" VerticalAlignment="Center"
+                                   Foreground="{StaticResource TextMuted}"/>
+                    </Grid>
+
+                    <DataGrid x:Name="DataTable" Grid.Row="1"
+                              Style="{StaticResource LightGrid}"
+                              ColumnHeaderStyle="{StaticResource LightGridHeader}"
+                              RowStyle="{StaticResource LightGridRow}"
+                              CellStyle="{StaticResource LightGridCell}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              IsReadOnly="True">
+                        <DataGrid.Columns>
+
+                            <!-- Source badge -->
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.CGraphe_ColSource}" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="5" Padding="8,3"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                Margin="12,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#EBF4FF"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Source}" Value="Facture">
+                                                            <Setter Property="Background" Value="#F3E8FF"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Source}" FontSize="11" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#3182CE"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Source}" Value="Facture">
+                                                                <Setter Property="Foreground" Value="#7C3AED"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="{x:Static p:Resources.CGraphe_ColDate}" Binding="{Binding DateLabel}" Width="110">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas"/>
+                                        <Setter Property="FontSize"   Value="12"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding"    Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="{x:Static p:Resources.CGraphe_ColLabel}" Binding="{Binding Label}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize"   Value="13"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding"    Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="{x:Static p:Resources.CGraphe_ColQty}" Binding="{Binding Quantity}" Width="80">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas"/>
+                                        <Setter Property="FontSize"   Value="13"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+                                        <Setter Property="TextAlignment" Value="Right"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding"    Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <DataGridTextColumn Header="{x:Static p:Resources.CGraphe_ColAmount}" Binding="{Binding ValueFormatted}" Width="130">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Cascadia Code, Consolas"/>
+                                        <Setter Property="FontSize"   Value="13"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Foreground" Value="{StaticResource AccentBlue}"/>
+                                        <Setter Property="TextAlignment" Value="Right"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding"    Value="12,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- Status badge -->
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.CGraphe_ColStatus}" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="5" Padding="8,3"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                Margin="12,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#F0FFF4"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Annulé">
+                                                            <Setter Property="Background" Value="#FFF5F5"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Payé">
+                                                            <Setter Property="Background" Value="#EBF4FF"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="En attente">
+                                                            <Setter Property="Background" Value="#FEFCBF"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#276749"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Annulé">
+                                                                <Setter Property="Foreground" Value="#C53030"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Payé">
+                                                                <Setter Property="Foreground" Value="#2B6CB0"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="En attente">
+                                                                <Setter Property="Foreground" Value="#975A16"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </ScrollViewer>
+</UserControl>

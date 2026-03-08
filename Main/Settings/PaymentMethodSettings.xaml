@@ -1,0 +1,262 @@
+<UserControl x:Class="GestionComerce.Settings.PaymentMethodSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Background="Transparent">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#EF4444"/>
+        <SolidColorBrush x:Key="CancelBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E5E7EB"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1F2937"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="InputBrush" Color="#F9FAFB"/>
+        <SolidColorBrush x:Key="HoverBrush" Color="#F3F4F6"/>
+
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                                <Setter Property="Background" Value="#E5E7EB"/>
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Setter Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernDataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowHeight" Value="60"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="ModernDataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        </Style>
+
+        <Style x:Key="ModernDataGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource HoverBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernDataGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid MaxWidth="1200" Margin="0">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Text="{x:Static res:Resources.Payment_Title}" 
+                           FontFamily="Segoe UI" FontSize="28" FontWeight="Bold" 
+                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="{x:Static res:Resources.Payment_Description}" 
+                           FontFamily="Segoe UI" FontSize="14" 
+                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,24"/>
+
+                <!-- Add New Payment Method Card -->
+                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" 
+                        BorderThickness="1" CornerRadius="12" Padding="32" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static res:Resources.Payment_NewMethod}" 
+                                   FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Static res:Resources.Payment_MethodName}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="txtNewPaymentMethod" Style="{StaticResource ModernTextBoxStyle}"
+                                         KeyDown="TxtNewPaymentMethod_KeyDown"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{x:Static res:Resources.Payment_ImageIcon}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtNewImagePath" Grid.Column="0"
+                                             Style="{StaticResource ModernTextBoxStyle}" IsReadOnly="True"/>
+                                    <Button Grid.Column="1" x:Name="btnBrowseNewImage" 
+                                            Content="{x:Static res:Resources.Payment_Browse}" 
+                                            Style="{StaticResource ModernButtonStyle}"
+                                            Background="{StaticResource CancelBrush}" Foreground="White"
+                                            Padding="12,10" Margin="8,0,0,0" Click="BtnBrowseNewImage_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button x:Name="btnAdd" Content="{x:Static res:Resources.Payment_AddMethod}" 
+                                Style="{StaticResource ModernButtonStyle}"
+                                Background="{StaticResource PrimaryBrush}" Foreground="White"
+                                HorizontalAlignment="Right" Margin="0,16,0,0" Click="BtnAdd_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Payment Methods List Card -->
+                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" 
+                        BorderThickness="1" CornerRadius="12" Padding="32">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static res:Resources.Payment_ExistingMethods}" 
+                                   FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+
+                        <DataGrid x:Name="dgPaymentMethods" 
+                                  Style="{StaticResource ModernDataGridStyle}"
+                                  ColumnHeaderStyle="{StaticResource ModernDataGridColumnHeaderStyle}"
+                                  RowStyle="{StaticResource ModernDataGridRowStyle}"
+                                  CellStyle="{StaticResource ModernDataGridCellStyle}"
+                                  SelectionChanged="DgPaymentMethods_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="{x:Static res:Resources.Payment_Image}" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Width="48" Height="48" Background="{StaticResource InputBrush}"
+                                                    CornerRadius="6" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                <Image Source="{Binding ImagePath}" Stretch="Uniform" Margin="4"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="{x:Static res:Resources.Payment_ID}" 
+                                                    Binding="{Binding PaymentMethodID}" Width="60" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="{x:Static res:Resources.Payment_Name}" 
+                                                    Binding="{Binding PaymentMethodName}" Width="*" IsReadOnly="True"/>
+                                <DataGridTemplateColumn Header="{x:Static res:Resources.Payment_Actions}" Width="240">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="{x:Static res:Resources.Payment_Edit}" 
+                                                        Style="{StaticResource ModernButtonStyle}"
+                                                        Background="{StaticResource PrimaryBrush}" Foreground="White"
+                                                        Padding="12,6" FontSize="12" Margin="0,0,8,0" x:Name="EditBtn"
+                                                        Click="BtnEdit_Click"
+                                                        IsEnabled="{Binding DataContext.CanEditPaymentMethod, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        Tag="{Binding}"/>
+                                                <Button Content="{x:Static res:Resources.Payment_Delete}" 
+                                                        Style="{StaticResource ModernButtonStyle}"
+                                                        Background="{StaticResource DangerBrush}" Foreground="White"
+                                                        IsEnabled="{Binding DataContext.CanDeletePaymentMethod, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        Padding="12,6" FontSize="12"
+                                                        Click="BtnDelete_Click" x:Name="DeleteBtn" Tag="{Binding}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <!-- Empty State -->
+                        <StackPanel x:Name="emptyState" Visibility="Collapsed"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,40">
+                            <TextBlock Text="📋" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                            <TextBlock Text="{x:Static res:Resources.Payment_NoMethods}" 
+                                       FontFamily="Segoe UI" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                            <TextBlock Text="{x:Static res:Resources.Payment_AddFirst}" 
+                                       FontFamily="Segoe UI" FontSize="14" 
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

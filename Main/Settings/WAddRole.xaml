@@ -1,0 +1,542 @@
+<Window x:Class="GestionComerce.Main.Settings.WAddRole"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Title="{x:Static res:Resources.Perm_ConfigTitle}" Height="700" Width="600"
+        Background="#F8FAFC" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
+
+    <Window.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ToggleButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SmallToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource ToggleButtonStyle}">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="FontSize" Value="10"/>
+        </Style>
+
+        <Style x:Key="RoleSectionStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="InputTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="CaretBrush" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#3B82F6"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="CheckBorder" Width="20" Height="20"
+                                    Background="White" BorderBrush="#D1D5DB" BorderThickness="2"
+                                    CornerRadius="4" VerticalAlignment="Center">
+                                <Path x:Name="CheckPath" Data="M 2 6 L 6 10 L 14 2"
+                                      Stroke="#3B82F6" StrokeThickness="2.5"
+                                      Visibility="Collapsed" Margin="2"/>
+                            </Border>
+                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckPath" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CheckBorder" Property="Background" Value="#EFF6FF"/>
+                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#3B82F6"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#3B82F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#9CA3AF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <TextBlock Text="×" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Foreground="{TemplateBinding Foreground}" FontSize="20" FontWeight="Bold"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F3F4F6"/>
+                                <Setter Property="Foreground" Value="#EF4444"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="16" Margin="0">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="10" BlurRadius="30" Opacity="0.15"/>
+        </Border.Effect>
+
+        <Grid Margin="32" x:Name="Container">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Button Name="CloseButton" Style="{StaticResource CloseButtonStyle}"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Margin="0,-8,-8,0" Click="CloseButton_Click"/>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="{x:Static res:Resources.Perm_ConfigTitle}" 
+                          FontWeight="Bold" FontSize="22" Foreground="#1F2937" Margin="0,0,56,6" Width="480"/>
+                <TextBlock Text="{x:Static res:Resources.Perm_ManageDesc}" FontSize="13" Foreground="#6B7280"/>
+            </StackPanel>
+
+            <!-- Global Toggle Buttons -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,16">
+                <Button x:Name="ToutActiverBtn" Content="{x:Static res:Resources.Perm_ActivateAll}" 
+                        Style="{StaticResource ToggleButtonStyle}" 
+                        Background="#10B981" Foreground="White" Margin="0,0,8,0" Click="ToutActiverBtn_Click"/>
+                <Button x:Name="ToutDesactiverBtn" Content="{x:Static res:Resources.Perm_DeactivateAll}" 
+                        Style="{StaticResource ToggleButtonStyle}" 
+                        Background="#EF4444" Foreground="White" Click="ToutDesactiverBtn_Click"/>
+            </StackPanel>
+
+            <!-- Role Name -->
+            <Border Grid.Row="2" Style="{StaticResource RoleSectionStyle}">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Resources.Perm_RoleName}" 
+                              FontWeight="SemiBold" FontSize="14" Foreground="#374151" Margin="0,0,0,10"/>
+                    <TextBox x:Name="RoleName" MaxLength="100" Style="{StaticResource InputTextBoxStyle}" Text=""/>
+                </StackPanel>
+            </Border>
+
+            <!-- Permissions -->
+            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
+                <StackPanel>
+
+                    <!-- Page Access -->
+                    <Border x:Name="PagesSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_PageAccess}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverPages_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverPages_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewClientsPage" Content="{x:Static res:Resources.Perm_ClientsPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewFournisseurPage" Content="{x:Static res:Resources.Perm_SuppliersPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewInventory" Content="{x:Static res:Resources.Perm_InventoryPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewVente" Content="{x:Static res:Resources.Perm_SalesPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Client Permissions -->
+                    <Border x:Name="ClientSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_ClientPerms}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverClient_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverClient_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="CreateClient" Content="{x:Static res:Resources.Perm_CreateClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ModifyClient" Content="{x:Static res:Resources.Perm_ModifyClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteClient" Content="{x:Static res:Resources.Perm_DeleteClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewClient" Content="{x:Static res:Resources.Perm_ViewClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewOperationClient" Content="{x:Static res:Resources.Perm_ViewClientOps}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="PayeClient" Content="{x:Static res:Resources.Perm_PayClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewCreditClient" Content="{x:Static res:Resources.Perm_ViewClientCredit}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="3" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Supplier Permissions -->
+                    <Border x:Name="FournisseurSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_SupplierPerms}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverFournisseur_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverFournisseur_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="CreateFournisseur" Content="{x:Static res:Resources.Perm_CreateSupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ModifyFournisseur" Content="{x:Static res:Resources.Perm_ModifySupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteFournisseur" Content="{x:Static res:Resources.Perm_DeleteSupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewFournisseur" Content="{x:Static res:Resources.Perm_ViewSupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewOperationFournisseur" Content="{x:Static res:Resources.Perm_ViewSupplierOps}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="PayeFournisseur" Content="{x:Static res:Resources.Perm_PaySupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewCreditFournisseur" Content="{x:Static res:Resources.Perm_ViewSupplierCredit}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="3" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Operations & Movements -->
+                    <Border x:Name="OperationsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Operations}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverOperations_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverOperations_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ReverseOperation" Content="{x:Static res:Resources.Perm_ReverseOp}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ReverseMouvment" Content="{x:Static res:Resources.Perm_ReverseMove}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewOperation" Content="{x:Static res:Resources.Perm_ViewOps}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewMouvment" Content="{x:Static res:Resources.Perm_ViewMoves}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Management & Settings -->
+                    <Border x:Name="ManagementSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Management}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverManagement_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverManagement_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewProjectManagment" Content="{x:Static res:Resources.Perm_ViewProjMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewSettings" Content="{x:Static res:Resources.Perm_ViewSettings}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Users & Roles -->
+                    <Border x:Name="UsersSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_UsersRoles}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverUsers_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverUsers_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewUsers" Content="{x:Static res:Resources.Perm_ViewUsers}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AddUsers" Content="{x:Static res:Resources.Perm_AddUsers}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="EditUsers" Content="{x:Static res:Resources.Perm_EditUsers}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteUsers" Content="{x:Static res:Resources.Perm_DeleteUsers}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewRoles" Content="{x:Static res:Resources.Perm_ViewRoles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AddRoles" Content="{x:Static res:Resources.Perm_AddRoles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="2" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteRoles" Content="{x:Static res:Resources.Perm_DeleteRoles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="3" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Families -->
+                    <Border x:Name="FamillySection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Families}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverFamilly_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverFamilly_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewFamilly" Content="{x:Static res:Resources.Perm_ViewFamilies}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AddFamilly" Content="{x:Static res:Resources.Perm_AddFamilies}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="EditFamilly" Content="{x:Static res:Resources.Perm_EditFamilies}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteFamilly" Content="{x:Static res:Resources.Perm_DeleteFamilies}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Articles -->
+                    <Border x:Name="ArticlesSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Articles}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverArticles_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverArticles_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewArticle" Content="{x:Static res:Resources.Perm_ViewArticles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AddArticle" Content="{x:Static res:Resources.Perm_AddArticles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="EditArticle" Content="{x:Static res:Resources.Perm_EditArticles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeleteArticle" Content="{x:Static res:Resources.Perm_DeleteArticles}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Reports -->
+                    <Border x:Name="ReportsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Reports}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverReports_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverReports_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="Repport" Content="{x:Static res:Resources.Perm_ViewReports}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Settlements -->
+                    <Border x:Name="SettlementsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Settlements}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverSettlements_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverSettlements_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="SolderFournisseur" Content="{x:Static res:Resources.Perm_SettleSupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="SolderClient" Content="{x:Static res:Resources.Perm_SettleClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="CashClient" Content="{x:Static res:Resources.Perm_CashClient}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="CashFournisseur" Content="{x:Static res:Resources.Perm_CashSupplier}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Invoice Settings -->
+                    <Border x:Name="InvoiceSettingsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_InvoiceSettings}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverInvoiceSettings_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverInvoiceSettings_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewFactureSettings" Content="{x:Static res:Resources.Perm_ViewInvSettings}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ModifyFactureSettings" Content="{x:Static res:Resources.Perm_ModifyInvSettings}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Payment Methods -->
+                    <Border x:Name="PaymentMethodsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_PaymentMethods}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverPaymentMethods_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverPaymentMethods_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewPaymentMethod" Content="{x:Static res:Resources.Perm_ViewPayMethods}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AddPaymentMethod" Content="{x:Static res:Resources.Perm_AddPayMethods}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ModifyPaymentMethod" Content="{x:Static res:Resources.Perm_ModifyPayMethods}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="DeletePaymentMethod" Content="{x:Static res:Resources.Perm_DeletePayMethods}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Invoicing -->
+                    <Border x:Name="FacturationSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Invoicing}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverFacturation_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverFacturation_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="AccessFacturation" Content="{x:Static res:Resources.Perm_AccessInvoicing}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" Checked="AccessFacturation_Checked" Unchecked="AccessFacturation_Unchecked"/>
+                                <CheckBox x:Name="CreateFacture" Content="{x:Static res:Resources.Perm_CreateInvoice}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="HistoriqueFacture" Content="{x:Static res:Resources.Perm_InvoiceHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="HistoryCheck" Content="{x:Static res:Resources.Perm_CheckHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="FactureEnregistrees" Content="{x:Static res:Resources.Perm_SavedInvoices}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Delivery -->
+                    <Border x:Name="LivraisonSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_Delivery}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverLivraison_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverLivraison_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="AccessLivraison" Content="{x:Static res:Resources.Perm_AccessDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" Checked="AccessLivraison_Checked" Unchecked="AccessLivraison_Unchecked"/>
+                                <CheckBox x:Name="CreationLivraison" Content="{x:Static res:Resources.Perm_CreateDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="GestionLivreur" Content="{x:Static res:Resources.Perm_DeliveryMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- System Actions -->
+                    <Border x:Name="SystemActionsSection" Style="{StaticResource RoleSectionStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="{x:Static res:Resources.Perm_SystemActions}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverSystemActions_Click"/>
+                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverSystemActions_Click"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="ViewApropos" Content="{x:Static res:Resources.Perm_ViewAbout}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="Logout" Content="{x:Static res:Resources.Perm_Logout}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="Exit" Content="{x:Static res:Resources.Perm_Exit}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ShutDown" Content="{x:Static res:Resources.Perm_Shutdown}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Footer Buttons -->
+            <Grid Grid.Row="4" Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="AnnulerButton" Content="{x:Static res:Resources.Perm_Cancel}"
+                        Style="{StaticResource ActionButtonStyle}" Background="#F3F4F6" Foreground="#374151"
+                        Click="AnnulerButton_Click"/>
+                <Button Grid.Column="2" x:Name="AppliquerButton" Content="{x:Static res:Resources.Perm_Apply}"
+                        Style="{StaticResource ActionButtonStyle}" Background="#3B82F6" Foreground="White"
+                        Click="AppliquerButton_Click"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,209 @@
+<UserControl x:Class="GestionComerce.Settings.CFactureSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Background="Transparent">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#10B981"/>
+        <SolidColorBrush x:Key="CancelBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E5E7EB"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1F2937"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="InputBrush" Color="#F9FAFB"/>
+
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                                <Setter Property="Background" Value="#E5E7EB"/>
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Setter Property="Cursor" Value="No"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="{StaticResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid MaxWidth="1200" Margin="0">
+            <StackPanel>
+                <!-- Header -->
+                <TextBlock Text="{x:Static res:Resources.Settings_TicketSettings}" 
+                           FontFamily="Segoe UI" FontSize="28" FontWeight="Bold" 
+                           Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,24"/>
+
+                <!-- Company Information Card -->
+                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" 
+                        BorderThickness="1" CornerRadius="12" Padding="32" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static res:Resources.CompanyName}" 
+                                   FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="{x:Static res:Resources.CompanyName}" 
+                                   FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                        <TextBox x:Name="txtCompanyName" Style="{StaticResource ModernTextBoxStyle}" Margin="0,0,0,16"/>
+
+                        <TextBlock Text="{x:Static res:Resources.Address}" 
+                                   FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                        <TextBox x:Name="txtCompanyAddress" Style="{StaticResource ModernTextBoxStyle}"
+                                 Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,16"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Static res:Resources.Phone}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="txtCompanyPhone" Style="{StaticResource ModernTextBoxStyle}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{x:Static res:Resources.Email}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="txtCompanyEmail" Style="{StaticResource ModernTextBoxStyle}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="{x:Static res:Resources.CompanyLogo}" 
+                                   FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="txtLogoPath" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}" IsReadOnly="True"/>
+                            <Button Grid.Column="1" x:Name="btnBrowseLogo" 
+                                    Content="{x:Static res:Resources.Browse}" 
+                                    Style="{StaticResource ModernButtonStyle}"
+                                    Background="{StaticResource PrimaryBrush}" Foreground="White"
+                                    Margin="12,0,0,0" Click="BtnBrowseLogo_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Invoice Settings Card -->
+                <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" 
+                        BorderThickness="1" CornerRadius="12" Padding="32" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock FontFamily="Segoe UI" FontSize="18" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,20">
+                            <Run Text="{x:Static res:Resources.Invoice}"/><Run Text=" "/>
+                            <Run Text="{x:Static res:Resources.Settings_TicketSettings}"/>
+                        </TextBlock>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Static res:Resources.InvoiceNumber}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="txtInvoicePrefix" Style="{StaticResource ModernTextBoxStyle}" Text="FAC-"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{x:Static res:Resources.TVA}" 
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                           Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <TextBox x:Name="txtTaxPercentage" Style="{StaticResource ModernTextBoxStyle}" Text="20.00"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6">
+                            <Run Text="{x:Static res:Resources.Notes}"/>
+                        </TextBlock>
+                        <TextBox x:Name="txtTermsAndConditions" Style="{StaticResource ModernTextBoxStyle}"
+                                 Height="100" TextWrapping="Wrap" AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,16"/>
+
+                        <TextBlock FontFamily="Segoe UI" FontSize="13" FontWeight="Medium"
+                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6">
+                            <Run Text="{x:Static res:Resources.Description}"/>
+                        </TextBlock>
+                        <TextBox x:Name="txtFooterText" Style="{StaticResource ModernTextBoxStyle}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button x:Name="btnCancel" Content="{x:Static res:Resources.Cancel}" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Background="{StaticResource CancelBrush}" Foreground="White"
+                            Margin="0,0,12,0" Click="BtnCancel_Click"/>
+                    <Button x:Name="btnPreview" Margin="0,0,10,0"
+                            Content="{x:Static res:Resources.Preview}" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Background="#075875" Foreground="White" Click="btnPreview_Click"/>
+                    <Button x:Name="btnSave" Content="{x:Static res:Resources.Save}" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Background="{StaticResource SuccessBrush}" Foreground="White"
+                            Click="BtnSave_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

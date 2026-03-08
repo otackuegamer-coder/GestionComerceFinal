@@ -1,0 +1,390 @@
+﻿<Window x:Class="Superete.Main.Comptabilite.gestionemployes.PayerSalaireWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Payer le Salaire"
+        Height="800" Width="880"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#FAFBFC"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#667EEA"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        <Style x:Key="PrimaryBtn" TargetType="Button">
+            <Setter Property="Background" Value="#48BB78"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="28,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#38A169"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="SecondaryBtn" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="24,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#EDF2F7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ModernCombo" TargetType="ComboBox">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#667EEA">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0">
+                <TextBlock Text="💰" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <StackPanel>
+                    <TextBlock x:Name="txtWindowTitle" Text="" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock x:Name="txtEmployeInfo" Text="" FontSize="12" Foreground="#C3DAFE"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,20">
+            <StackPanel>
+
+                <!-- Période -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblPeriode" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="lblMois" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox x:Name="cmbMois" Style="{StaticResource ModernCombo}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock x:Name="lblAnnee" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtAnnee" Style="{StaticResource ModernTextBox}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock x:Name="lblDatePaiement" Style="{StaticResource FieldLabel}"/>
+                                <DatePicker x:Name="dpDatePaiement" Height="36" FontSize="13"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Salaire de Base -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblSalaireBaseSection" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="lblSalaireBase" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtSalaireBase" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock x:Name="lblTauxHoraire" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtTauxHoraire" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock x:Name="lblHeuresNormales" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtHeuresNormales" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Heures Supp -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblHeuresSupp" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="lblHS25" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtHeuresSupp25" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock x:Name="lblHS50" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtHeuresSupp50" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock x:Name="lblHS100" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtHeuresSupp100" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="6">
+                                <TextBlock x:Name="lblMontantHS" Style="{StaticResource FieldLabel}"/>
+                                <TextBox x:Name="txtMontantHeuresSupp" Style="{StaticResource ModernTextBox}" IsReadOnly="True" Background="#F7FAFC"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Primes -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblPrimesSection" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblPrimeAnc" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtPrimeAnciennete" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblPrimeRend" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtPrimeRendement" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="lblPrimeResp" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtPrimeResponsabilite" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblIndemTransport" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtIndemniteTransport" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblIndemLogement" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtIndemniteLogement" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="lblAutresPrimes" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtAutresPrimes" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                <Border Background="#F0FFF4" CornerRadius="8" Padding="16" BorderBrush="#C6F6D5" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock x:Name="lblTotalPrimes" FontSize="12" Foreground="#276749" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                        <TextBlock x:Name="txtTotalPrimes" Text="0.00 DH" FontSize="20" FontWeight="Bold" Foreground="#276749"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Retenues -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblRetenuesSection" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblCNSS" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtCotisationCNSS" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblAMO" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtCotisationAMO" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="lblCIMR" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtCotisationCIMR" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblIR" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtMontantIR" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblAvance" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtAvanceSurSalaire" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="lblPret" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtPretPersonnel" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock x:Name="lblPenalites" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtPenalites" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,0,24">
+                                    <TextBlock x:Name="lblAutresRetenues" Style="{StaticResource FieldLabel}"/>
+                                    <TextBox x:Name="txtAutresRetenues" Style="{StaticResource ModernTextBox}" TextChanged="OnAmountChanged"/>
+                                </StackPanel>
+                                <Border Background="#FFF5F5" CornerRadius="8" Padding="16" BorderBrush="#FED7D7" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock x:Name="lblTotalRetenues" FontSize="12" Foreground="#9B2C2C" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                        <TextBlock x:Name="txtTotalRetenues" Text="0.00 DH" FontSize="20" FontWeight="Bold" Foreground="#9B2C2C"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Remarques -->
+                <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,16"
+                        BorderBrush="#E2E8F0" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock x:Name="lblRemarques" Style="{StaticResource SectionTitle}"/>
+                        <TextBox x:Name="txtRemarques" Height="70" TextWrapping="Wrap"
+                                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                 Style="{StaticResource ModernTextBox}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Summary Bar -->
+                <Border CornerRadius="10" Padding="20" Margin="0,0,0,8" BorderThickness="0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#667EEA" Offset="0"/>
+                            <GradientStop Color="#764BA2" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock x:Name="lblSalaireBrut" FontSize="12" Foreground="#C3DAFE" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="txtSalaireBrut" Text="0.00 DH" FontSize="22" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                            <TextBlock x:Name="lblTotalRetenuesSummary" FontSize="12" Foreground="#FED7D7" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="txtTotalRetenuesSummary" Text="0.00 DH" FontSize="22" FontWeight="Bold" Foreground="#FEB2B2" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <TextBlock x:Name="lblSalaireNet" FontSize="12" Foreground="#C6F6D5" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="txtSalaireNet" Text="0.00 DH" FontSize="26" FontWeight="Bold" Foreground="#9AE6B4" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="24,14">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnAnnuler" Style="{StaticResource SecondaryBtn}" Margin="0,0,12,0" Click="BtnAnnuler_Click"/>
+                <Button x:Name="btnEnregistrerAttente" Style="{StaticResource SecondaryBtn}" Margin="0,0,12,0" Click="BtnEnregistrerAttente_Click"/>
+                <Button x:Name="btnValiderPayer" Style="{StaticResource PrimaryBtn}" Click="BtnValiderPayer_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

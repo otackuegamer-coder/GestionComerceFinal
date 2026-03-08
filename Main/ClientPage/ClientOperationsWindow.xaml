@@ -1,0 +1,501 @@
+﻿<Window x:Class="GestionComerce.Main.ClientPage.ClientOperationsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Opérations Client" Height="700" Width="750"
+        MinWidth="550"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- Modern Card Style -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Margin" Value="15"/>
+        </Style>
+
+        <!-- Close Button Style -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="18">
+                            <TextBlock Text="×"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      FontSize="20"
+                                      FontWeight="Bold"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern ListView Style -->
+        <Style x:Key="ModernListView" TargetType="ListView">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="AlternationCount" Value="2"/>
+        </Style>
+
+        <!-- Modern GridViewColumnHeader Style -->
+        <Style x:Key="ModernGridViewColumnHeader" TargetType="GridViewColumnHeader">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Modern ListViewItem Style -->
+        <Style x:Key="ModernListViewItem" TargetType="ListViewItem">
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#F3F4F6"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Margin="2">
+                            <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                                Columns="{TemplateBinding GridView.ColumnCollection}"
+                                                Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EEF2FF"/>
+                    <Setter Property="BorderBrush" Value="#6366F1"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F9FAFB"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="True"/>
+                        <Condition Property="IsMouseOver" Value="True"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="#E0E7FF"/>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Header Text Style -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="Margin" Value="0,0,0,24"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" 
+            CornerRadius="16" 
+            BorderBrush="#E5E7EB" 
+            BorderThickness="1"
+            Margin="10">
+        <Grid x:Name="MainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="550"/>
+                <ColumnDefinition x:Name="ArticlesColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Close Button -->
+            <Button x:Name="CloseWindowButton"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Style="{StaticResource CloseButtonStyle}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,20,20,0"
+                    Panel.ZIndex="999"
+                    Click="CloseWindowButton_Click"/>
+
+            <!-- Liste des opérations -->
+            <Grid Grid.Column="0" Margin="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <TextBlock Grid.Row="0" Text="{x:Static res:Resources.ClientOperations}" Style="{StaticResource HeaderTextStyle}"/>
+
+                <!-- Operations List with ScrollViewer -->
+                <ScrollViewer Grid.Row="1" 
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            Padding="0">
+                    <ListView x:Name="OperationsList" 
+                             Style="{StaticResource ModernListView}"
+                             SelectionChanged="OperationsList_SelectionChanged"
+                             ItemContainerStyle="{StaticResource ModernListViewItem}" 
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListView.View>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource ModernGridViewColumnHeader}">
+                                <GridViewColumn Header="{x:Static res:Resources.Date}" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="13" FontWeight="Medium" Foreground="#64748B" Text="{Binding Date, StringFormat='dd/MM/yyyy', FallbackValue='N/A'}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.ID}" Width="60">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="6" Padding="6,3" Background="#F3F4F6">
+                                                <TextBlock FontWeight="Bold" HorizontalAlignment="Center" Foreground="#475569" Text="{Binding OperationID}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Type}" Width="140">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="10" Padding="10,6" Background="#EEF2FF">
+                                                <TextBlock FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#4338CA" Text="{Binding OperationType, FallbackValue=N/A}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Amount}" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="#059669" Text="{Binding PrixOperation, StringFormat='{}{0:N2} DH', FallbackValue='0,00 DH'}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Discount}" Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="6" Padding="6,3" Background="#FEF2F2">
+                                                <TextBlock FontSize="12" FontWeight="Medium" HorizontalAlignment="Center" Foreground="#DC2626" Text="{Binding Remise, StringFormat='{}{0:N2} DH', FallbackValue='0,00 DH'}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Credit}" Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="6" Padding="6,3" Background="#FFFBEB">
+                                                <TextBlock FontSize="12" FontWeight="Medium" HorizontalAlignment="Center" Foreground="#D97706" Text="{Binding CreditValue, StringFormat='{}{0:N2} DH', FallbackValue='0,00 DH'}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Liste des Articles -->
+            <Border x:Name="ArticlesPanel" Grid.Column="1" Style="{StaticResource CardStyle}" Margin="15,15,15,15">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,24">
+                        <TextBlock Text="{x:Static res:Resources.OperationArticles}" Style="{StaticResource HeaderTextStyle}" DockPanel.Dock="Left"/>
+                        <Button x:Name="CloseArticlesButton" 
+                               DockPanel.Dock="Right"
+                               Click="CloseArticlesButton_Click"
+                               Background="Transparent"
+                               BorderThickness="0"
+                               FontSize="18"
+                               Foreground="#64748B"
+                               Cursor="Hand"
+                               Padding="10"
+                               ToolTip="Fermer le panneau des articles">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" 
+                                           CornerRadius="8"
+                                           Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <TextBlock Text="✕"/>
+                        </Button>
+                        <TextBlock x:Name="OperationInfoText" 
+                                  Text="{x:Static res:Resources.SelectOperation}" 
+                                  FontSize="14" Foreground="#64748B" 
+                                  HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                  DockPanel.Dock="Right" Margin="0,0,15,0"/>
+                    </DockPanel>
+
+                    <!-- ListView with fixed height and proper scrolling -->
+                    <ListView x:Name="ArticlesList" 
+                             Style="{StaticResource ModernListView}"
+                             ItemContainerStyle="{StaticResource ModernListViewItem}"
+                             HorizontalAlignment="Stretch"
+                             Height="400"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.CanContentScroll="True">
+                        <ListView.View>
+                            <GridView ColumnHeaderContainerStyle="{StaticResource ModernGridViewColumnHeader}">
+                                <GridViewColumn Header="{x:Static res:Resources.ArticleID}" Width="90">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="6" Padding="6,3">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                <Setter Property="Background" Value="#E5E7EB"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#475569"/>
+                                                            <Setter Property="Text" Value="{Binding ArticleID}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.ArticleName}" Width="150">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock FontWeight="SemiBold" TextWrapping="Wrap" FontSize="13">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#1E293B"/>
+                                                            <Setter Property="Text" Value="{Binding ArticleName}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock FontSize="9" FontWeight="Medium" Margin="0,2,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                    <Setter Property="Text" Value="(Reversed)"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Family}" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="8" Padding="8,4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                <Setter Property="Background" Value="#E5E7EB"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontSize="12" FontWeight="Medium" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#374151"/>
+                                                            <Setter Property="Text" Value="{Binding Famille}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Quantity}" Width="85">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="8" Padding="8,4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#EFF6FF"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                <Setter Property="Background" Value="#F3F4F6"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontWeight="Bold" HorizontalAlignment="Center" FontSize="13">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#2563EB"/>
+                                                            <Setter Property="Text" Value="{Binding QteArticle}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.UnitPrice}" Width="105">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="13" FontWeight="Medium">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#64748B"/>
+                                                        <Setter Property="Text" Value="{Binding UnitPrice, StringFormat='{}{0:N2} DH', FallbackValue='0,00 DH'}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="{x:Static res:Resources.Total}" Width="120">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,0,0,0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#059669"/>
+                                                        <Setter Property="Text" Value="{Binding Total, StringFormat='{}{0:N2} DH', FallbackValue='0,00 DH'}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReversed}" Value="True">
+                                                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <!-- Summary Panel -->
+                    <Border CornerRadius="12" Padding="20" Margin="0,20,0,0" Background="#F9FAFB">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Static res:Resources.Articles}" FontSize="13" Foreground="#64748B" FontWeight="Medium"/>
+                                <TextBlock x:Name="TotalArticlesText" Text="0" FontSize="20" FontWeight="Bold" Foreground="#1F2937" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{x:Static res:Resources.TotalQuantity}" FontSize="13" Foreground="#64748B" FontWeight="Medium"/>
+                                <TextBlock x:Name="TotalQuantityText" Text="0" FontSize="20" FontWeight="Bold" Foreground="#2563EB" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{x:Static res:Resources.TotalOperation}" FontSize="13" Foreground="#64748B" FontWeight="Medium"/>
+                                <TextBlock x:Name="TotalAmountText" Text="0,00 DH" FontSize="20" FontWeight="Bold" Foreground="#059669" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

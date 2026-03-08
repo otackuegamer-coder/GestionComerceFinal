@@ -1,0 +1,1031 @@
+﻿<Window x:Class="GestionComerce.Main.Delivery.LivraisonAddWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Nouvelle Livraison"
+        Height="820"
+        Width="1000"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F8FAFC">
+
+    <Window.Resources>
+        <!-- Modern Input Style -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="ModernDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Padding" Value="32,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" 
+                    Background="#3B82F6"
+                    Padding="32,24">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Resources.NewDelivery}" 
+                               FontFamily="Segoe UI"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="White"/>
+                    <TextBlock Text="{x:Static res:Resources.DeliveryInstructions}" 
+                               FontFamily="Segoe UI"
+                               FontSize="14"
+                               Foreground="#DBEAFE"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Content -->
+            <ScrollViewer Grid.Row="1" 
+                          VerticalScrollBarVisibility="Auto"
+                          Padding="32,24">
+                <StackPanel>
+                    <!-- Section: Sélection des Opérations -->
+                    <TextBlock Text="{x:Static res:Resources.OperationSelection}" 
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,0,0,16"/>
+
+                    <Border Background="#EFF6FF" 
+                            BorderBrush="#3B82F6"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="16"
+                            Margin="0,0,0,16">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+               Text="{x:Static res:Resources.OperationSelectionDescription}" 
+               FontFamily="Segoe UI"
+               FontSize="13"
+               Foreground="#1E40AF"
+               VerticalAlignment="Center"/>
+
+                                <Button Grid.Column="1"
+            Name="BtnRefreshOperations"
+            Click="BtnRefreshOperations_Click"
+            Height="32"
+            Padding="16,0"
+            FontFamily="Segoe UI"
+            FontSize="12"
+            FontWeight="SemiBold"
+            Background="#3B82F6"
+            Foreground="White"
+            BorderThickness="0"
+            Cursor="Hand"
+            Content="{x:Static res:Resources.Refresh}">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+
+                            <!-- REPLACE YOUR DATAGRID IN LivraisonAddWindow.xaml WITH THIS -->
+
+                            <DataGrid x:Name="DgOperations"
+          Background="White"
+          BorderThickness="1"
+          BorderBrush="#E2E8F0"
+          RowHeight="48"
+          GridLinesVisibility="None"
+          HeadersVisibility="Column"
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          CanUserReorderColumns="False"
+          CanUserResizeColumns="False"
+          CanUserResizeRows="False"
+          CanUserSortColumns="False"
+          IsReadOnly="True"
+          SelectionMode="Single"
+          Height="200"
+          FontFamily="Segoe UI">
+
+                                <!-- DataGrid Header Style -->
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                        <Setter Property="Foreground" Value="#475569"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="Padding" Value="12,10"/>
+                                        <Setter Property="Height" Value="44"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+
+                                <!-- DataGrid Row Style -->
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F8FAFC"/>
+                                            </Trigger>
+                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True">
+                                                <Setter Property="Background" Value="#EFF6FF"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <!-- DataGrid Cell Style -->
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridCell">
+                                                    <Border Padding="{TemplateBinding Padding}" 
+                                Background="{TemplateBinding Background}">
+                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Foreground" Value="#1E293B"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+
+                                <DataGrid.Columns>
+                                    <!-- Checkbox Column -->
+                                    <DataGridTemplateColumn Width="50">
+                                        <DataGridTemplateColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <CheckBox x:Name="ChkSelectAll"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              ToolTip="Tout sélectionner"
+                              Click="ChkSelectAll_Click"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.HeaderTemplate>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox x:Name="ChkSelect"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Click="ChkSelect_Click"
+                              IsHitTestVisible="True"
+                              Focusable="False"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- ID Column -->
+                                    <DataGridTextColumn Header="{x:Static res:Resources.ID}" 
+                            Binding="{Binding OperationID}" 
+                            Width="70">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="Foreground" Value="#3B82F6"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Date Column -->
+                                    <DataGridTextColumn Header="{x:Static res:Resources.Date}" 
+                            Binding="{Binding DateOperation, StringFormat='dd/MM/yyyy'}" 
+                            Width="120">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#64748B"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Prix Column -->
+                                    <DataGridTextColumn Header="{x:Static res:Resources.Price}" 
+                            Binding="{Binding PrixOperation, StringFormat='{}{0:N2} DH'}" 
+                            Width="110">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#1E293B"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Remise Column -->
+                                    <DataGridTextColumn Header="{x:Static res:Resources.Discount}" 
+                            Binding="{Binding Remise, StringFormat='{}{0:N2} DH'}" 
+                            Width="100">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#EF4444"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Total Column -->
+                                    <DataGridTextColumn Header="{x:Static res:Resources.Total}" 
+                            Binding="{Binding PrixOperation, StringFormat='{}{0:N2} DH'}" 
+                            Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#10B981"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="FontSize" Value="14"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <TextBlock Text="Opérations sélectionnées: " 
+                                           FontFamily="Segoe UI"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#1E40AF"/>
+                                <TextBlock x:Name="TxtSelectedCount"
+                                           Text="0" 
+                                           FontFamily="Segoe UI"
+                                           FontSize="13"
+                                           FontWeight="Bold"
+                                           Foreground="#3B82F6"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- Section: Sélection de Facture                         -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <TextBlock Text="Sélection de Facture (optionnel)"
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,24,0,16"/>
+
+                    <Border Background="#F0FDF4"
+                            BorderBrush="#86EFAC"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="16"
+                            Margin="0,0,0,16">
+                        <StackPanel>
+
+                            <!-- Search row -->
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="TxtInvoiceSearch"
+                                         Grid.Column="0"
+                                         Height="44"
+                                         Padding="16,0"
+                                         FontFamily="Segoe UI"
+                                         FontSize="14"
+                                         Background="White"
+                                         BorderBrush="#86EFAC"
+                                         BorderThickness="1"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="TxtInvoiceSearch_TextChanged">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="TextBox">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="8">
+                                                            <Grid>
+                                                                <TextBlock x:Name="Placeholder"
+                                                                           Text="Rechercher par N° facture ou client..."
+                                                                           FontFamily="Segoe UI"
+                                                                           FontSize="14"
+                                                                           Foreground="#94A3B8"
+                                                                           Padding="16,0"
+                                                                           VerticalAlignment="Center"
+                                                                           IsHitTestVisible="False"
+                                                                           Visibility="Collapsed"/>
+                                                                <ScrollViewer x:Name="PART_ContentHost"
+                                                                              Padding="{TemplateBinding Padding}"
+                                                                              VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="Text" Value="">
+                                                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+
+                                <Button Grid.Column="2"
+                                        x:Name="BtnSearchInvoices"
+                                        Click="BtnSearchInvoices_Click"
+                                        Height="44"
+                                        Padding="20,0"
+                                        FontFamily="Segoe UI"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Background="#16A34A"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Content="🔍 Rechercher">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                CornerRadius="8"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#15803D"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Grid.Column="4"
+                                        x:Name="BtnClearInvoice"
+                                        Click="BtnClearInvoice_Click"
+                                        Height="44"
+                                        Padding="16,0"
+                                        FontFamily="Segoe UI"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Background="#F1F5F9"
+                                        Foreground="#64748B"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Content="✕ Effacer"
+                                        Visibility="Collapsed">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                CornerRadius="8"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#E2E8F0"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+
+                            <!-- Invoice results DataGrid -->
+                            <DataGrid x:Name="DgInvoices"
+                                      Background="White"
+                                      BorderThickness="1"
+                                      BorderBrush="#E2E8F0"
+                                      RowHeight="44"
+                                      GridLinesVisibility="None"
+                                      HeadersVisibility="Column"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      CanUserReorderColumns="False"
+                                      CanUserResizeColumns="False"
+                                      CanUserResizeRows="False"
+                                      CanUserSortColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Single"
+                                      Height="180"
+                                      FontFamily="Segoe UI"
+                                      Visibility="Collapsed"
+                                      SelectionChanged="DgInvoices_SelectionChanged">
+
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                        <Setter Property="Foreground" Value="#475569"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="FontSize" Value="12"/>
+                                        <Setter Property="Padding" Value="12,10"/>
+                                        <Setter Property="Height" Value="40"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F0FDF4"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#DCFCE7"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Padding" Value="12,0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridCell">
+                                                    <Border Padding="{TemplateBinding Padding}"
+                                                            Background="{TemplateBinding Background}">
+                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Foreground" Value="#1E293B"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="N° Facture"
+                                                        Binding="{Binding InvoiceNumber}"
+                                                        Width="130">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="Foreground" Value="#16A34A"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Date"
+                                                        Binding="{Binding InvoiceDate, StringFormat='dd/MM/yyyy'}"
+                                                        Width="110">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#64748B"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Client"
+                                                        Binding="{Binding ClientName}"
+                                                        Width="*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#1E293B"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Total TTC"
+                                                        Binding="{Binding TotalTTC, StringFormat='{}{0:N2} DH'}"
+                                                        Width="110">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#64748B"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Après remise"
+                                                        Binding="{Binding TotalAfterRemise, StringFormat='{}{0:N2} DH'}"
+                                                        Width="120">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="Foreground" Value="#16A34A"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Articles"
+                                                        Binding="{Binding ArticleCount}"
+                                                        Width="80">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                <Setter Property="Foreground" Value="#475569"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- Selected invoice summary banner -->
+                            <Border x:Name="SelectedInvoiceBanner"
+                                    Background="White"
+                                    BorderBrush="#86EFAC"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="14,10"
+                                    Margin="0,12,0,0"
+                                    Visibility="Collapsed">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="✅ " FontSize="14" VerticalAlignment="Center"/>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock x:Name="TxtSelectedInvoiceInfo"
+                                                       FontFamily="Segoe UI"
+                                                       FontSize="13"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#15803D"/>
+                                            <TextBlock x:Name="TxtSelectedInvoiceArticles"
+                                                       FontFamily="Segoe UI"
+                                                       FontSize="12"
+                                                       Foreground="#64748B"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1"
+                                               Text="Cliquer sur une autre facture pour changer"
+                                               FontFamily="Segoe UI"
+                                               FontSize="11"
+                                               Foreground="#94A3B8"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Articles extracted panel -->
+                            <Border x:Name="ExtractedArticlesPanel"
+                                    Background="White"
+                                    BorderBrush="#E2E8F0"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="0"
+                                    Margin="0,10,0,0"
+                                    Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Background="#F8FAFC"
+                                            CornerRadius="8,8,0,0"
+                                            BorderBrush="#E2E8F0"
+                                            BorderThickness="0,0,0,1"
+                                            Padding="14,10">
+                                        <TextBlock Text="Articles extraits de la facture"
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#475569"/>
+                                    </Border>
+                                    <DataGrid x:Name="DgExtractedArticles"
+                                              Background="White"
+                                              BorderThickness="0"
+                                              RowHeight="40"
+                                              GridLinesVisibility="None"
+                                              HeadersVisibility="Column"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              CanUserDeleteRows="False"
+                                              CanUserReorderColumns="False"
+                                              CanUserResizeColumns="False"
+                                              CanUserResizeRows="False"
+                                              CanUserSortColumns="False"
+                                              IsReadOnly="True"
+                                              SelectionMode="Single"
+                                              MaxHeight="160"
+                                              FontFamily="Segoe UI">
+
+                                        <DataGrid.ColumnHeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="Background" Value="#F8FAFC"/>
+                                                <Setter Property="Foreground" Value="#475569"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="FontSize" Value="11"/>
+                                                <Setter Property="Padding" Value="12,8"/>
+                                                <Setter Property="Height" Value="36"/>
+                                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                            </Style>
+                                        </DataGrid.ColumnHeaderStyle>
+
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                                <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+
+                                        <DataGrid.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Padding" Value="12,0"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="DataGridCell">
+                                                            <Border Padding="{TemplateBinding Padding}"
+                                                                    Background="{TemplateBinding Background}">
+                                                                <ContentPresenter VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                            </Style>
+                                        </DataGrid.CellStyle>
+
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Article"
+                                                                Binding="{Binding ArticleName}"
+                                                                Width="*">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="Medium"/>
+                                                        <Setter Property="Foreground" Value="#1E293B"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Qté"
+                                                                Binding="{Binding Quantite, StringFormat='{}{0:N0}'}"
+                                                                Width="70">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                        <Setter Property="Foreground" Value="#475569"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Prix Unit."
+                                                                Binding="{Binding PrixUnitaire, StringFormat='{}{0:N2} DH'}"
+                                                                Width="110">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#475569"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="Total TTC"
+                                                                Binding="{Binding TotalTTC, StringFormat='{}{0:N2} DH'}"
+                                                                Width="110">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="Foreground" Value="#16A34A"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Section: Information Client -->
+                    <TextBlock Text="{x:Static res:Resources.ClientInformation}" 
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,8,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.ClientNameRequired}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtClientNom" 
+                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static res:Resources.PhoneRequired}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtClientTelephone" 
+                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Section: Adresse de Livraison -->
+                    <TextBlock Text="{x:Static res:Resources.DeliveryAddress}" 
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,24,0,16"/>
+
+                    <TextBlock Text="{x:Static res:Resources.AddressRequired}" Style="{StaticResource LabelStyle}"/>
+                    <TextBox x:Name="TxtAdresse" 
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="66"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalContentAlignment="Top"
+                             Padding="16,12"
+                             Margin="0,0,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.City}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtVille" 
+                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static res:Resources.PostalCode}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtCodePostal" 
+                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="{x:Static res:Resources.DeliveryZone}" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbZoneLivraison"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      SelectionChanged="CmbZoneLivraison_SelectionChanged">
+                                <ComboBoxItem Content="{x:Static res:Resources.CityCenter}" Tag="30"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Periphery}" Tag="50"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Suburb}" Tag="70"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.OutOfZone}" Tag="100"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Section: Détails de Livraison -->
+                    <TextBlock Text="{x:Static res:Resources.DeliveryDetails}" 
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,24,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.ExpectedDeliveryDate}" Style="{StaticResource LabelStyle}"/>
+                            <DatePicker x:Name="DateLivraisonPrevue" 
+                                        Style="{StaticResource ModernDatePickerStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static res:Resources.DeliveryTime}" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbHeureLivraison"
+                                      Style="{StaticResource ModernComboBoxStyle}">
+                                <ComboBoxItem Content="08:00 - 10:00"/>
+                                <ComboBoxItem Content="10:00 - 12:00" IsSelected="True"/>
+                                <ComboBoxItem Content="12:00 - 14:00"/>
+                                <ComboBoxItem Content="14:00 - 16:00"/>
+                                <ComboBoxItem Content="16:00 - 18:00"/>
+                                <ComboBoxItem Content="18:00 - 20:00"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.AssignedDeliverer}" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbLivreur"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      DisplayMemberPath="NomComplet"
+                                      SelectedValuePath="LivreurID"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static res:Resources.InitialStatus}" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbStatut"
+                                      Style="{StaticResource ModernComboBoxStyle}">
+                                <ComboBoxItem Content="{x:Static res:Resources.Pending}" Tag="en_attente" IsSelected="True"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Confirmed}" Tag="confirmee"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.InPreparation}" Tag="en_preparation"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Section: Détails Financiers -->
+                    <TextBlock Text="{x:Static res:Resources.FinancialDetails}" 
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,24,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.TotalOrderDH}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtTotalCommande" 
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"
+                                     Text="0.00"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{x:Static res:Resources.DeliveryFeesDH}" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtFraisLivraison" 
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     Text="0"
+                                     IsReadOnly="True"
+                                     Background="#F8FAFC"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="{x:Static res:Resources.PaymentMode}" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbModePaiement"
+              Style="{StaticResource ModernComboBoxStyle}">
+                                <!-- Items will be loaded from database -->
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Notes -->
+                    <TextBlock Text="{x:Static res:Resources.NotesInstructions}" 
+                               Style="{StaticResource LabelStyle}"
+                               Margin="0,16,0,8"/>
+                    <TextBox x:Name="TxtNotes" 
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="80"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalContentAlignment="Top"
+                             Padding="16,12"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Footer Actions -->
+            <Border Grid.Row="2" 
+                    Background="#F8FAFC"
+                    BorderBrush="#E2E8F0"
+                    BorderThickness="0,1,0,0"
+                    Padding="32,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Border Background="#FEF3C7" 
+                                CornerRadius="8"
+                                Padding="12,8">
+                            <TextBlock Text="{x:Static res:Resources.SelectAtLeastOneOperation}" 
+                                       FontFamily="Segoe UI"
+                                       FontSize="12"
+                                       Foreground="#92400E"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="{x:Static res:Resources.Cancel}" 
+                                Name="BtnAnnuler"
+                                Click="BtnAnnuler_Click"
+                                Style="{StaticResource ButtonStyle}"
+                                Background="#F1F5F9"
+                                Foreground="#475569"
+                                Margin="0,0,12,0"/>
+
+                        <Button Content="{x:Static res:Resources.CreateDelivery}" 
+                                Name="BtnCreer"
+                                Click="BtnCreer_Click"
+                                Style="{StaticResource ButtonStyle}"
+                                Background="#3B82F6"
+                                Foreground="White"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

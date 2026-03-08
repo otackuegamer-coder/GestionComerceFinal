@@ -1,0 +1,614 @@
+﻿<Window x:Class="GestionComerce.Main.Delivery.LivraisonDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Détails de la Livraison"
+        Height="850"
+        Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#F8FAFC">
+
+    <Window.Resources>
+        <!-- Button Style -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="24,0"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Card Style -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#0F172A" BlurRadius="16" ShadowDepth="4" Opacity="0.08"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+        </Style>
+
+        <!-- Value Style -->
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <!-- Section Title Style -->
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+
+        <!-- DataGrid Style -->
+        <Style x:Key="ModernDataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="RowHeight" Value="44"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+
+        <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#3B82F6" Padding="32,24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock x:Name="TxtHeaderTitle"
+                               Text="{x:Static res:Resources.DeliveryDetailsNumber}" 
+                               FontFamily="Segoe UI"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="White"/>
+                    <TextBlock x:Name="TxtHeaderSubtitle"
+                               Text="{x:Static res:Resources.CreatedOn}" 
+                               FontFamily="Segoe UI"
+                               FontSize="14"
+                               Foreground="#DBEAFE"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        x:Name="StatusBadge"
+                        CornerRadius="12"
+                        Padding="20,10"
+                        Background="#FEF3C7"
+                        VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtStatut"
+                               Text="EN ATTENTE"
+                               FontFamily="Segoe UI"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Foreground="#92400E"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="32,24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Informations Principales -->
+                <StackPanel Grid.Column="0">
+                    <!-- Opération Associée -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.AssociatedOperation}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.OperationID}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtOperationID" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{x:Static res:Resources.Type}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtOperationType" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{x:Static res:Resources.OperationDate}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtOperationDate" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Articles de l'opération -->
+                            <TextBlock Text="{x:Static res:Resources.OrderedArticles}" 
+                                       Style="{StaticResource LabelStyle}"
+                                       Margin="0,16,0,8"/>
+
+                            <!-- Edit hint + save button -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="✏️ Cliquez sur une cellule pour modifier"
+                                           FontFamily="Segoe UI" FontSize="11"
+                                           Foreground="#94A3B8"
+                                           VerticalAlignment="Center"/>
+                                <Button Grid.Column="1"
+                                        x:Name="BtnSaveArticleEdits"
+                                        Content="💾 Enregistrer les modifications"
+                                        Click="BtnSaveArticleEdits_Click"
+                                        Height="34" Padding="14,0"
+                                        FontFamily="Segoe UI" FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Background="#3B82F6" Foreground="White"
+                                        BorderThickness="0" Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#2563EB"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+
+                            <DataGrid x:Name="DgArticles"
+                                      Style="{StaticResource ModernDataGridStyle}"
+                                      ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
+                                      Height="160"
+                                      Margin="0,0,0,0"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="False"
+                                      CellEditEnding="DgArticles_CellEditEnding">
+                                <DataGrid.Columns>
+
+                                    <!-- Article name — editable -->
+                                    <DataGridTemplateColumn Header="{x:Static res:Resources.Article}" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ArticleName}"
+                                                           FontFamily="Segoe UI" FontSize="13"
+                                                           Foreground="#1E293B"
+                                                           VerticalAlignment="Center" Padding="8,0"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding ArticleName, UpdateSourceTrigger=PropertyChanged}"
+                                                         FontFamily="Segoe UI" FontSize="13"
+                                                         BorderThickness="0" Padding="8,4"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Quantity — editable -->
+                                    <DataGridTemplateColumn Header="{x:Static res:Resources.Quantity}" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Quantity}"
+                                                           FontFamily="Segoe UI" FontSize="13"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
+                                                         FontFamily="Segoe UI" FontSize="13"
+                                                         BorderThickness="0" Padding="8,4"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Unit price — editable -->
+                                    <DataGridTemplateColumn Header="{x:Static res:Resources.UnitPriceShort}" Width="120">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding UnitPrice, StringFormat='{}{0:N2} DH'}"
+                                                           FontFamily="Segoe UI" FontSize="13"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Center" Padding="0,0,8,0"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBox Text="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"
+                                                         FontFamily="Segoe UI" FontSize="13"
+                                                         BorderThickness="0" Padding="8,4"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Total — auto-computed, read-only -->
+                                    <DataGridTemplateColumn Header="{x:Static res:Resources.Total}" Width="120">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Total, StringFormat='{}{0:N2} DH'}"
+                                                           FontFamily="Segoe UI" FontSize="13"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#10B981"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Center" Padding="0,0,8,0"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Client Info -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.ClientInformations}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="16"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.Name}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtClientNom" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+                                    <TextBlock Text="Téléphone" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtClientTelephone" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.ClientID}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtClientID" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Adresse Info -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.DeliveryAddress}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <TextBlock Text="{x:Static res:Resources.Address}" Style="{StaticResource LabelStyle}"/>
+                            <TextBlock x:Name="TxtAdresse" 
+                                       Text="-" 
+                                       Style="{StaticResource ValueStyle}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,16"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.City}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtVille" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{x:Static res:Resources.PostalCode}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtCodePostal" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{x:Static res:Resources.Zone}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtZone" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Détails Livraison -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.DeliveryDetails}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="16"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="16"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.ExpectedDate}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtDatePrevue" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+                                    <TextBlock Text="{x:Static res:Resources.EffectiveDate}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtDateEffective" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <TextBlock Text="{x:Static res:Resources.Deliverer}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtLivreur" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Grid.Column="1">
+                                    <TextBlock Text="{x:Static res:Resources.PaymentMode}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtModePaiement" Text="-" Style="{StaticResource ValueStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                                    <TextBlock Text="{x:Static res:Resources.Notes}" Style="{StaticResource LabelStyle}"/>
+                                    <TextBlock x:Name="TxtNotes" 
+                                               Text="-" 
+                                               Style="{StaticResource ValueStyle}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Sidebar -->
+                <StackPanel Grid.Column="2">
+                    <!-- Résumé Financier -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.FinancialSummary}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="12"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="12"/>
+                                    <RowDefinition Height="1"/>
+                                    <RowDefinition Height="12"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" 
+                                           Text="{x:Static res:Resources.TotalOrder}"
+                                           Style="{StaticResource LabelStyle}"/>
+                                <TextBlock x:Name="TxtTotalCommande" 
+                                           Grid.Row="0" Grid.Column="1"
+                                           Text="0 DH" 
+                                           Style="{StaticResource ValueStyle}"
+                                           FontSize="16"
+                                           FontWeight="Bold"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" 
+                                           Text="{x:Static res:Resources.DeliveryFees}"
+                                           Style="{StaticResource LabelStyle}"/>
+                                <TextBlock x:Name="TxtFraisLivraison" 
+                                           Grid.Row="2" Grid.Column="1"
+                                           Text="0 DH" 
+                                           Style="{StaticResource ValueStyle}"
+                                           Foreground="#3B82F6"/>
+
+                                <Border Grid.Row="4" Grid.ColumnSpan="2" 
+                                        Height="1" 
+                                        Background="#E2E8F0"/>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" 
+                                           Text="TOTAL"
+                                           FontFamily="Segoe UI"
+                                           FontSize="15"
+                                           FontWeight="Bold"
+                                           Foreground="#1E293B"/>
+                                <TextBlock x:Name="TxtTotal" 
+                                           Grid.Row="6" Grid.Column="1"
+                                           Text="0 DH" 
+                                           FontFamily="Segoe UI"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#10B981"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Changer le Statut -->
+                    <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="🔄 Changer le Statut" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <ComboBox x:Name="CmbNouveauStatut"
+                                      Height="44"
+                                      Padding="16,0"
+                                      FontFamily="Segoe UI"
+                                      FontSize="14"
+                                      Background="White"
+                                      BorderBrush="#E2E8F0"
+                                      BorderThickness="1"
+                                      Margin="0,0,0,12">
+                                <ComboBoxItem Content="{x:Static res:Resources.Pending}" Tag="en_attente"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Confirmed}" Tag="confirmee"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.InPreparation}" Tag="en_preparation"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.InProgress}" Tag="en_cours"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Delivered}" Tag="livree"/>
+                                <ComboBoxItem Content="{x:Static res:Resources.Cancelled}" Tag="annulee"/>
+                            </ComboBox>
+
+                            <TextBox x:Name="TxtCommentaire"
+                                     Height="80"
+                                     Padding="12"
+                                     FontFamily="Segoe UI"
+                                     FontSize="13"
+                                     Background="White"
+                                     BorderBrush="#E2E8F0"
+                                     BorderThickness="1"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     VerticalContentAlignment="Top"
+                                     Margin="0,0,0,12"
+                                     Text="{x:Static res:Resources.CommentOptional}"/>
+
+                            <Button Content="{x:Static res:Resources.Update}" 
+                                    Name="BtnUpdateStatut"
+                                    Click="BtnUpdateStatut_Click"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    Foreground="White"
+                                    HorizontalAlignment="Stretch">
+                                <Button.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="#10B981" Offset="0"/>
+                                        <GradientStop Color="#059669" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Actions Rapides -->
+                    <!-- Find the Actions Rapides section and UPDATE it to this: -->
+
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="{x:Static res:Resources.QuickActions}" Style="{StaticResource SectionTitleStyle}"/>
+
+                            <Button Content="{x:Static res:Resources.ViewDeliveryTicket}" 
+                Name="BtnViewTicket"
+                Click="BtnViewTicket_Click"
+                Style="{StaticResource ActionButtonStyle}"
+                Background="#10B981"
+                Foreground="White"
+                Margin="0,0,0,8"
+                HorizontalAlignment="Stretch"/>
+
+                            <Button Content="{x:Static res:Resources.CallClient}" 
+                Name="BtnCallClient"
+                Click="BtnCallClient_Click"
+                Style="{StaticResource ActionButtonStyle}"
+                Background="#3B82F6"
+                Foreground="White"
+                Margin="0,0,0,8"
+                HorizontalAlignment="Stretch"/>
+
+                            <Button Content="{x:Static res:Resources.ViewRoute}" 
+                Name="BtnViewRoute"
+                Click="BtnViewRoute_Click"
+                Style="{StaticResource ActionButtonStyle}"
+                Background="#8B5CF6"
+                Foreground="White"
+                Margin="0,0,0,8"
+                HorizontalAlignment="Stretch"/>
+
+                            <Button Content="{x:Static res:Resources.SaveAsInvoice}" 
+                Name="BtnSaveAsInvoice"
+                Click="BtnSaveAsInvoice_Click"
+                Style="{StaticResource ActionButtonStyle}"
+                Background="#F59E0B"
+                Foreground="White"
+                HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" 
+                Background="#F8FAFC"
+                BorderBrush="#E2E8F0"
+                BorderThickness="0,1,0,0"
+                Padding="32,20">
+            <Grid>
+                <Button Content="{x:Static res:Resources.Close}" 
+                        Name="BtnFermer"
+                        Click="BtnFermer_Click"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Background="#F1F5F9"
+                        Foreground="#475569"
+                        HorizontalAlignment="Right"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,189 @@
+<Window x:Class="GestionComerce.Main.Inventory.WNouveauStock"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Title="{x:Static res:Resources.StockManagementSection}" 
+        Height="340" Width="500"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="None"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="12"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            Margin="20,12"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F8FAFC"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#3B82F6"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FEE2E2"/>
+                                <Setter Property="Foreground" Value="#DC2626"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="White" CornerRadius="16" Margin="20">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Direction="270" ShadowDepth="0" BlurRadius="40" Opacity="0.15"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#F8FAFC" CornerRadius="16,16,0,0" Padding="24,20"
+                    BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Width="40" Height="40" Background="#DBEAFE" CornerRadius="20" Margin="0,0,16,0">
+                        <Viewbox Width="20" Height="20">
+                            <Canvas Width="24" Height="24">
+                                <Path Data="M12 4.5v15m7.5-7.5h-15" 
+                                      Stroke="#3B82F6" StrokeThickness="2" StrokeLineJoin="Round"/>
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Static res:Resources.StockAddition}" 
+                                  FontSize="18" FontWeight="Bold" 
+                                  Foreground="#1E293B"
+                                  Margin="0,0,0,4"/>
+                        <TextBlock Text="{x:Static res:Resources.ChooseStockAdditionType}" 
+                                  FontSize="13" Foreground="#64748B"/>
+                    </StackPanel>
+
+                    <Button Name="CloseButton"
+                            Style="{StaticResource CloseButton}"
+                            Content="✕"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Click="CloseButton_Click" Grid.Column="1" Margin="316,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Content Area -->
+            <StackPanel Grid.Row="1" Margin="24,24,24,24">
+
+                <!-- Add New Article Stock Button -->
+                <Button Name="AddNewArticleButton"
+                        Style="{StaticResource ModernButton}"
+                        Click="AddNewArticleButton_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="36" Height="36"
+                                Background="#EFF6FF" CornerRadius="8" Margin="0,0,12,0">
+                            <Viewbox Width="18" Height="18">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="M12 6v6m0 0v6m0-6h6m-6 0H6" 
+                                          Stroke="#3B82F6" StrokeThickness="2" StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <TextBlock Grid.Column="1"
+                                  Text="{x:Static res:Resources.AddNewArticleStock}"
+                                  TextAlignment="Left"
+                                  TextWrapping="Wrap"
+                                  LineHeight="20"
+                                  VerticalAlignment="Center"
+                                  Foreground="#1E293B"/>
+                    </Grid>
+                </Button>
+
+                <!-- Add Existing Article Stock Button -->
+                <Button Name="AddExistingArticleButton"
+                        Style="{StaticResource ModernButton}"
+                        Click="AddExistingArticleButton_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="36" Height="36"
+                                Background="#F0FDF4" CornerRadius="8" Margin="0,0,12,0">
+                            <Viewbox Width="18" Height="18">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" 
+                                          Stroke="#10B981" StrokeThickness="2" StrokeLineJoin="Round" Fill="Transparent"/>
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <TextBlock Grid.Column="1"
+                                  Text="{x:Static res:Resources.AddExistingArticleStock}"
+                                  TextAlignment="Left"
+                                  TextWrapping="Wrap"
+                                  LineHeight="20"
+                                  VerticalAlignment="Center"
+                                  Foreground="#1E293B"/>
+                    </Grid>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

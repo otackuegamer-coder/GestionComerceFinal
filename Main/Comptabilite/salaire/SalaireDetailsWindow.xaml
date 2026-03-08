@@ -1,0 +1,416 @@
+﻿<Window x:Class="Superete.Main.Comptabilite.SalaireDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:GestionComerce.Resources"
+        Title="{x:Static p:Resources.SalaireDetails_WindowTitle}" 
+        Height="850" 
+        Width="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#FAFBFC"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+        <Style x:Key="HeaderText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1A202C"/>
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+
+        <Style x:Key="ValueText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="TotalText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="CloseButton" TargetType="Button">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#7C8FF5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrintButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F7FAFC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="White" Padding="24" CornerRadius="12" Margin="0,0,0,16">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.06" BlurRadius="12" ShadowDepth="2"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static p:Resources.SalaireDetails_Title}" 
+                             FontSize="20" 
+                             FontWeight="Bold" 
+                             Foreground="#1A202C"/>
+                    <TextBlock x:Name="txtPeriode" 
+                             Text="Période: --/----" 
+                             FontSize="13" 
+                             Foreground="#718096" 
+                             Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="1" 
+                        Background="#EEF2FF" 
+                        Padding="16,8" 
+                        CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.SalaireDetails_StatusHeader}" 
+                                 FontSize="11" 
+                                 FontWeight="SemiBold" 
+                                 Foreground="#4C51BF" 
+                                 HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="txtStatut" 
+                                 Text="En Attente" 
+                                 FontSize="14" 
+                                 FontWeight="Bold" 
+                                 Foreground="#667EEA" 
+                                 HorizontalAlignment="Center" 
+                                 Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Employee Information -->
+                <Border Background="White" Padding="24" CornerRadius="12" Margin="0,0,0,16">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" Opacity="0.04" BlurRadius="12" ShadowDepth="2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.SalaireDetails_EmployeeSection}" Style="{StaticResource SectionTitle}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_FullNameLabel}" Style="{StaticResource LabelText}" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtNomComplet" Text="--" Style="{StaticResource ValueText}" Margin="0,0,0,10"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_CINLabel}" Style="{StaticResource LabelText}" Margin="0,0,0,10"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtCIN" Text="--" Style="{StaticResource ValueText}" Margin="0,0,0,10"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_CNSSLabel}" Style="{StaticResource LabelText}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtCNSS" Text="--" Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Salary Details -->
+                <Border Background="White" Padding="24" CornerRadius="12" Margin="0,0,0,16">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" Opacity="0.04" BlurRadius="12" ShadowDepth="2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.SalaireDetails_DetailsSection}" Style="{StaticResource SectionTitle}"/>
+
+                        <!-- Base Salary -->
+                        <Border Background="#F7FAFC" Padding="16" CornerRadius="8" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.SalaireDetails_BaseSalarySection}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_BaseSalaryLabel}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock Grid.Column="1" x:Name="txtSalaireBase" Text="0.00 DH" Style="{StaticResource ValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_HourlyRate}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock Grid.Column="1" x:Name="txtTauxHoraire" Text="0.00 DH/h" Style="{StaticResource ValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Overtime Hours -->
+                        <Border Background="#F7FAFC" Padding="16" CornerRadius="8" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.SalaireDetails_OvertimeSection}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Overtime25}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtHeuresSupp25" Text="0 h" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Overtime50}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtHeuresSupp50" Text="0 h" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Overtime100}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtHeuresSupp100" Text="0 h" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <Rectangle Grid.Row="3" Grid.ColumnSpan="2" Height="1" Fill="#E2E8F0" Margin="0,8"/>
+                                </Grid>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_TotalOvertime}" FontWeight="SemiBold" Style="{StaticResource LabelText}"/>
+                                    <TextBlock Grid.Column="1" x:Name="txtMontantHeuresSupp" Text="0.00 DH" FontWeight="Bold" Foreground="#667EEA" Style="{StaticResource ValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Allowances and Bonuses -->
+                        <Border Background="#F7FAFC" Padding="16" CornerRadius="8" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.SalaireDetails_BonusSection}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_SeniorityBonus}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtPrimeAnciennete" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_PerformanceBonus}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtPrimeRendement" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_ResponsibilityBonus}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtPrimeResponsabilite" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_TransportAllowance}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtIndemniteTransport" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_HousingAllowance}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="txtIndemniteLogement" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_OtherBonuses}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="txtAutresPrimes" Text="0.00 DH" Style="{StaticResource ValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Deductions -->
+                        <Border Background="#FEF2F2" Padding="16" CornerRadius="8" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.SalaireDetails_DeductionsSection}" FontSize="12" FontWeight="SemiBold" Foreground="#991B1B" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_CNSS}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtCotisationCNSS" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_AMO}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtCotisationAMO" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_IR}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtMontantIR" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_CIMR}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtCIMR" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Advance}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" x:Name="txtAvance" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Loan}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" x:Name="txtPret" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_Penalties}" Style="{StaticResource LabelText}" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" x:Name="txtPenalites" Text="0.00 DH" Style="{StaticResource ValueText}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_OtherDeductions}" Style="{StaticResource LabelText}"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="1" x:Name="txtAutresRetenues" Text="0.00 DH" Style="{StaticResource ValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Remarks -->
+                        <Border Background="#F7FAFC" Padding="16" CornerRadius="8" x:Name="remarquesPanel" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="{x:Static p:Resources.SalaireDetails_RemarksSection}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtRemarques" 
+                                         Text="" 
+                                         TextWrapping="Wrap" 
+                                         FontSize="13" 
+                                         Foreground="#4A5568"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Summary -->
+                <Border Background="White" Padding="24" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="2">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" Opacity="0.06" BlurRadius="12" ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_GrossSalary}" FontSize="14" FontWeight="SemiBold" Foreground="#4A5568"/>
+                            <TextBlock Grid.Column="1" x:Name="txtSalaireBrut" Text="0.00 DH" Style="{StaticResource TotalText}" Foreground="#2D3748"/>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_TotalDeductions}" FontSize="14" FontWeight="SemiBold" Foreground="#4A5568"/>
+                            <TextBlock Grid.Column="1" x:Name="txtTotalRetenues" Text="0.00 DH" Style="{StaticResource TotalText}" Foreground="#F56565"/>
+                        </Grid>
+
+                        <Rectangle Height="2" Fill="#E2E8F0" Margin="0,0,0,16" Grid.Row="2"/>
+
+                        <Grid Grid.Row="2" Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{x:Static p:Resources.SalaireDetails_NetSalary}" FontSize="16" FontWeight="Bold" Foreground="#1A202C"/>
+                            <TextBlock Grid.Column="1" x:Name="txtSalaireNet" Text="0.00 DH" FontSize="22" FontWeight="Bold" Foreground="#48BB78" TextAlignment="Right"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="{x:Static p:Resources.SalaireDetails_PrintButton}" 
+                    Style="{StaticResource PrintButton}" 
+                    Margin="0,0,12,0"
+                    Click="BtnImprimer_Click"/>
+            <Button Content="Fermer" 
+                    Style="{StaticResource CloseButton}" 
+                    Click="BtnFermer_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

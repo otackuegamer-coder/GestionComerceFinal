@@ -1,0 +1,156 @@
+<UserControl x:Class="GestionComerce.Main.Vente.CSingleArticle1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:res="clr-namespace:GestionComerce.Resources"
+             mc:Ignorable="d" Background="White">
+
+    <Grid>
+        <!-- Row Layout -->
+        <Grid x:Name="RowLayout" Height="48"
+              MouseLeftButtonDown="ArticleClicked"
+              Margin="0,0,0,2"
+              Background="White"
+              Cursor="Hand"
+              Visibility="Visible">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Background" Value="White"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#F8FAFC"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Border BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" CornerRadius="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" MinWidth="50" x:Name="ImageColumnRow"/>
+                        <ColumnDefinition Width="80" MinWidth="80" x:Name="ArticleIDC"/>
+                        <ColumnDefinition Width="2*" MinWidth="150" x:Name="ArticleNameC"/>
+                        <ColumnDefinition Width="80" MinWidth="80" x:Name="QuantiteC"/>
+                        <ColumnDefinition Width="100" MinWidth="100" x:Name="PrixAchatC"/>
+                        <ColumnDefinition Width="100" MinWidth="100" x:Name="PrixVenteC"/>
+                        <ColumnDefinition Width="100" MinWidth="100" x:Name="PrixMPC"/>
+                        <ColumnDefinition Width="80" MinWidth="80" x:Name="FamilleC"/>
+                        <ColumnDefinition Width="120" MinWidth="120" x:Name="FournisseurNameC"/>
+                        <ColumnDefinition Width="100" MinWidth="100" x:Name="CodeC"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Width="40" Height="40" Margin="5,0" CornerRadius="4" Background="#F3F4F6">
+                        <Image x:Name="RowArticleImage" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="ArticleID" Grid.Column="1" Margin="10,0,0,0" Padding="8,0"
+                               VerticalAlignment="Center" FontFamily="Segoe UI" FontSize="13" Foreground="#374151"/>
+                    <TextBlock x:Name="ArticleName" Grid.Column="2" Padding="8,0" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" FontSize="13" FontWeight="Medium" Foreground="#1F2937"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock x:Name="Quantite" Grid.Column="3" Padding="8,0" VerticalAlignment="Center"
+                               HorizontalAlignment="Right" FontFamily="Segoe UI" FontSize="13" Foreground="#374151"/>
+                    <TextBlock x:Name="PrixAchat" Grid.Column="4" Padding="8,0" VerticalAlignment="Center"
+                               HorizontalAlignment="Right" FontFamily="Segoe UI" FontSize="13"
+                               FontWeight="Medium" Foreground="#059669"/>
+                    <TextBlock x:Name="PrixVente" Grid.Column="5" Padding="8,0" VerticalAlignment="Center"
+                               HorizontalAlignment="Right" FontFamily="Segoe UI" FontSize="13"
+                               FontWeight="Medium" Foreground="#DC2626"/>
+                    <TextBlock x:Name="PrixMP" Grid.Column="6" Padding="8,0" VerticalAlignment="Center"
+                               HorizontalAlignment="Right" FontFamily="Segoe UI" FontSize="13"
+                               FontWeight="Medium" Foreground="#7C3AED"/>
+                    <TextBlock x:Name="Famille" Grid.Column="7" Padding="8,0" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" FontSize="13" Foreground="#374151"/>
+                    <TextBlock x:Name="FournisseurName" Grid.Column="8" Padding="8,0" VerticalAlignment="Center"
+                               FontFamily="Segoe UI" FontSize="13" FontWeight="Medium" Foreground="#1F2937"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock x:Name="Code" Grid.Column="9" Padding="8,0" VerticalAlignment="Center"
+                               FontSize="13" Foreground="#374151"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Card Layout -->
+        <Border x:Name="CardLayout"
+                Visibility="Collapsed"
+                Background="White"
+                BorderBrush="#E5E7EB"
+                BorderThickness="1"
+                CornerRadius="8"
+                Cursor="Hand"
+                MouseLeftButtonDown="ArticleClicked">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="#2563EB"/>
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect BlurRadius="12" ShadowDepth="0" Opacity="0.15" Color="#2563EB"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="160"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" CornerRadius="8,8,0,0" Background="#F8FAFC"
+                        BorderThickness="0,0,0,1" BorderBrush="#E5E7EB">
+                    <Image x:Name="CardArticleImage" Stretch="Uniform"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Row="1" Margin="10" x:Name="CardInfoPanel">
+                    <TextBlock x:Name="CardArticleName" FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                               Foreground="#111827" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"
+                               MaxHeight="36" Margin="0,0,0,6"/>
+
+                    <Grid Margin="0,0,0,4" x:Name="PricesGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.ColPurchase}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280"/>
+                            <TextBlock x:Name="CardPrixAchat" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" Foreground="#059669"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Static res:Resources.ColSale}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280" TextAlignment="Right"/>
+                            <TextBlock x:Name="CardPrixVente" FontFamily="Segoe UI" FontSize="11" FontWeight="SemiBold" Foreground="#DC2626" TextAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Margin="0,0,0,3" x:Name="FournisseurPanel">
+                        <TextBlock Text="{x:Static res:Resources.Supplier}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280"/>
+                        <TextBlock x:Name="CardFournisseur" FontFamily="Segoe UI" FontSize="10" Foreground="#374151" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <Grid Margin="0,0,0,3" x:Name="FamilleCodeGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Static res:Resources.Family}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280"/>
+                            <TextBlock x:Name="CardFamille" FontFamily="Segoe UI" FontSize="10" Foreground="#374151" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Static res:Resources.Code}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280" TextAlignment="Right"/>
+                            <TextBlock x:Name="CardCode" FontFamily="Segoe UI" FontSize="10" Foreground="#374151" TextAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel x:Name="StockPanel">
+                        <TextBlock Text="{x:Static res:Resources.Stock}" FontFamily="Segoe UI" FontSize="9" Foreground="#6B7280"/>
+                        <TextBlock x:Name="CardQuantite" FontFamily="Segoe UI" FontSize="10" FontWeight="SemiBold" Foreground="#2563EB"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,118 @@
+<Window x:Class="GestionComerce.Main.Inventory.WAddMultipleArticles"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Title="{x:Static res:Resources.ArticleManagement}" Height="558" Width="567"
+        Background="#F8FAFC" WindowStyle="None" WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Keep all original button styles -->
+    </Window.Resources>
+
+    <Grid>
+        <!-- Close Button (Top Right) -->
+        <Button HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,8,8,0"
+                Click="CloseButton_Click"
+                Panel.ZIndex="999"
+                Content="✕"
+                Width="32" Height="32"/>
+
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Row 1: ComboBox and Add Button -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Supplier ComboBox -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{x:Static res:Resources.Supplier}" FontSize="13" FontWeight="Medium" 
+                          Foreground="#374151" Margin="0,0,0,6"/>
+                    <Border Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Height="40">
+                        <ComboBox x:Name="SupplierComboBox" Background="Transparent" BorderThickness="0" 
+                             FontSize="13" Padding="12,8" VerticalContentAlignment="Center" 
+                             SelectionChanged="SupplierComboBox_SelectionChanged"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Add Article Button -->
+                <Button Grid.Column="2" Content="{x:Static res:Resources.AddArticle}" 
+                    VerticalAlignment="Bottom"
+                    Click="AddArticleButton_Click"/>
+            </Grid>
+
+            <!-- Row 2: Articles Container -->
+            <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="24">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="-24,-24,-24,-24">
+                    <StackPanel x:Name="ArticlesContainer"/>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Row 3: Payment Options -->
+            <StackPanel Grid.Row="2" x:Name="ButtonsContainer">
+                <!-- Payment Method ComboBox -->
+                <Grid Margin="0,5,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="{x:Static res:Resources.PaymentMethod}" 
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Margin="0,0,10,0"/>
+
+                    <ComboBox x:Name="PaymentMethodComboBox"
+                              Grid.Column="1"
+                              Height="40"
+                              FontSize="13"
+                              SelectedIndex="0"/>
+                </Grid>
+
+                <!-- Original Payment Buttons Grid -->
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cash Button -->
+                    <Button x:Name="CashButton" Grid.Column="0" Height="45" Click="CashButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Static res:Resources.Cash}" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Half Button -->
+                    <Button x:Name="HalfButton" Grid.Column="2" Height="45" Click="HalfButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Static res:Resources.HalfHalf}" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Credit Button -->
+                    <Button x:Name="CreditButton" Grid.Column="4" Height="45" Click="CreditButton_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Static res:Resources.Credit}" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

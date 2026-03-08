@@ -1,0 +1,141 @@
+<Window x:Class="GestionComerce.Main.Inventory.WAddFournisseur"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:res="clr-namespace:GestionComerce.Resources"
+        Title="{x:Static res:Resources.SupplierManagement}"
+        Height="700" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True">
+
+    <Window.Resources>
+        <!-- Keep all original styles -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#6366F1"/>
+        <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#5855EB"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="#6B7280"/>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E5E7EB"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#374151"/>
+        <SolidColorBrush x:Key="PlaceholderBrush" Color="#9CA3AF"/>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BackgroundBrush}"
+            CornerRadius="16"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title Bar -->
+            <Grid Grid.Row="0" Margin="32,32,32,20">
+                <TextBlock Text="{x:Static res:Resources.SupplierManagement}" 
+                          FontSize="24"
+                          FontWeight="SemiBold"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Center"/>
+                <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="32" Height="32"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Content="✕"
+                        FontSize="16"
+                        Cursor="Hand"
+                        Click="CancelButton_Click"/>
+            </Grid>
+
+            <!-- Scrollable Content -->
+            <ScrollViewer Grid.Row="1" 
+                         VerticalScrollBarVisibility="Auto" 
+                         HorizontalScrollBarVisibility="Disabled"
+                         Padding="32,0,32,32">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Code Field -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.Code}"/>
+                        <TextBox x:Name="CodeTextBox" MaxLength="50"/>
+                    </StackPanel>
+
+                    <!-- Name Field -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.SupplierName}"/>
+                        <TextBox x:Name="NameTextBox" MaxLength="100"/>
+                    </StackPanel>
+
+                    <!-- Phone Field -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.PhoneNumber}"/>
+                        <TextBox x:Name="PhoneTextBox" MaxLength="19"/>
+                    </StackPanel>
+
+                    <!-- ICE Field -->
+                    <StackPanel Grid.Row="3" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.ICE}"/>
+                        <TextBox x:Name="ICETextBox" MaxLength="50"/>
+                    </StackPanel>
+
+                    <!-- Legal Status Field -->
+                    <StackPanel Grid.Row="4" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.LegalStatus}"/>
+                        <TextBox x:Name="EtatJuridicTextBox" MaxLength="100"/>
+                    </StackPanel>
+
+                    <!-- Company Headquarters Field -->
+                    <StackPanel Grid.Row="5" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.Headquarters}"/>
+                        <TextBox x:Name="SiegeEntrepriseTextBox" MaxLength="200"/>
+                    </StackPanel>
+
+                    <!-- Address Field -->
+                    <StackPanel Grid.Row="6" Margin="0,0,0,20">
+                        <TextBlock Text="{x:Static res:Resources.Address}"/>
+                        <TextBox x:Name="AdresseTextBox" MaxLength="200"/>
+                    </StackPanel>
+
+                    <!-- Balance Field -->
+                    <StackPanel Grid.Row="7" Margin="0,0,0,32">
+                        <TextBlock Text="{x:Static res:Resources.Balance}"/>
+                        <TextBox x:Name="BalanceTextBox" MaxLength="18"/>
+                    </StackPanel>
+
+                    <!-- Action Buttons -->
+                    <Grid Grid.Row="8" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="CancelButton" 
+                                Grid.Column="0"
+                                Content="{x:Static res:Resources.Cancel}"
+                                Click="CancelButton_Click"/>
+
+                        <Button x:Name="UpdateButton" 
+                                Grid.Column="2"
+                                Content="{x:Static res:Resources.SaveChanges}"
+                                Click="UpdateButton_Click"/>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

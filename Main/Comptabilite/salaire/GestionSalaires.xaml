@@ -1,0 +1,682 @@
+<UserControl x:Class="Superete.Main.Comptabilite.GestionSalaires"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:p="clr-namespace:GestionComerce.Resources"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="#FAFBFC">
+
+    <UserControl.Resources>
+        <!-- Modern Text Box Style -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                        Padding="{TemplateBinding Padding}"
+                                        VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#CBD5E0"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#667EEA"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Primary Button Style -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#7C8FF5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#5568D3"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#CBD5E0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary Button Style -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="24,12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#F7FAFC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Danger Button Style -->
+        <Style x:Key="DangerButton" TargetType="Button">
+            <Setter Property="Background" Value="#F56565"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FC8181"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Success Button Style -->
+        <Style x:Key="SuccessButton" TargetType="Button">
+            <Setter Property="Background" Value="#48BB78"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#68D391"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataGrid Style -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowHeight" Value="50"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F7FAFC"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EBF4FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <!-- Section Header Style -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Action Bar -->
+        <Border Grid.Row="0" 
+                Background="White" 
+                Padding="24,20"
+                CornerRadius="12"
+                Margin="0,0,0,16">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.04" BlurRadius="12" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <TextBlock Text="📊" FontSize="24" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.GestionSalaires_Title}" 
+                                 FontSize="22" 
+                                 FontWeight="SemiBold"
+                                 Foreground="#1A202C"/>
+                        <TextBlock Text="{x:Static p:Resources.GestionSalaires_Subtitle}" 
+                                 FontSize="13" 
+                                 Foreground="#718096"
+                                 Margin="0,4,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                    <Button Content="{x:Static p:Resources.GestionSalaires_NewSalary}" 
+                            Style="{StaticResource PrimaryButton}"
+                            Click="BtnNouveauSalaire_Click"
+                            Margin="0,0,12,0"/>
+                    <Button Content="{x:Static p:Resources.GestionSalaires_Export}" 
+                            Style="{StaticResource SecondaryButton}"
+                            Click="BtnExporter_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="12"
+                Padding="24">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.04" BlurRadius="12" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <Grid>
+                <!-- Salary List View -->
+                <Grid x:Name="ListViewPanel" Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Filters -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Month}" Style="{StaticResource FormLabel}"/>
+                            <ComboBox x:Name="cmbMois" 
+                                    Width="150" 
+                                    SelectionChanged="Filter_Changed"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Year}" Style="{StaticResource FormLabel}"/>
+                            <ComboBox x:Name="cmbAnnee" 
+                                    Width="120" 
+                                    SelectionChanged="Filter_Changed"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_StatusLabel}" Style="{StaticResource FormLabel}"/>
+                            <ComboBox x:Name="cmbStatut" 
+                                    Width="150" 
+                                    SelectionChanged="Filter_Changed"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,0">
+                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_SearchLabel}" Style="{StaticResource FormLabel}"/>
+                            <TextBox x:Name="txtRecherche" 
+                                   Width="250" 
+                                   Style="{StaticResource ModernTextBox}"
+                                   TextChanged="TxtRecherche_TextChanged"
+                                   Tag="Nom de l'employé..."/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- DataGrid -->
+                    <DataGrid Grid.Row="1" 
+                            x:Name="dgSalaires"
+                            SelectionChanged="DgSalaires_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColEmployee}" Binding="{Binding NomComplet}" Width="200"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColCIN}" Binding="{Binding CIN}" Width="100"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColPeriod}" Width="100">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding StringFormat="{}{0:00}/{1}">
+                                        <Binding Path="Mois"/>
+                                        <Binding Path="Annee"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColBaseSalary}" Binding="{Binding SalaireBase, StringFormat='{}{0:N2} DH'}" Width="120"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColGrossSalary}" Binding="{Binding SalaireBrut, StringFormat='{}{0:N2} DH'}" Width="130"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColCNSS}" Binding="{Binding CotisationCNSS, StringFormat='{}{0:N2} DH'}" Width="100"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColAMO}" Binding="{Binding CotisationAMO, StringFormat='{}{0:N2} DH'}" Width="100"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColIR}" Binding="{Binding MontantIR, StringFormat='{}{0:N2} DH'}" Width="100"/>
+                            <DataGridTextColumn Header="{x:Static p:Resources.GestionSalaires_ColNetSalary}" Binding="{Binding SalaireNet, StringFormat='{}{0:N2} DH'}" Width="130">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Foreground" Value="#48BB78"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.GestionSalaires_ColStatus}" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="8,4" 
+                                              CornerRadius="12"
+                                              HorizontalAlignment="Left">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Statut}" Value="Payé">
+                                                            <Setter Property="Background" Value="#C6F6D5"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Statut}" Value="Validé">
+                                                            <Setter Property="Background" Value="#BEE3F8"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Statut}" Value="En Attente">
+                                                            <Setter Property="Background" Value="#FED7D7"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Statut}" 
+                                                     FontSize="12" 
+                                                     FontWeight="Medium">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Statut}" Value="Payé">
+                                                                <Setter Property="Foreground" Value="#22543D"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Statut}" Value="Validé">
+                                                                <Setter Property="Foreground" Value="#2C5282"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Statut}" Value="En Attente">
+                                                                <Setter Property="Foreground" Value="#742A2A"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{x:Static p:Resources.GestionSalaires_ColActions}" Width="200">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Content="👁" 
+                      ToolTip="{x:Static p:Resources.GestionSalaires_ViewTooltip}"
+                      Style="{StaticResource SecondaryButton}"
+                      Height="32" Width="36" Padding="0" FontSize="16" Margin="0,0,4,0"
+                      Click="BtnVoir_Click" Tag="{Binding SalaireID}"/>
+                                            <Button Content="✏" 
+                      ToolTip="{x:Static p:Resources.GestionSalaires_ModifyTooltip}"
+                      Style="{StaticResource SecondaryButton}"
+                      Height="32" Width="36" Padding="0" FontSize="16" Margin="0,0,4,0"
+                      Click="BtnModifier_Click" Tag="{Binding SalaireID}"/>
+                                            <Button Content="🗑" 
+                      ToolTip="{x:Static p:Resources.GestionSalaires_DeleteTooltip}"
+                      Style="{StaticResource DangerButton}"
+                      Height="32" Width="36" Padding="0" FontSize="16"
+                      Click="BtnSupprimer_Click" Tag="{Binding SalaireID}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Summary Panel -->
+                    <Border Grid.Row="2" 
+                          Background="#F7FAFC" 
+                          Padding="20"
+                          CornerRadius="8"
+                          Margin="0,20,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_TotalNetSalaries}" 
+                                     FontSize="16" FontWeight="SemiBold" Foreground="#2D3748" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="txtTotalSalaires" 
+                                     Text="0.00 DH" 
+                                     FontSize="20" FontWeight="Bold" Foreground="#48BB78"
+                                     Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Add/Edit Form Panel -->
+                <ScrollViewer x:Name="FormPanel" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Form Header -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                            <Button Content="← Retour" Style="{StaticResource SecondaryButton}" Click="BtnRetour_Click" Margin="0,0,16,0"/>
+                            <TextBlock x:Name="txtFormTitle" 
+                                     Text="{x:Static p:Resources.GestionSalaires_NewBulletin}" 
+                                     Style="{StaticResource SectionHeader}"
+                                     VerticalAlignment="Center" Margin="0"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left Column -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{x:Static p:Resources.GestionSalaires_EmployeeSection}" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_EmployeeLabel}" Style="{StaticResource FormLabel}"/>
+                                            <ComboBox x:Name="cmbEmploye" 
+                                                    DisplayMemberPath="NomComplet"
+                                                    SelectedValuePath="EmployeID"
+                                                    SelectionChanged="CmbEmploye_SelectionChanged"/>
+                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="12"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,0,16">
+                                                <TextBlock Text="CIN" Style="{StaticResource FormLabel}"/>
+                                                <TextBox x:Name="txtCIN" Style="{StaticResource ModernTextBox}" IsReadOnly="True" Background="#EDF2F7"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Margin="0,0,0,16">
+                                                <TextBlock Text="Numéro CNSS" Style="{StaticResource FormLabel}"/>
+                                                <TextBox x:Name="txtCNSS" Style="{StaticResource ModernTextBox}" IsReadOnly="True" Background="#EDF2F7"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="{x:Static p:Resources.GestionSalaires_SalaryPeriod}" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_MonthLabel}" Style="{StaticResource FormLabel}"/>
+                                            <ComboBox x:Name="cmbFormMois"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_YearLabel}" Style="{StaticResource FormLabel}"/>
+                                            <ComboBox x:Name="cmbFormAnnee"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <TextBlock Text="Salaire de Base" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_BaseSalaryLabel}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtSalaireBase" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="12"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{x:Static p:Resources.GestionSalaires_HourlyRate}" Style="{StaticResource FormLabel}"/>
+                                                <TextBox x:Name="txtTauxHoraire" Style="{StaticResource ModernTextBox}" IsReadOnly="True" Background="#EDF2F7"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Text="{x:Static p:Resources.GestionSalaires_NormalHours}" Style="{StaticResource FormLabel}"/>
+                                                <TextBox x:Name="txtHeuresNormales" Text="191" Style="{StaticResource ModernTextBox}" IsReadOnly="True" Background="#EDF2F7"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Heures Supplémentaires" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Overtime25}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtHeuresSupp25" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Overtime50}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtHeuresSupp50" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Overtime100}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtHeuresSupp100" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Right Column -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Primes et Indemnités" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_SeniorityBonus}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtPrimeAnciennete" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_PerformanceBonus}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtPrimeRendement" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_ResponsibilityBonus}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtPrimeResponsabilite" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_TransportAllowance}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtIndemniteTransport" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_HousingAllowance}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtIndemniteLogement" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_OtherBonuses}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtAutresPrimes" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Autres Retenues" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Advance}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtAvance" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Loan}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtPret" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_CIMR}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtCIMR" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,0,16">
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_Penalties}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtPenalites" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="{x:Static p:Resources.GestionSalaires_OtherDeductions}" Style="{StaticResource FormLabel}"/>
+                                            <TextBox x:Name="txtAutresRetenues" Text="0" Style="{StaticResource ModernTextBox}" TextChanged="CalculateSalary"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Remarques" Style="{StaticResource SectionHeader}"/>
+                                <Border Background="#F7FAFC" Padding="20" CornerRadius="8" Margin="0,0,0,24">
+                                    <StackPanel>
+                                        <TextBlock Text="{x:Static p:Resources.GestionSalaires_RemarksLabel}" Style="{StaticResource FormLabel}"/>
+                                        <TextBox x:Name="txtRemarques" Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                                               VerticalScrollBarVisibility="Auto" Style="{StaticResource ModernTextBox}"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Salary Summary Card -->
+                        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="2" Padding="24" CornerRadius="12" Margin="0,0,0,24">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{x:Static p:Resources.GestionSalaires_GrossSalary}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="txtCalculSalaireBrut" Text="0.00 DH" FontSize="24" FontWeight="Bold" Foreground="#2D3748"/>
+                                    <TextBlock Text="{x:Static p:Resources.GestionSalaires_OvertimeIncluded}" FontSize="11" Foreground="#A0AEC0" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{x:Static p:Resources.GestionSalaires_TotalDeductions}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="txtCalculTotalRetenues" Text="0.00 DH" FontSize="24" FontWeight="Bold" Foreground="#F56565"/>
+                                    <StackPanel Margin="0,4,0,0">
+                                        <TextBlock x:Name="txtCalculCNSS" Text="CNSS: 0.00 DH" FontSize="11" Foreground="#A0AEC0"/>
+                                        <TextBlock x:Name="txtCalculAMO" Text="AMO: 0.00 DH" FontSize="11" Foreground="#A0AEC0"/>
+                                        <TextBlock x:Name="txtCalculIR" Text="IR: 0.00 DH" FontSize="11" Foreground="#A0AEC0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{x:Static p:Resources.GestionSalaires_NetSalary}" FontSize="12" FontWeight="SemiBold" Foreground="#718096" Margin="0,0,0,8"/>
+                                    <TextBlock x:Name="txtCalculSalaireNet" Text="0.00 DH" FontSize="28" FontWeight="Bold" Foreground="#48BB78"/>
+                                    <TextBlock Text="{x:Static p:Resources.GestionSalaires_NetSalaryNote}" FontSize="11" Foreground="#A0AEC0" Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Annuler" Style="{StaticResource SecondaryButton}" Click="BtnRetour_Click" Margin="0,0,12,0"/>
+                            <Button x:Name="btnSauvegarder"
+                                  Content="{x:Static p:Resources.GestionSalaires_SaveSalary}" 
+                                  Style="{StaticResource PrimaryButton}"
+                                  Click="BtnSauvegarder_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
