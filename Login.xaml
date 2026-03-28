@@ -125,7 +125,7 @@
         <Style x:Key="ModernPasswordBoxStyle" TargetType="PasswordBox">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="Background" Value="White"/>
@@ -157,7 +157,7 @@
         <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="Padding" Value="12,8"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="Background" Value="White"/>
@@ -213,32 +213,15 @@
                 <!-- Left Panel -->
                 <Grid Grid.Column="0">
                     <Border Background="#F9FAFB" CornerRadius="24,0,0,24" Opacity="0.5"/>
-                    <StackPanel Margin="60,50" VerticalAlignment="Center">
+                    <StackPanel Margin="60,20" VerticalAlignment="Center">
 
                         <!-- Logo / company header -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,30">
-                            <Border Width="70" Height="70" CornerRadius="18">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="Transparent" Offset="0"/>
-                                        <GradientStop Color="Transparent" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Border.Effect>
-                                    <DropShadowEffect Color="#2563EB" Opacity="0.3" BlurRadius="15" ShadowDepth="0"/>
-                                </Border.Effect>
-                                <Image Source="/Main/images/BM-Logo.ico" Margin="0,8,0,6"/>
-                            </Border>
-                            <StackPanel VerticalAlignment="Center" Margin="20,0,0,0">
-                                <TextBlock Text="{x:Static res:Resources.CompanyName}"
-                                           FontFamily="Segoe UI" FontSize="26" FontWeight="SemiBold" Foreground="#111827"/>
-                                <TextBlock Text="{x:Static res:Resources.CompanyHeadquarters}"
-                                           FontFamily="Segoe UI" FontSize="26" FontWeight="SemiBold"
-                                           Foreground="#111827" Margin="0,-5,0,0"/>
-                                <TextBlock Text="{x:Static res:Resources.About_Tagline}"
-                                           FontFamily="Segoe UI" FontSize="13" Foreground="#6B7280" Margin="0,5,0,0"/>
-                            </StackPanel>
-                        </StackPanel>
+                        <Image Source="/Main/images/Zenix.png"
+       Width="480" Height="280"
+       Stretch="Uniform"
+       RenderOptions.BitmapScalingMode="HighQuality"
+       HorizontalAlignment="Left"
+       Margin="0,0,0,0"/>
 
                         <TextBlock Text="{x:Static res:Resources.About_Tagline}"
                                    FontFamily="Segoe UI" FontSize="36" FontWeight="Light"
@@ -250,7 +233,7 @@
                                    HorizontalAlignment="Left" Margin="0,0,0,20"/>
 
                         <!-- ── 3 NEW INPUTS ── -->
-                        <StackPanel Width="380" HorizontalAlignment="Left" Margin="0,0,0,20">
+                        <StackPanel Width="380" HorizontalAlignment="Left" Margin="0,0,0,10">
 
                             <!-- Username -->
                             <TextBlock Text="Username"
@@ -282,7 +265,7 @@
                         <StackPanel>
                             <TextBlock Text="{x:Static res:Resources.AddUser_Password}"
                                        FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="#374151" Margin="0,0,0,10"/>
+                                       Foreground="#374151" Margin="0,0,0,5"/>
                             <PasswordBox x:Name="PasswordInput" MaxLength="9"
                                          Style="{StaticResource ModernPasswordBoxStyle}"
                                          Width="380" HorizontalAlignment="Left"

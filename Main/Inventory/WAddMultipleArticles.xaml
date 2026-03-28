@@ -2,117 +2,371 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:res="clr-namespace:GestionComerce.Resources"
-        Title="{x:Static res:Resources.ArticleManagement}" Height="558" Width="567"
-        Background="#F8FAFC" WindowStyle="None" WindowStartupLocation="CenterScreen">
+        Title="{x:Static res:Resources.ArticleManagement}" Height="620" Width="620"
+        Background="#F0F4FF" WindowStyle="None" WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True">
 
     <Window.Resources>
-        <!-- Keep all original button styles -->
+
+        <!-- ══════════════════════════════════════════════
+             COLOR TOKENS  (matches the inventory page)
+             ══════════════════════════════════════════════ -->
+        <SolidColorBrush x:Key="BgPage"          Color="#F0F4FF"/>
+        <SolidColorBrush x:Key="BgCard"          Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="BgCardAlt"       Color="#F8FAFF"/>
+        <SolidColorBrush x:Key="AccentBlue"      Color="#3B6EF8"/>
+        <SolidColorBrush x:Key="AccentBlueDark"  Color="#2A56D6"/>
+        <SolidColorBrush x:Key="AccentTeal"      Color="#06B6D4"/>
+        <SolidColorBrush x:Key="BorderLight"     Color="#DDE3F5"/>
+        <SolidColorBrush x:Key="TextPrimary"     Color="#0F172A"/>
+        <SolidColorBrush x:Key="TextSecondary"   Color="#64748B"/>
+        <SolidColorBrush x:Key="TextMuted"       Color="#94A3B8"/>
+        <SolidColorBrush x:Key="Danger"          Color="#EF4444"/>
+
+        <!-- ══════════════════════════════════════════════
+             WINDOW SHADOW / OUTER BORDER
+             ══════════════════════════════════════════════ -->
+        <DropShadowEffect x:Key="CardShadow" Color="#1E3A8A" Opacity="0.10"
+                          BlurRadius="28" ShadowDepth="4" Direction="270"/>
+        <DropShadowEffect x:Key="ButtonShadow" Color="#3B6EF8" Opacity="0.25"
+                          BlurRadius="12" ShadowDepth="2" Direction="270"/>
+
+        <!-- ══════════════════════════════════════════════
+             CLOSE BUTTON
+             ══════════════════════════════════════════════ -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Width"            Value="32"/>
+            <Setter Property="Height"           Value="32"/>
+            <Setter Property="Background"       Value="Transparent"/>
+            <Setter Property="Foreground"       Value="#94A3B8"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="FontSize"         Value="16"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FEE2E2"/>
+                                <Setter Property="Foreground" Value="#EF4444"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════
+             PRIMARY ACTION BUTTON  (blue, matches "+ " fab)
+             ══════════════════════════════════════════════ -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background"       Value="{StaticResource AccentBlue}"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Height"           Value="40"/>
+            <Setter Property="Padding"          Value="18,0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Effect"           Value="{StaticResource ButtonShadow}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background"
+                                        Value="{StaticResource AccentBlueDark}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1E40AF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════
+             PAYMENT BUTTONS  (ghost / outline style)
+             ══════════════════════════════════════════════ -->
+        <Style x:Key="PaymentButtonStyle" TargetType="Button">
+            <Setter Property="Background"       Value="White"/>
+            <Setter Property="Foreground"       Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource BorderLight}"/>
+            <Setter Property="BorderThickness"  Value="1.5"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="FontWeight"       Value="Medium"/>
+            <Setter Property="Height"           Value="46"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background"  Value="#EEF2FF"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBlue}"/>
+                                <Setter Property="Foreground" Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background"  Value="#E0E7FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════
+             COMBOBOX
+             ══════════════════════════════════════════════ -->
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Background"       Value="White"/>
+            <Setter Property="Foreground"       Value="{StaticResource TextPrimary}"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource BorderLight}"/>
+            <Setter Property="BorderThickness"  Value="1.5"/>
+            <Setter Property="Height"           Value="42"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="Padding"          Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="36"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Grid.Column="0"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  Margin="12,0,0,0"
+                                                  VerticalAlignment="Center"/>
+                                <Path Grid.Column="1" Data="M 0 0 L 5 5 L 10 0"
+                                      Stroke="{StaticResource TextMuted}"
+                                      StrokeThickness="1.8"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                                <Popup x:Name="PART_Popup"
+                                       AllowsTransparency="True"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       Placement="Bottom"
+                                       PopupAnimation="Slide">
+                                    <Border Background="White" BorderBrush="{StaticResource BorderLight}"
+                                            BorderThickness="1.5" CornerRadius="10"
+                                            MinWidth="{TemplateBinding ActualWidth}">
+                                        <ScrollViewer>
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush"
+                                        Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush"
+                                        Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
-    <Grid>
-        <!-- Close Button (Top Right) -->
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Margin="0,8,8,0"
-                Click="CloseButton_Click"
-                Panel.ZIndex="999"
-                Content="✕"
-                Width="32" Height="32"/>
+    <!-- ══════════════════════════════════════════════════════
+         ROOT — rounded card with drop shadow
+         ══════════════════════════════════════════════════════ -->
+    <Border Background="{StaticResource BgPage}"
+            CornerRadius="16"
+            Effect="{StaticResource CardShadow}">
 
-        <Grid Margin="24">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <!-- Title bar -->
+                <RowDefinition Height="56"/>
+                <!-- Body -->
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Row 1: ComboBox and Add Button -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Supplier ComboBox -->
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{x:Static res:Resources.Supplier}" FontSize="13" FontWeight="Medium" 
-                          Foreground="#374151" Margin="0,0,0,6"/>
-                    <Border Background="White" BorderBrush="#D1D5DB" BorderThickness="1" Height="40">
-                        <ComboBox x:Name="SupplierComboBox" Background="Transparent" BorderThickness="0" 
-                             FontSize="13" Padding="12,8" VerticalContentAlignment="Center" 
-                             SelectionChanged="SupplierComboBox_SelectionChanged"/>
-                    </Border>
-                </StackPanel>
-
-                <!-- Add Article Button -->
-                <Button Grid.Column="2" Content="{x:Static res:Resources.AddArticle}" 
-                    VerticalAlignment="Bottom"
-                    Click="AddArticleButton_Click"/>
-            </Grid>
-
-            <!-- Row 2: Articles Container -->
-            <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="24">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="-24,-24,-24,-24">
-                    <StackPanel x:Name="ArticlesContainer"/>
-                </ScrollViewer>
+            <!-- ═══════════════════════════════════════
+                 TITLE BAR
+                 ═══════════════════════════════════════ -->
+            <Border Grid.Row="0" CornerRadius="16,16,0,0"
+                   >
+                <Grid Margin="20,0,12,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Blue accent dot -->
+                        <Border Width="8" Height="8" CornerRadius="4"
+                                Background="{StaticResource AccentBlue}"
+                                Margin="0,0,10,0"/>
+                        <TextBlock Text="{x:Static res:Resources.ArticleManagement}"
+                                   FontSize="15" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Style="{StaticResource CloseButtonStyle}"
+                            HorizontalAlignment="Right"
+                            Content="✕"
+                            Click="CloseButton_Click"/>
+                </Grid>
             </Border>
 
-            <!-- Row 3: Payment Options -->
-            <StackPanel Grid.Row="2" x:Name="ButtonsContainer">
-                <!-- Payment Method ComboBox -->
-                <Grid Margin="0,5,0,10">
+            <!-- ═══════════════════════════════════════
+                 BODY
+                 ═══════════════════════════════════════ -->
+            <Grid Grid.Row="1" Margin="20,0,20,20">
+                <Grid.RowDefinitions>
+                    <!-- Supplier row -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Articles card -->
+                    <RowDefinition Height="*"/>
+                    <!-- Payment section -->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- ─── ROW 0 : Supplier + Add button ─── -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="{x:Static res:Resources.PaymentMethod}" 
-                               Grid.Column="0"
-                               VerticalAlignment="Center"
-                               FontSize="13"
-                               FontWeight="SemiBold"
-                               Margin="0,0,10,0"/>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="{x:Static res:Resources.Supplier}"
+                                   FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   Margin="2,0,0,6"
+                                 />
+                        <ComboBox x:Name="SupplierComboBox"
+                                  Style="{StaticResource ModernComboBox}"
+                                  SelectionChanged="SupplierComboBox_SelectionChanged"/>
+                    </StackPanel>
 
-                    <ComboBox x:Name="PaymentMethodComboBox"
-                              Grid.Column="1"
-                              Height="40"
-                              FontSize="13"
-                              SelectedIndex="0"/>
+                    <Button Grid.Column="2"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Content="{x:Static res:Resources.AddArticle}"
+                            VerticalAlignment="Bottom"
+                            Click="AddArticleButton_Click"/>
                 </Grid>
 
-                <!-- Original Payment Buttons Grid -->
-                <Grid Margin="0,5,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <!-- ─── ROW 1 : Articles scrollable card ─── -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource BgCard}"
+                        BorderBrush="{StaticResource BorderLight}"
+                        BorderThickness="1.5"
+                        CornerRadius="14"
+                        Margin="0,0,0,16">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Padding="4">
+                        <StackPanel x:Name="ArticlesContainer"
+                                    Margin="12"/>
+                    </ScrollViewer>
+                </Border>
 
-                    <!-- Cash Button -->
-                    <Button x:Name="CashButton" Grid.Column="0" Height="45" Click="CashButton_Click">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static res:Resources.Cash}" FontSize="11" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                <!-- ─── ROW 2 : Payment section ─── -->
+                <StackPanel Grid.Row="2" x:Name="ButtonsContainer">
 
-                    <!-- Half Button -->
-                    <Button x:Name="HalfButton" Grid.Column="2" Height="45" Click="HalfButton_Click">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static res:Resources.HalfHalf}" FontSize="11" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
+                    <!-- Divider -->
+                    <Border Height="1" Background="{StaticResource BorderLight}"
+                            Margin="0,0,0,14"/>
 
-                    <!-- Credit Button -->
-                    <Button x:Name="CreditButton" Grid.Column="4" Height="45" Click="CreditButton_Click">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static res:Resources.Credit}" FontSize="11" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </StackPanel>
+                    <!-- Payment method label + combobox -->
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{x:Static res:Resources.PaymentMethod}"
+                                   FontSize="12" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextSecondary}"
+                            
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0"/>
+                        <ComboBox Grid.Column="1"
+                                  x:Name="PaymentMethodComboBox"
+                                  Style="{StaticResource ModernComboBox}"
+                                  SelectedIndex="0"/>
+                    </Grid>
+
+                    <!-- Payment buttons -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="CashButton"
+                                Grid.Column="0"
+                                Style="{StaticResource PaymentButtonStyle}"
+                                Click="CashButton_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="💵" FontSize="14" Margin="0,0,7,0"/>
+                                <TextBlock Text="{x:Static res:Resources.Cash}"
+                                           FontSize="12" FontWeight="Medium"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="HalfButton"
+                                Grid.Column="2"
+                                Style="{StaticResource PaymentButtonStyle}"
+                                Click="HalfButton_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⚖️" FontSize="14" Margin="0,0,7,0"/>
+                                <TextBlock Text="{x:Static res:Resources.HalfHalf}"
+                                           FontSize="12" FontWeight="Medium"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="CreditButton"
+                                Grid.Column="4"
+                                Style="{StaticResource PaymentButtonStyle}"
+                                Click="CreditButton_Click">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="💳" FontSize="14" Margin="0,0,7,0"/>
+                                <TextBlock Text="{x:Static res:Resources.Credit}"
+                                           FontSize="12" FontWeight="Medium"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
+
 </Window>

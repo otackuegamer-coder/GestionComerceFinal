@@ -294,9 +294,8 @@ namespace GestionComerce.Main.Vente
             // Right: codes & misc
             var rightPanel = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(16, 0, 0, 0) };
 
-            if (item.Article.Code > 0)
+            if (!string.IsNullOrEmpty(item.Article.Code))
                 rightPanel.Children.Add(CreateInfoText($"Code-barres: {item.Article.Code}", 11, false, new SolidColorBrush(Color.FromRgb(59, 130, 246))));
-
             if (!string.IsNullOrWhiteSpace(item.Article.SKU))
                 rightPanel.Children.Add(CreateInfoText($"SKU: {item.Article.SKU}", 11));
 

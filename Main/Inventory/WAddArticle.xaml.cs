@@ -417,7 +417,7 @@ namespace GestionComerce.Main.Inventory
                         {
                             if (ar.ArticleName == a.ArticleName)
                             {
-                                ar.Code = ParseLong(Code.Text);
+                                ar.Code = Code.Text;
                                 await ar.UpdateArticleAsync();
                             }
                         }
@@ -428,7 +428,7 @@ namespace GestionComerce.Main.Inventory
                     }
                 }
 
-                a.Code = ParseLong(Code.Text);
+                a.Code = Code.Text;
                 a.ArticleName = ArticleName.Text;
                 a.PrixVente = ParseDecimal(PrixV.Text);
                 a.PrixAchat = ParseDecimal(PrixA.Text);
@@ -632,7 +632,7 @@ namespace GestionComerce.Main.Inventory
         // Update the PopulateArticleFromForm method
         private void PopulateArticleFromForm()
         {
-            a.Code = ParseLong(Code.Text);
+            a.Code = Code.Text;
             a.ArticleName = ArticleName.Text;
             a.PrixVente = ParseDecimal(PrixV.Text);
             a.PrixAchat = ParseDecimal(PrixA.Text);

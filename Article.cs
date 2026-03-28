@@ -30,9 +30,8 @@ namespace GestionComerce
 
         [JsonPropertyName("famillyId")]
         public int FamillyID { get; set; }
-
         [JsonPropertyName("code")]
-        public long Code { get; set; }
+        public string Code { get; set; }
 
         [JsonPropertyName("articleName")]
         public string ArticleName { get; set; }
@@ -256,7 +255,7 @@ namespace GestionComerce
             prixGros = this.PrixGros,
             quantite = this.Quantite,
             famillyId = this.FamillyID,
-            code = this.Code.ToString(),
+            code = this.Code ?? string.Empty,
             tva = this.tva,
             marque = this.marque ?? string.Empty,
             minimumStock = this.MinimumStock,

@@ -19,39 +19,25 @@ namespace GestionComerce
         public bool Reversed { get; set; }
         public string ArticleName { get; set; } = string.Empty;
 
-        // Shares Operation.ApiBaseUrl / Operation.BearerToken
         private static readonly JsonSerializerOptions _json = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
-        private static HttpClient CreateClient()
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(Operation.ApiBaseUrl);
-            if (!string.IsNullOrEmpty(Operation.BearerToken))
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Operation.BearerToken);
-            return client;
-        }
-
-        // GET (active articles for this OperationID)
+        // ── GET articles for one operation ────────────────────────────────────
         public async Task<List<OperationArticle>> GetOperationArticlesAsync()
         {
             try
             {
-                using (var client = CreateClient())
-                {
-                    var response = await client.GetAsync("/api/operations/" + OperationID + "/articles");
-                    response.EnsureSuccessStatusCode();
-                    var raw = await response.Content.ReadAsStringAsync();
-                    var items = JsonSerializer.Deserialize<List<JsonElement>>(raw, _json);
-                    var list = new List<OperationArticle>();
-                    if (items != null)
-                        foreach (var item in items)
-                            list.Add(MapFromJson(item));
-                    return list;
-                }
+                var response = await MainWindow.ApiClient.GetAsync("/api/operations/" + OperationID + "/articles");
+                response.EnsureSuccessStatusCode();
+                var raw = await response.Content.ReadAsStringAsync();
+                var items = JsonSerializer.Deserialize<List<JsonElement>>(raw, _json);
+                var list = new List<OperationArticle>();
+                if (items != null)
+                    foreach (var item in items)
+                        list.Add(MapFromJson(item));
+                return list;
             }
             catch (Exception err)
             {
@@ -60,42 +46,38 @@ namespace GestionComerce
             }
         }
 
-        // GET ALL articles across ALL operations (used by MainWindow.load_main).
-        // Calls GET /api/operations which returns operations with embedded articles, then flattens.
+        // ── GET ALL articles across ALL operations ────────────────────────────
         public static async Task<List<OperationArticle>> GetAllOperationArticlesAsync()
         {
             try
             {
-                using (var client = CreateClient())
+                var response = await MainWindow.ApiClient.GetAsync("/api/operations?");
+                response.EnsureSuccessStatusCode();
+                var raw = await response.Content.ReadAsStringAsync();
+                var envelopes = JsonSerializer.Deserialize<List<OperationWithArticles>>(raw, _json);
+                var result = new List<OperationArticle>();
+                if (envelopes != null)
                 {
-                    var response = await client.GetAsync("/api/operations?");
-                    response.EnsureSuccessStatusCode();
-                    var raw = await response.Content.ReadAsStringAsync();
-                    var envelopes = JsonSerializer.Deserialize<List<OperationWithArticles>>(raw, _json);
-                    var result = new List<OperationArticle>();
-                    if (envelopes != null)
+                    foreach (var env in envelopes)
                     {
-                        foreach (var env in envelopes)
+                        if (env == null || env.Articles == null) continue;
+                        int opId = env.Operation != null ? env.Operation.OperationID : 0;
+                        foreach (var a in env.Articles)
                         {
-                            if (env == null || env.Articles == null) continue;
-                            int opId = env.Operation != null ? env.Operation.OperationID : 0;
-                            foreach (var a in env.Articles)
+                            result.Add(new OperationArticle
                             {
-                                result.Add(new OperationArticle
-                                {
-                                    OperationArticleID = a.OperationArticleID,
-                                    ArticleID = a.ArticleID,
-                                    OperationID = opId,
-                                    QteArticle = a.QteArticle,
-                                    Reversed = a.Reversed,
-                                    ArticleName = a.ArticleName ?? string.Empty,
-                                    Etat = true
-                                });
-                            }
+                                OperationArticleID = a.OperationArticleID,
+                                ArticleID = a.ArticleID,
+                                OperationID = opId,
+                                QteArticle = a.QteArticle,
+                                Reversed = a.Reversed,
+                                ArticleName = a.ArticleName ?? string.Empty,
+                                Etat = true
+                            });
                         }
                     }
-                    return result;
                 }
+                return result;
             }
             catch (Exception err)
             {
@@ -104,89 +86,82 @@ namespace GestionComerce
             }
         }
 
-        // INSERT
+        // ── INSERT ────────────────────────────────────────────────────────────
         public async Task<int> InsertOperationArticleAsync()
         {
             try
             {
-                using (var client = CreateClient())
+                var dto = new OperationArticleDto
                 {
-                    var dto = new OperationArticleDto
-                    {
-                        ArticleID = ArticleID,
-                        OperationID = OperationID,
-                        QteArticle = QteArticle,
-                        Reversed = Reversed
-                    };
-                    var content = new StringContent(
-                        JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync("/api/operations/articles", content);
-                    response.EnsureSuccessStatusCode();
-                    var raw = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(raw, _json);
-                    JsonElement idEl;
-                    if (result != null && result.TryGetValue("operationArticleId", out idEl))
-                        return idEl.GetInt32();
-                    return 0;
-                }
+                    ArticleID = ArticleID,
+                    OperationID = OperationID,
+                    QteArticle = QteArticle,
+                    Reversed = Reversed
+                };
+                var content = new StringContent(
+                    JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
+
+                var response = await MainWindow.ApiClient.PostAsync("/api/operations/articles", content);
+                response.EnsureSuccessStatusCode();
+
+                var raw = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(raw, _json);
+                if (result != null && result.TryGetValue("operationArticleId", out JsonElement idEl))
+                    return idEl.GetInt32();
+                return 0;
             }
             catch (Exception err)
             {
-                MessageBox.Show("OperationArticle not inserted, error: " + err);
+                MessageBox.Show("OperationArticle not inserted, error: " + err.Message);
                 return 0;
             }
         }
 
-        // UPDATE
+        // ── UPDATE ────────────────────────────────────────────────────────────
         public async Task<int> UpdateOperationArticleAsync()
         {
             try
             {
-                using (var client = CreateClient())
+                var dto = new OperationArticleDto
                 {
-                    var dto = new OperationArticleDto
-                    {
-                        ArticleID = ArticleID,
-                        OperationID = OperationID,
-                        QteArticle = QteArticle,
-                        Reversed = Reversed
-                    };
-                    var content = new StringContent(
-                        JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
-                    var response = await client.PutAsync(
-                        "/api/operations/articles/" + OperationArticleID, content);
-                    response.EnsureSuccessStatusCode();
-                    return 1;
-                }
+                    ArticleID = ArticleID,
+                    OperationID = OperationID,
+                    QteArticle = QteArticle,
+                    Reversed = Reversed
+                };
+                var content = new StringContent(
+                    JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
+
+                var response = await MainWindow.ApiClient.PutAsync(
+                    "/api/operations/articles/" + OperationArticleID, content);
+                response.EnsureSuccessStatusCode();
+                return 1;
             }
             catch (Exception err)
             {
-                MessageBox.Show("OperationArticle not updated: " + err);
+                MessageBox.Show("OperationArticle not updated: " + err.Message);
                 return 0;
             }
         }
 
-        // DELETE (soft)
+        // ── DELETE (soft) ─────────────────────────────────────────────────────
         public async Task<int> DeleteOperationArticleAsync()
         {
             try
             {
-                using (var client = CreateClient())
-                {
-                    var response = await client.DeleteAsync(
-                        "/api/operations/articles/" + OperationArticleID);
-                    response.EnsureSuccessStatusCode();
-                    return 1;
-                }
+                var response = await MainWindow.ApiClient.DeleteAsync(
+                    "/api/operations/articles/" + OperationArticleID);
+                response.EnsureSuccessStatusCode();
+                return 1;
             }
             catch (Exception err)
             {
-                MessageBox.Show("OperationArticle not deleted: " + err);
+                MessageBox.Show("OperationArticle not deleted: " + err.Message);
                 return 0;
             }
         }
 
-        // REVERSE
+        // ── REVERSE ───────────────────────────────────────────────────────────
         public async Task<int> ReverseAsync()
         {
             try
@@ -196,21 +171,21 @@ namespace GestionComerce
             }
             catch (Exception err)
             {
-                MessageBox.Show("OperationArticle not reversed: " + err);
+                MessageBox.Show("OperationArticle not reversed: " + err.Message);
                 return 0;
             }
         }
 
+        // ── MAPPER ────────────────────────────────────────────────────────────
         private static OperationArticle MapFromJson(JsonElement e)
         {
-            JsonElement tmp;
             return new OperationArticle
             {
-                OperationArticleID = e.TryGetProperty("operationArticleId", out tmp) ? tmp.GetInt32() : 0,
-                ArticleID = e.TryGetProperty("articleId", out tmp) ? tmp.GetInt32() : 0,
-                OperationID = e.TryGetProperty("operationId", out tmp) ? tmp.GetInt32() : 0,
-                QteArticle = e.TryGetProperty("qteArticle", out tmp) ? tmp.GetInt32() : 0,
-                Reversed = e.TryGetProperty("reversed", out tmp) && tmp.GetBoolean(),
+                OperationArticleID = e.TryGetProperty("operationArticleId", out JsonElement id) ? id.GetInt32() : 0,
+                ArticleID = e.TryGetProperty("articleId", out JsonElement aid) ? aid.GetInt32() : 0,
+                OperationID = e.TryGetProperty("operationId", out JsonElement oid) ? oid.GetInt32() : 0,
+                QteArticle = e.TryGetProperty("qteArticle", out JsonElement qty) ? qty.GetInt32() : 0,
+                Reversed = e.TryGetProperty("reversed", out JsonElement rev) && rev.GetBoolean(),
                 Etat = true
             };
         }
