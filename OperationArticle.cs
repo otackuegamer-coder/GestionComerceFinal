@@ -29,7 +29,7 @@ namespace GestionComerce
         {
             try
             {
-                var response = await MainWindow.ApiClient.GetAsync("/api/operations/" + OperationID + "/articles");
+                var response = await MainWindow.ApiClient.GetAsync(Operation.ApiBaseUrl + "/api/operations/" + OperationID + "/articles");
                 response.EnsureSuccessStatusCode();
                 var raw = await response.Content.ReadAsStringAsync();
                 var items = JsonSerializer.Deserialize<List<JsonElement>>(raw, _json);
@@ -51,7 +51,7 @@ namespace GestionComerce
         {
             try
             {
-                var response = await MainWindow.ApiClient.GetAsync("/api/operations?");
+                var response = await MainWindow.ApiClient.GetAsync(Operation.ApiBaseUrl + "/api/operations?");
                 response.EnsureSuccessStatusCode();
                 var raw = await response.Content.ReadAsStringAsync();
                 var envelopes = JsonSerializer.Deserialize<List<OperationWithArticles>>(raw, _json);
@@ -101,7 +101,7 @@ namespace GestionComerce
                 var content = new StringContent(
                     JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
 
-                var response = await MainWindow.ApiClient.PostAsync("/api/operations/articles", content);
+                var response = await MainWindow.ApiClient.PostAsync(Operation.ApiBaseUrl + "/api/operations/articles", content);
                 response.EnsureSuccessStatusCode();
 
                 var raw = await response.Content.ReadAsStringAsync();
@@ -133,7 +133,7 @@ namespace GestionComerce
                     JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
 
                 var response = await MainWindow.ApiClient.PutAsync(
-                    "/api/operations/articles/" + OperationArticleID, content);
+                    Operation.ApiBaseUrl + "/api/operations/articles/" + OperationArticleID, content);
                 response.EnsureSuccessStatusCode();
                 return 1;
             }
@@ -150,7 +150,7 @@ namespace GestionComerce
             try
             {
                 var response = await MainWindow.ApiClient.DeleteAsync(
-                    "/api/operations/articles/" + OperationArticleID);
+                    Operation.ApiBaseUrl + "/api/operations/articles/" + OperationArticleID);
                 response.EnsureSuccessStatusCode();
                 return 1;
             }

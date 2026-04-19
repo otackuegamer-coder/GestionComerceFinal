@@ -362,24 +362,24 @@
                         </DataGridTemplateColumn>
 
                         <!-- Actions -->
-                        <DataGridTemplateColumn Width="300">
+                        <DataGridTemplateColumn Width="420">
                             <DataGridTemplateColumn.Header>
-                                <TextBlock Text="{x:Static res:Resources.Actions}" 
+                                <TextBlock Text="{x:Static res:Resources.Actions}"
                    Margin="80,0,0,0"/>
                             </DataGridTemplateColumn.Header>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" 
+                                    <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
-                                        <Button Content="{x:Static res:Resources.View}" 
+                                        <Button Content="{x:Static res:Resources.View}"
                         Style="{StaticResource PrimaryButtonStyle}"
                         Padding="10,6"
                         FontSize="12"
                         Margin="0,0,6,0"
                         Click="btnView_Click"
                         Tag="{Binding InvoiceID}"/>
-                                        <Button Content="{x:Static res:Resources.Modify}" 
+                                        <Button Content="{x:Static res:Resources.Modify}"
                         Background="#F59E0B"
                         Foreground="White"
                         FontSize="12"
@@ -395,8 +395,8 @@
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="Button">
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                CornerRadius="6" 
+                                                                <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="6"
                                                 Padding="{TemplateBinding Padding}">
                                                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
@@ -414,7 +414,58 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button Content="{x:Static res:Resources.Delete}" 
+                                        <!-- Transform dropdown button -->
+                                        <Button
+                        Background="#7C3AED"
+                        Foreground="White"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        Padding="10,6"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Margin="0,0,6,0"
+                        Click="btnTransform_Click"
+                        Tag="{Binding InvoiceID}">
+                                            <Button.Content>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Transformer en "/>
+                                                    <TextBlock Text="▼" FontSize="10" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button.Content>
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#6D28D9"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter Property="Background" Value="#5B21B6"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Facture"         Tag="Facture"         Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Devis"           Tag="Devis"           Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Pro Forma"       Tag="Pro Forma"       Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Expédition"      Tag="Expédition"      Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Avoir"           Tag="Avoir"           Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Bon de Commande" Tag="Bon de Commande" Click="TransformMenuItem_Click"/>
+                                                    <MenuItem Header="Bon de Livraison" Tag="Bon de Livraison" Click="TransformMenuItem_Click"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <Button Content="{x:Static res:Resources.Delete}"
                         Style="{StaticResource DangerButtonStyle}"
                         Padding="10,6"
                         FontSize="12"

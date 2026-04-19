@@ -195,6 +195,55 @@ namespace GestionComerce.Main.Facturation.HistoriqueFacture
             }
         }
 
+        private void btnTransform_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                // Store the invoice ID on each MenuItem so TransformMenuItem_Click can read it
+                foreach (var item in button.ContextMenu.Items)
+                {
+                    if (item is MenuItem mi)
+                        mi.CommandParameter = button.Tag;
+                }
+                button.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private async void TransformMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi
+                && mi.CommandParameter is int invoiceId
+                && mi.Tag is string targetType)
+            {
+                var confirm = MessageBox.Show(
+                    $"Transformer cette facture en « {targetType} » ?\nL'original sera conservé en lecture seule.",
+                    "Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (confirm != MessageBoxResult.Yes) return;
+
+                var helper = new Invoice();
+                var (success, newId, error) = await helper.TransformInvoiceAsync(invoiceId, targetType);
+
+                if (success)
+                {
+                    MessageBox.Show(
+                        $"Transformation réussie.\nNouvel ID : {newId}",
+                        "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await LoadInvoicesAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Échec de la transformation :\n{error}",
+                        "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
         #endregion
 
         #region Business Logic
@@ -489,6 +538,7 @@ namespace GestionComerce.Main.Facturation.HistoriqueFacture
         {
 
         }
+
     }
 
     #region Value Converters

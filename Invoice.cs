@@ -2,12 +2,35 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace GestionComerce
 {
+    internal class InvoiceNullDecimalConverter : JsonConverter<decimal>
+    {
+        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Null) return 0m;
+            return reader.GetDecimal();
+        }
+        public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+            => writer.WriteNumberValue(value);
+    }
+
+    internal class InvoiceNullIntConverter : JsonConverter<int>
+    {
+        public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Null) return 0;
+            return reader.GetInt32();
+        }
+        public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
+            => writer.WriteNumberValue(value);
+    }
+
     public class Invoice
     {
         [JsonPropertyName("invoiceId")] public int InvoiceID { get; set; }
@@ -16,7 +39,7 @@ namespace GestionComerce
         [JsonPropertyName("invoiceType")] public string InvoiceType { get; set; }
         [JsonPropertyName("invoiceIndex")] public string InvoiceIndex { get; set; }
         [JsonPropertyName("creditClientName")] public string CreditClientName { get; set; }
-        [JsonPropertyName("creditMontant")] public decimal CreditMontant { get; set; }
+        [JsonPropertyName("creditMontant")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal CreditMontant { get; set; }
         [JsonPropertyName("objet")] public string Objet { get; set; }
         [JsonPropertyName("numberLetters")] public string NumberLetters { get; set; }
         [JsonPropertyName("nameFactureGiven")] public string NameFactureGiven { get; set; }
@@ -43,13 +66,13 @@ namespace GestionComerce
         [JsonPropertyName("clientIdSociete")] public string ClientIdSociete { get; set; }
         [JsonPropertyName("clientSiegeEntreprise")] public string ClientSiegeEntreprise { get; set; }
         [JsonPropertyName("currency")] public string Currency { get; set; }
-        [JsonPropertyName("tvaRate")] public decimal TVARate { get; set; }
-        [JsonPropertyName("totalHT")] public decimal TotalHT { get; set; }
-        [JsonPropertyName("totalTVA")] public decimal TotalTVA { get; set; }
-        [JsonPropertyName("totalTTC")] public decimal TotalTTC { get; set; }
-        [JsonPropertyName("remise")] public decimal Remise { get; set; }
-        [JsonPropertyName("totalAfterRemise")] public decimal TotalAfterRemise { get; set; }
-        [JsonPropertyName("etatFacture")] public int EtatFacture { get; set; }
+        [JsonPropertyName("tvaRate")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TVARate { get; set; }
+        [JsonPropertyName("totalHT")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalHT { get; set; }
+        [JsonPropertyName("totalTVA")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalTVA { get; set; }
+        [JsonPropertyName("totalTTC")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalTTC { get; set; }
+        [JsonPropertyName("remise")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal Remise { get; set; }
+        [JsonPropertyName("totalAfterRemise")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalAfterRemise { get; set; }
+        [JsonPropertyName("etatFacture")][JsonConverter(typeof(InvoiceNullIntConverter))] public int EtatFacture { get; set; }
         [JsonPropertyName("isReversed")] public bool IsReversed { get; set; }
         [JsonPropertyName("description")] public string Description { get; set; }
         [JsonPropertyName("logoPath")] public string LogoPath { get; set; }
@@ -71,12 +94,12 @@ namespace GestionComerce
             [JsonPropertyName("operationId")] public int? OperationID { get; set; }
             [JsonPropertyName("articleId")] public int ArticleID { get; set; }
             [JsonPropertyName("articleName")] public string ArticleName { get; set; }
-            [JsonPropertyName("prixUnitaire")] public decimal PrixUnitaire { get; set; }
-            [JsonPropertyName("quantite")] public decimal Quantite { get; set; }
-            [JsonPropertyName("tva")] public decimal TVA { get; set; }
-            [JsonPropertyName("totalHT")] public decimal TotalHT { get; set; }
-            [JsonPropertyName("montantTVA")] public decimal MontantTVA { get; set; }
-            [JsonPropertyName("totalTTC")] public decimal TotalTTC { get; set; }
+            [JsonPropertyName("prixUnitaire")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal PrixUnitaire { get; set; }
+            [JsonPropertyName("quantite")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal Quantite { get; set; }
+            [JsonPropertyName("tva")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TVA { get; set; }
+            [JsonPropertyName("totalHT")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalHT { get; set; }
+            [JsonPropertyName("montantTVA")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal MontantTVA { get; set; }
+            [JsonPropertyName("totalTTC")][JsonConverter(typeof(InvoiceNullDecimalConverter))] public decimal TotalTTC { get; set; }
             [JsonPropertyName("isReversed")] public bool IsReversed { get; set; }
             [JsonPropertyName("createdDate")] public DateTime? CreatedDate { get; set; }
             [JsonPropertyName("userIF")] public string UserIF { get; set; }
@@ -132,7 +155,8 @@ namespace GestionComerce
                     invoice.InvoiceID = newId;
                     return newId;
                 }
-                MessageBox.Show(string.Format("Invoice not created. Status: {0}", response.StatusCode));
+                string body = await response.Content.ReadAsStringAsync();
+                MessageBox.Show(string.Format("Invoice not created. Status: {0}\n{1}", response.StatusCode, body));
                 return 0;
             }
             catch (Exception err)
@@ -250,6 +274,34 @@ namespace GestionComerce
                 MessageBox.Show(string.Format("Invoice not deleted: {0}", err.Message));
                 return false;
             }
+        }
+
+        // TRANSFORM — copies the invoice to a new document of targetType, marks original as read-only
+        public async Task<(bool Success, int NewInvoiceId, string Error)> TransformInvoiceAsync(int invoiceId, string targetType)
+        {
+            try
+            {
+                var payload = new { targetType };
+                var response = await MainWindow.ApiClient.PostAsJsonAsync(
+                    string.Format("{0}/{1}/transform", BaseUrl, invoiceId), payload);
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<TransformResult>();
+                    return (true, result?.NewInvoiceId ?? 0, null);
+                }
+                string body = await response.Content.ReadAsStringAsync();
+                return (false, 0, body);
+            }
+            catch (Exception err)
+            {
+                return (false, 0, err.Message);
+            }
+        }
+
+        private class TransformResult
+        {
+            [JsonPropertyName("newInvoiceId")]
+            public int NewInvoiceId { get; set; }
         }
 
         // Hard delete — API has only one DELETE endpoint (same as soft delete)
@@ -381,7 +433,7 @@ namespace GestionComerce
             clientIdSociete = inv.ClientIdSociete,
             clientSiegeEntreprise = inv.ClientSiegeEntreprise,
             currency = inv.Currency,
-            tVARate = inv.TVARate,
+            tvaRate = inv.TVARate,
             totalHT = inv.TotalHT,
             totalTVA = inv.TotalTVA,
             totalTTC = inv.TotalTTC,
@@ -390,7 +442,8 @@ namespace GestionComerce
             etatFacture = inv.EtatFacture,
             isReversed = inv.IsReversed,
             description = inv.Description,
-            logoPath = inv.LogoPath,
+            logoPath = string.IsNullOrEmpty(inv.LogoPath) || inv.LogoPath.StartsWith("data:") || inv.LogoPath.Length > 500
+                ? null : inv.LogoPath,
             createdBy = inv.CreatedBy
         };
 

@@ -23,41 +23,10 @@ namespace GestionComerce.Main.Vente
 
         private async void FamillyName_Click(object sender, RoutedEventArgs e)
         {
-            mainv.ArticlesContainer.Children.Clear();
             Article a = new Article();
             List<Article> Articles = await a.GetArticlesAsync();
             List<Article> articlesInFamily = Articles.Where(article => article.FamillyID == f.FamilleID).ToList();
-
-            // Apply current sorting
-            articlesInFamily = mainv.ApplySorting(articlesInFamily);
-
-            // Display based on current layout mode
-            if (mainv.isCardLayout)
-            {
-                // Card layout - 5 per row
-                var wrapPanel = new WrapPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Width = 1180
-                };
-
-                foreach (Article article in articlesInFamily)
-                {
-                    CSingleArticle1 ar = new CSingleArticle1(article, mainv, lf, mainv.lfo, 2);
-                    wrapPanel.Children.Add(ar);
-                }
-
-                mainv.ArticlesContainer.Children.Add(wrapPanel);
-            }
-            else
-            {
-                // Row layout
-                foreach (Article article in articlesInFamily)
-                {
-                    mainv.ArticlesContainer.Children.Add(new CSingleArticle1(article, mainv, lf, mainv.lfo, 0));
-                }
-            }
+            mainv.LoadArticles(articlesInFamily);
         }
     }
 }

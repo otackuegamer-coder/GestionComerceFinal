@@ -106,7 +106,7 @@ namespace GestionComerce.Main.Inventory
                         familleName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                         matches = true;
 
-                    string supplierName = GetFournisseurName(article.FournisseurID);
+                    string supplierName = GetFournisseurName(article.FournisseurID ?? 0);
                     if (!string.IsNullOrEmpty(supplierName) &&
                         supplierName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                         matches = true;
@@ -199,7 +199,7 @@ namespace GestionComerce.Main.Inventory
             string familyName = GetFamilleName(article.FamillyID);
             AddDetailBadge(detailsPanel, "📁", familyName);
 
-            string supplierName = GetFournisseurName(article.FournisseurID);
+            string supplierName = GetFournisseurName(article.FournisseurID ?? 0);
             AddDetailBadge(detailsPanel, "🏢", supplierName);
 
             AddDetailBadge(detailsPanel, "📦", $"Stock: {article.Quantite}");

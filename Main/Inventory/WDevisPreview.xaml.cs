@@ -399,7 +399,7 @@ namespace GestionComerce.Main.Inventory
                 }
                 if (config.ShowFournisseur)
                 {
-                    AddCellText(rowGrid, GetFournisseurName(article.FournisseurID), colIdx++);
+                    AddCellText(rowGrid, GetFournisseurName(article.FournisseurID ?? 0), colIdx++);
                 }
                 if (config.ShowMarque)
                 {

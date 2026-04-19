@@ -245,5 +245,205 @@ namespace Superete
 
             return @"C:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA";
         }
+
+        /// <summary>
+        /// Adds any columns that exist in code but are missing from the database.
+        /// Safe to call on every startup — each ALTER only runs if the column is absent.
+        /// </summary>
+        public static void EnsureColumns()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(APP_CONNECTION))
+                {
+                    conn.Open();
+                    string[] migrations = new[]
+                    {
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Employes') AND name = 'SalaireBase')
+                          ALTER TABLE Employes ADD SalaireBase DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'IsTransformed')
+                          ALTER TABLE Invoice ADD IsTransformed BIT NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TransformedToId')
+                          ALTER TABLE Invoice ADD TransformedToId INT NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TransformedFromId')
+                          ALTER TABLE Invoice ADD TransformedFromId INT NULL",
+
+                        // Invoice columns that may be missing from the original table
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'IsReversed')
+                          ALTER TABLE Invoice ADD IsReversed BIT NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'EtatFacture')
+                          ALTER TABLE Invoice ADD EtatFacture INT NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'IsDeleted')
+                          ALTER TABLE Invoice ADD IsDeleted BIT NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'Remise')
+                          ALTER TABLE Invoice ADD Remise DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TotalAfterRemise')
+                          ALTER TABLE Invoice ADD TotalAfterRemise DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TVARate')
+                          ALTER TABLE Invoice ADD TVARate DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TotalHT')
+                          ALTER TABLE Invoice ADD TotalHT DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TotalTVA')
+                          ALTER TABLE Invoice ADD TotalTVA DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'TotalTTC')
+                          ALTER TABLE Invoice ADD TotalTTC DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'CreditMontant')
+                          ALTER TABLE Invoice ADD CreditMontant DECIMAL(18,2) NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'CreditClientName')
+                          ALTER TABLE Invoice ADD CreditClientName NVARCHAR(255) NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'Currency')
+                          ALTER TABLE Invoice ADD Currency NVARCHAR(10) NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'InvoiceIndex')
+                          ALTER TABLE Invoice ADD InvoiceIndex NVARCHAR(50) NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'CreatedBy')
+                          ALTER TABLE Invoice ADD CreatedBy INT NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'ModifiedBy')
+                          ALTER TABLE Invoice ADD ModifiedBy INT NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'ModifiedDate')
+                          ALTER TABLE Invoice ADD ModifiedDate DATETIME NULL",
+
+                        // InvoiceArticle.Remise — added via migration, may be missing
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('InvoiceArticle') AND name = 'Remise')
+                          ALTER TABLE InvoiceArticle ADD Remise DECIMAL(18,2) NOT NULL DEFAULT 0",
+
+                        // Invoice.LogoPath — widen so long paths don't truncate
+                        @"IF EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Invoice') AND name = 'LogoPath'
+                              AND max_length < 1000)
+                          ALTER TABLE Invoice ALTER COLUMN LogoPath NVARCHAR(MAX) NULL",
+
+                        // Article.Date — make nullable (TryUpdateExtendedColumns sends null when no date is set)
+                        @"IF EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Article') AND name = 'Date'
+                              AND is_nullable = 0)
+                          ALTER TABLE Article ALTER COLUMN Date DATETIME NULL",
+
+                        // Article columns that are hardcoded in the API's main UPDATE but may be missing
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Article') AND name = 'IsUnlimitedStock')
+                          ALTER TABLE Article ADD IsUnlimitedStock BIT NOT NULL DEFAULT 0",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Article') AND name = 'DateExpiration')
+                          ALTER TABLE Article ADD DateExpiration DATETIME NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Article') AND name = 'NumeroLot')
+                          ALTER TABLE Article ADD NumeroLot NVARCHAR(100) NULL",
+
+                        @"IF NOT EXISTS (
+                            SELECT 1 FROM sys.columns
+                            WHERE object_id = OBJECT_ID('Article') AND name = 'FournisseurID')
+                          ALTER TABLE Article ADD FournisseurID INT NULL",
+
+                        // Article.FournisseurID — make nullable so null supplier doesn't violate NOT NULL.
+                        // The DROP + re-add of FK is needed on SQL Server if a FK constraint exists on this column.
+                        @"BEGIN TRY
+                            IF EXISTS (
+                                SELECT 1 FROM sys.columns
+                                WHERE object_id = OBJECT_ID('Article') AND name = 'FournisseurID'
+                                  AND is_nullable = 0)
+                            BEGIN
+                                DECLARE @fkName NVARCHAR(256);
+                                SELECT @fkName = fk.name
+                                FROM sys.foreign_keys fk
+                                JOIN sys.foreign_key_columns fkc ON fk.object_id = fkc.constraint_object_id
+                                JOIN sys.columns c ON fkc.parent_object_id = c.object_id AND fkc.parent_column_id = c.column_id
+                                WHERE fkc.parent_object_id = OBJECT_ID('Article') AND c.name = 'FournisseurID';
+
+                                IF @fkName IS NOT NULL
+                                    EXEC('ALTER TABLE Article DROP CONSTRAINT [' + @fkName + ']');
+
+                                ALTER TABLE Article ALTER COLUMN FournisseurID INT NULL;
+                            END
+                          END TRY
+                          BEGIN CATCH
+                          END CATCH"
+                    };
+
+                    foreach (string sql in migrations)
+                    {
+                        try
+                        {
+                            using (SqlCommand cmd = new SqlCommand(sql, conn))
+                                cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[EnsureColumns] Migration failed: {ex.Message}\nSQL: {sql.Trim().Substring(0, Math.Min(120, sql.Trim().Length))}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[EnsureColumns] Connection failed: {ex.Message}");
+            }
+        }
     }
 }

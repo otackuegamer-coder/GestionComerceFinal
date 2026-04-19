@@ -492,7 +492,7 @@ namespace GestionComerce.Main.Inventory
                                   a.ArticleName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
                         break;
                     case 2: // Supplier
-                        string fournisseurName = GetFournisseurName(a.FournisseurID);
+                        string fournisseurName = GetFournisseurName(a.FournisseurID ?? 0);
                         matches = !string.IsNullOrEmpty(fournisseurName) &&
                                   fournisseurName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
                         break;

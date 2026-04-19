@@ -471,7 +471,7 @@
                             <CheckBox x:Name="Ticket" IsChecked="True" Margin="0,0,10,16">
                                 <CheckBox.Template>
                                     <ControlTemplate TargetType="CheckBox">
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel Orientation="Horizontal" Background="Transparent">
                                             <Border x:Name="Border" Width="20" Height="20" CornerRadius="6"
                                                     BorderBrush="#E5E7EB" BorderThickness="2" Background="White" Margin="0,0,10,0">
                                                 <Path x:Name="CheckMark" Data="M0 5 L7 12 L15 0"
@@ -493,7 +493,7 @@
                             <CheckBox x:Name="Facture" IsChecked="True" Margin="0,0,0,16">
                                 <CheckBox.Template>
                                     <ControlTemplate TargetType="CheckBox">
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel Orientation="Horizontal" Background="Transparent">
                                             <Border x:Name="Border" Width="20" Height="20" CornerRadius="6"
                                                     BorderBrush="#E5E7EB" BorderThickness="2" Background="White" Margin="0,0,10,0">
                                                 <Path x:Name="CheckMark" Data="M0 5 L7 12 L15 0"

@@ -271,14 +271,14 @@ namespace GestionComerce.Main.Inventory
         /// <summary>Returns the FournisseurID from whichever source is active.</summary>
         private int ResolveFournisseurId()
         {
-            if (a != null) return a.FournisseurID;
+            if (a != null) return a.FournisseurID ?? 0;
             if (ama != null)
             {
                 // Take from the first article row
                 for (int i = ama.ArticlesContainer.Children.Count - 1; i >= 0; i--)
                 {
                     if (ama.ArticlesContainer.Children[i] is CSingleRowArticle csra)
-                        return csra.a.FournisseurID;
+                        return csra.a.FournisseurID ?? 0;
                 }
             }
             return 0;

@@ -2,33 +2,64 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace GestionComerce
 {
+    // Handles JSON int fields that the API may return as null — maps null → 0.
+    internal class NullableIntConverter : JsonConverter<int>
+    {
+        public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Null) return 0;
+            return reader.GetInt32();
+        }
+        public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
+            => writer.WriteNumberValue(value);
+    }
+
+    // Handles JSON decimal fields that the API may return as null — maps null → 0.
+    internal class NullableDecimalConverter : JsonConverter<decimal>
+    {
+        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.Null) return 0m;
+            return reader.GetDecimal();
+        }
+        public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+            => writer.WriteNumberValue(value);
+    }
+
+
     public class Article
     {
         [JsonPropertyName("articleId")]
         public int ArticleID { get; set; }
 
         [JsonPropertyName("quantite")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int Quantite { get; set; }
 
         [JsonPropertyName("prixAchat")]
+        [JsonConverter(typeof(NullableDecimalConverter))]
         public decimal PrixAchat { get; set; }
 
         [JsonPropertyName("prixVente")]
+        [JsonConverter(typeof(NullableDecimalConverter))]
         public decimal PrixVente { get; set; }
 
         [JsonPropertyName("prixGros")]
+        [JsonConverter(typeof(NullableDecimalConverter))]
         public decimal PrixGros { get; set; }
 
         // PrixMP is not returned by the API — keep locally defaulted
         public decimal PrixMP { get; set; }
 
         [JsonPropertyName("famillyId")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int FamillyID { get; set; }
         [JsonPropertyName("code")]
         public string Code { get; set; }
@@ -47,6 +78,7 @@ namespace GestionComerce
         public string marque { get; set; }
 
         [JsonPropertyName("tva")]
+        [JsonConverter(typeof(NullableDecimalConverter))]
         public decimal tva { get; set; }
 
         public string numeroLot { get; set; }
@@ -100,15 +132,21 @@ namespace GestionComerce
         public bool IsUnlimitedStock { get; set; }
 
         // Packaging — kept for local display; not all returned by API
+        [JsonPropertyName("piecesPerPackage")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int PiecesPerPackage { get; set; }
         public string PackageType { get; set; }
+        [JsonPropertyName("packageWeight")]
+        [JsonConverter(typeof(NullableDecimalConverter))]
         public decimal PackageWeight { get; set; }
         public string PackageDimensions { get; set; }
 
         [JsonPropertyName("minimumStock")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int MinimumStock { get; set; }
 
         [JsonPropertyName("maximumStock")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int MaximumStock { get; set; }
 
         [JsonPropertyName("storageLocation")]
@@ -125,6 +163,8 @@ namespace GestionComerce
         [JsonPropertyName("unitOfMeasure")]
         public string UnitOfMeasure { get; set; }
 
+        [JsonPropertyName("minQuantityForGros")]
+        [JsonConverter(typeof(NullableIntConverter))]
         public int MinQuantityForGros { get; set; }
         public string CountryOfOrigin { get; set; }
         public string Manufacturer { get; set; }
@@ -132,7 +172,7 @@ namespace GestionComerce
         public string Notes { get; set; }
 
         [JsonPropertyName("fournisseurId")]
-        public int FournisseurID { get; set; }
+        public int? FournisseurID { get; set; }
 
         private static readonly string BaseUrl = "http://localhost:5050/api/inventory/articles";
 
@@ -200,7 +240,8 @@ namespace GestionComerce
                 var payload = BuildPayload();
                 var response = await MainWindow.ApiClient.PutAsJsonAsync($"{BaseUrl}/{this.ArticleID}", payload);
                 if (response.IsSuccessStatusCode) return 1;
-                MessageBox.Show($"Article not updated. Status: {response.StatusCode}");
+                string body = await response.Content.ReadAsStringAsync();
+                MessageBox.Show($"Article not updated. Status: {response.StatusCode}\n{body}");
                 return 0;
             }
             catch (Exception err)
@@ -254,7 +295,7 @@ namespace GestionComerce
             prixVente = this.PrixVente,
             prixGros = this.PrixGros,
             quantite = this.Quantite,
-            famillyId = this.FamillyID,
+            famillyId = this.FamillyID == 0 ? (int?)null : this.FamillyID,
             code = this.Code ?? string.Empty,
             tva = this.tva,
             marque = this.marque ?? string.Empty,

@@ -64,6 +64,9 @@ namespace GestionComerce
                 return;
             }
 
+            // CHECK 3b: Add any missing columns (safe to run every startup)
+            DatabaseSetup.EnsureColumns();
+
             // ─── APPLY SAVED LANGUAGE BEFORE ANYTHING IS SHOWN ───────────────
             ApplyLanguage(GestionComerce.Properties.Settings.Default.AppLanguage);
             // ─────────────────────────────────────────────────────────────────
