@@ -190,16 +190,6 @@ namespace GestionComerce.Main.Settings
             SetSectionCheckboxes(OperationsSection, false);
         }
 
-        private void ActiverManagement_Click(object sender, RoutedEventArgs e)
-        {
-            SetSectionCheckboxes(ManagementSection, true);
-        }
-
-        private void DesactiverManagement_Click(object sender, RoutedEventArgs e)
-        {
-            SetSectionCheckboxes(ManagementSection, false);
-        }
-
         private void ActiverUsers_Click(object sender, RoutedEventArgs e)
         {
             SetSectionCheckboxes(UsersSection, true);

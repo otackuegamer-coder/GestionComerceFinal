@@ -80,8 +80,120 @@
             </Grid>
         </Border>
 
-        <!-- ══ MAIN CONTENT ══ -->
-        <Grid x:Name="MainGrid"/>
+        <!-- ══ UPDATE NOTIFICATION BANNER ══ -->
+        <Border x:Name="UpdateBanner"
+                DockPanel.Dock="Top"
+                Height="0"
+                Background="#2563EB"
+                Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="UpdateBannerMessage"
+                           Grid.Column="0"
+                           Text="Une nouvelle version est disponible."
+                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                           Foreground="White" VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+                <Button x:Name="UpdateNowBtn"
+                        Grid.Column="1"
+                        Content="Mettre à jour"
+                        Background="White" Foreground="#2563EB"
+                        FontSize="12" FontWeight="Bold"
+                        Padding="12,4" Margin="8,0"
+                        Cursor="Hand" BorderThickness="0"
+                        VerticalAlignment="Center"
+                        Click="UpdateNowBtn_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#EFF6FF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="UpdateLaterBtn"
+                        Grid.Column="2"
+                        Content="Plus tard"
+                        Background="Transparent" Foreground="White"
+                        FontSize="12" Padding="12,4" Margin="0,0,8,0"
+                        Cursor="Hand" BorderThickness="0"
+                        VerticalAlignment="Center"
+                        Click="UpdateLaterBtn_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#26FFFFFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ══ MAIN CONTENT + DOWNLOAD OVERLAY ══ -->
+        <Grid>
+            <Grid x:Name="MainGrid"/>
+
+            <!-- Update download overlay — shown during active download -->
+            <Border x:Name="UpdateOverlay"
+                    Visibility="Collapsed"
+                    Background="#B3000000">
+                <Border Background="White" CornerRadius="12" Padding="40"
+                        Width="420" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="40" ShadowDepth="0" Opacity="0.25" Color="#000000"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Mise à jour en cours"
+                                   FontSize="20" FontWeight="Bold" Foreground="#1E293B"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock x:Name="UpdateStatusText"
+                                   Text="Téléchargement…"
+                                   FontSize="13" Foreground="#64748B"
+                                   Margin="0,0,0,20"/>
+                        <ProgressBar x:Name="UpdateProgressBar"
+                                     Minimum="0" Maximum="100" Value="0"
+                                     Height="8" Background="#E2E8F0"
+                                     Foreground="#2563EB"
+                                     BorderThickness="0"
+                                     Margin="0,0,0,10"/>
+                        <TextBlock x:Name="UpdateProgressText"
+                                   Text="0 %"
+                                   FontSize="12" Foreground="#94A3B8"
+                                   HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Grid>
 
     </DockPanel>
 </Window>

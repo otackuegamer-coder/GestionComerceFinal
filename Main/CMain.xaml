@@ -340,7 +340,7 @@
                                    Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="220" TextAlignment="Center"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="4" Margin="12">
+                    <StackPanel x:Name="AccountabilityPanel" Grid.Row="0" Grid.Column="4" Margin="12">
                         <Button Style="{StaticResource ModuleButtonStyle}" Name="AccountabilityBtn" Click="AccountabilityBtn_Click">
                             <Button.Background>
                                 <ImageBrush ImageSource="images/accounting.png" Stretch="Uniform"/>

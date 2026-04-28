@@ -401,6 +401,36 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- Check for Updates -->
+                    <Border Style="{StaticResource ModernCard}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="&#xE895;" Style="{StaticResource IconText}" Foreground="#2563EB"/>
+                                <TextBlock Grid.Column="1" Text="Mises à jour" Style="{StaticResource SectionTitle}"/>
+                            </Grid>
+                            <TextBlock Style="{StaticResource SectionDescription}"
+                                       Text="Vérifiez si une nouvelle version de l'application est disponible."/>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <Button x:Name="BtnCheckUpdate"
+                                        Content="Vérifier les mises à jour"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Width="220"
+                                        Click="BtnCheckUpdate_Click"/>
+                                <TextBlock x:Name="TxtUpdateStatus"
+                                           VerticalAlignment="Center"
+                                           Margin="16,0,0,0"
+                                           FontSize="13"
+                                           Foreground="#6B7280"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="360"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Icon Size -->
                     <Border x:Name="TailleIconesBorder" Style="{StaticResource ModernCard}">
                         <StackPanel>

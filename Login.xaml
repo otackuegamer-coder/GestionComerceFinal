@@ -235,22 +235,25 @@
                         <!-- ── 3 NEW INPUTS ── -->
                         <StackPanel Width="380" HorizontalAlignment="Left" Margin="0,0,0,10">
 
-                            <!-- Username -->
-                            <TextBlock Text="Username"
-                                       FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="#374151" Margin="0,0,0,8"/>
-                            <TextBox x:Name="UsernameInput"
-                                     Style="{StaticResource ModernTextBoxStyle}"
-                                     MaxLength="64"/>
+                            <!-- Subscription credentials — hidden in OTC (one-time-buy) mode -->
+                            <StackPanel x:Name="SubscriptionFieldsPanel">
+                                <!-- Username -->
+                                <TextBlock Text="Username"
+                                           FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="#374151" Margin="0,0,0,8"/>
+                                <TextBox x:Name="UsernameInput"
+                                         Style="{StaticResource ModernTextBoxStyle}"
+                                         MaxLength="64"/>
 
-                            <!-- Password -->
-                            <TextBlock Text="Password"
-                                       FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
-                                       Foreground="#374151" Margin="0,16,0,8"/>
-                            <PasswordBox x:Name="UserPasswordInput"
-                                         Style="{StaticResource ModernPasswordBoxStyle}"/>
+                                <!-- Password -->
+                                <TextBlock Text="Password"
+                                           FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="#374151" Margin="0,16,0,8"/>
+                                <PasswordBox x:Name="UserPasswordInput"
+                                             Style="{StaticResource ModernPasswordBoxStyle}"/>
+                            </StackPanel>
 
-                            <!-- App Username -->
+                            <!-- App Username — always visible -->
                             <TextBlock Text="App Username"
                                        FontFamily="Segoe UI" FontSize="14" FontWeight="SemiBold"
                                        Foreground="#374151" Margin="0,16,0,8"/>

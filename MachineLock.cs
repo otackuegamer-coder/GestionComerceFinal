@@ -188,6 +188,11 @@ namespace GestionComerce
             }
         }
 
+        public static string GetHardwareId()
+        {
+            return GetHardwareFingerprint();
+        }
+
         public static bool RegisterInstallation()
         {
             try

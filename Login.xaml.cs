@@ -27,6 +27,10 @@ namespace GestionComerce
             InitializeComponent();
             this.main = main;
 
+            // OTC installs have no subscription account — hide those fields entirely
+            if (ClientConfig.IsOtcMode)
+                SubscriptionFieldsPanel.Visibility = System.Windows.Visibility.Collapsed;
+
             Btn0.Click += NumericButton_Click;
             Btn1.Click += NumericButton_Click;
             Btn2.Click += NumericButton_Click;
@@ -100,18 +104,22 @@ namespace GestionComerce
 
         private async void BtnEnter_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameInput.Text.Trim();
-            string password = UserPasswordInput.Password.Trim();
+            bool isOtc = ClientConfig.IsOtcMode;
+
+            // OTC installs have no subscription account — pass empty strings so the
+            // server-side OTC path ignores them. Non-OTC installs validate all four.
+            string username    = isOtc ? "_otc_" : UsernameInput.Text.Trim();
+            string password    = isOtc ? "_otc_" : UserPasswordInput.Password.Trim();
             string appUserName = AppUsernameInput.Text.Trim();
-            string pin = PasswordInput.Password;
+            string pin         = PasswordInput.Password;
 
             // ── basic field validation ─────────────────────────────────────────
-            if (string.IsNullOrEmpty(username))
+            if (!isOtc && string.IsNullOrEmpty(username))
             {
                 MessageBox.Show("Veuillez entrer un nom d'utilisateur.");
                 return;
             }
-            if (string.IsNullOrEmpty(password))
+            if (!isOtc && string.IsNullOrEmpty(password))
             {
                 MessageBox.Show("Veuillez entrer un mot de passe.");
                 return;

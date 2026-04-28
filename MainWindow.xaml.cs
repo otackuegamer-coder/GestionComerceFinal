@@ -44,6 +44,38 @@ namespace GestionComerce
 
         public MainWindow()
         {
+            // STEP 0: Registration pass — run once silently by the installer
+            var args = System.Environment.GetCommandLineArgs();
+            if (args.Length > 1 && args[1] == "--register")
+            {
+                bool allowLocal = true; // default: register locally (offline fallback)
+                if (ClientConfig.IsConfigured)
+                {
+                    try
+                    {
+                        var machineId = MachineLock.GetHardwareId();
+                        var body = string.Format(
+                            "{{\"clientId\":\"{0}\",\"machineId\":\"{1}\"}}",
+                            ClientConfig.ClientId, machineId);
+                        using (var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) })
+                        {
+                            var content = new StringContent(body, Encoding.UTF8, "application/json");
+                            var url = ClientConfig.ManagementApiBaseUrl + "/api/updates/activate";
+                            var resp = http.PostAsync(url, content).GetAwaiter().GetResult();
+                            if ((int)resp.StatusCode == 403)
+                                allowLocal = false; // already bound to a different machine
+                        }
+                    }
+                    catch { } // network unreachable → allow local registration (offline install)
+                }
+
+                if (allowLocal)
+                    try { MachineLock.RegisterInstallation(); } catch { }
+
+                Environment.Exit(0);
+                return;
+            }
+
             // STEP 1: Check if running on authorized machine
             if (!MachineLock.ValidateInstallation())
             {
@@ -261,6 +293,9 @@ namespace GestionComerce
                 mainPage.Margin = new Thickness(0);
                 MainGrid.Children.Add(mainPage);
 
+                // Silent background update check — fires and forgets, never blocks UI
+                CheckForUpdateSilentAsync();
+
                 var app = Application.Current as App;
                 if (app != null)
                 {
@@ -380,6 +415,129 @@ namespace GestionComerce
         {
             Main.Delivery.CLivraison livraison = new Main.Delivery.CLivraison(this, u);
             MainGrid.Children.Add(livraison);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // UPDATE SYSTEM
+        // ─────────────────────────────────────────────────────────────────────
+
+        // Cached result from the last check, used by "Update Now" click
+        private UpdateCheckResult _pendingUpdate;
+
+        /// <summary>
+        /// Called once after load_main completes — runs silently in background.
+        /// Any error is swallowed; the UI is never blocked.
+        /// </summary>
+        public async void CheckForUpdateSilentAsync()
+        {
+            var result = await UpdateService.CheckAsync();
+            if (result == null || !result.HasUpdate) return;
+
+            _pendingUpdate = result;
+            Dispatcher.Invoke(() => ShowUpdateBanner(result.Version ?? ""));
+        }
+
+        /// <summary>
+        /// Called from the Preferences page "Check for Updates" button.
+        /// Returns a user-visible message string.
+        /// </summary>
+        public async Task<string> CheckForUpdateManualAsync()
+        {
+            if (!ClientConfig.IsConfigured)
+                return "Aucun identifiant client configuré pour cette installation.";
+
+            // Test reachability first
+            try
+            {
+                using (var probe = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(5) })
+                {
+                    await probe.GetAsync(ClientConfig.ManagementApiBaseUrl + "/api/updates/check?clientId=probe");
+                }
+            }
+            catch
+            {
+                return "Pas de connexion Internet. Vérifiez votre réseau et réessayez.";
+            }
+
+            var result = await UpdateService.CheckAsync();
+            if (result == null)
+                return "Impossible de contacter le serveur de mise à jour.";
+
+            if (!result.HasUpdate)
+                return "Vous utilisez déjà la dernière version.";
+
+            _pendingUpdate = result;
+            ShowUpdateBanner(result.Version ?? "");
+            return string.Format("Version {0} disponible.", result.Version);
+        }
+
+        private void ShowUpdateBanner(string version)
+        {
+            UpdateBannerMessage.Text = string.Format(
+                "Version {0} disponible — Mettez à jour dès maintenant.", version);
+            UpdateBanner.Visibility = Visibility.Visible;
+            var anim = new DoubleAnimation(0, 44, TimeSpan.FromMilliseconds(200));
+            UpdateBanner.BeginAnimation(HeightProperty, anim);
+        }
+
+        private void HideUpdateBanner()
+        {
+            var anim = new DoubleAnimation(44, 0, TimeSpan.FromMilliseconds(200));
+            anim.Completed += (_, __) => UpdateBanner.Visibility = Visibility.Collapsed;
+            UpdateBanner.BeginAnimation(HeightProperty, anim);
+        }
+
+        private void UpdateLaterBtn_Click(object sender, RoutedEventArgs e)
+            => HideUpdateBanner();
+
+        private async void UpdateNowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (_pendingUpdate == null || _pendingUpdate.DownloadUrl == null) return;
+            HideUpdateBanner();
+            await StartUpdateDownloadAsync(_pendingUpdate.DownloadUrl,
+                                           _pendingUpdate.Version ?? "");
+        }
+
+        // Also callable from the Preferences page after a manual check
+        public async Task StartUpdateDownloadAsync(string downloadUrl, string version)
+        {
+            UpdateOverlay.Visibility = Visibility.Visible;
+            UpdateStatusText.Text    = string.Format("Téléchargement de la version {0}…", version);
+            UpdateProgressBar.Value  = 0;
+            UpdateProgressText.Text  = "0 %";
+
+            try
+            {
+                var progress = new Progress<int>(pct =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        UpdateProgressBar.Value = pct;
+                        UpdateProgressText.Text = pct + " %";
+                    });
+                });
+
+                var path = await UpdateService.DownloadAsync(downloadUrl, progress);
+
+                UpdateStatusText.Text   = "Téléchargement terminé. Installation en cours…";
+                UpdateProgressBar.Value = 100;
+                UpdateProgressText.Text = "100 %";
+
+                // Small pause so user sees the 100% message
+                await Task.Delay(1200);
+
+                // Uninstall old version + install new version silently, then exit
+                UpdateService.InstallAndRestart(path);
+            }
+            catch (Exception ex)
+            {
+                UpdateOverlay.Visibility = Visibility.Collapsed;
+                MessageBox.Show(
+                    string.Format("Échec du téléchargement :\n{0}", ex.Message),
+                    "Mise à jour",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

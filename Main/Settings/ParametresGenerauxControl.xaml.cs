@@ -267,6 +267,36 @@ namespace Superete.Main.Settings
             ChargerParametres();
         }
 
+        private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            BtnCheckUpdate.IsEnabled = false;
+            TxtUpdateStatus.Text     = "Vérification en cours…";
+            TxtUpdateStatus.Foreground = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#6B7280"));
+
+            try
+            {
+                var main = Application.Current.MainWindow as GestionComerce.MainWindow;
+                string msg = main != null
+                    ? await main.CheckForUpdateManualAsync()
+                    : "Erreur interne.";
+
+                bool isUpdate = msg.Contains("disponible");
+                TxtUpdateStatus.Text = msg;
+                TxtUpdateStatus.Foreground = new System.Windows.Media.SolidColorBrush(
+                    (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
+                        isUpdate ? "#2563EB" : "#6B7280"));
+            }
+            catch (Exception ex)
+            {
+                TxtUpdateStatus.Text = "Erreur : " + ex.Message;
+            }
+            finally
+            {
+                BtnCheckUpdate.IsEnabled = true;
+            }
+        }
+
         public ParametresGeneraux ObtenirParametres() => _parametresActuels;
 
         private void CbLangue_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -216,11 +216,15 @@
                             </Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                                 <CheckBox x:Name="ViewClientsPage" Content="{x:Static res:Resources.Perm_ClientsPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
                                 <CheckBox x:Name="ViewFournisseurPage" Content="{x:Static res:Resources.Perm_SuppliersPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
                                 <CheckBox x:Name="ViewInventory" Content="{x:Static res:Resources.Perm_InventoryPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
                                 <CheckBox x:Name="ViewVente" Content="{x:Static res:Resources.Perm_SalesPage}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="AccessFacturation" Content="{x:Static res:Resources.Perm_AccessInvoicing}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10" Checked="AccessFacturation_Checked" Unchecked="AccessFacturation_Unchecked"/>
+                                <CheckBox x:Name="AccessLivraison" Content="{x:Static res:Resources.Perm_AccessDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="2" Margin="0,0,0,10" Checked="AccessLivraison_Checked" Unchecked="AccessLivraison_Unchecked"/>
+                                <CheckBox x:Name="ViewProjectManagment" Content="{x:Static res:Resources.Perm_ViewProjMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="3" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="ViewSettings" Content="{x:Static res:Resources.Perm_ViewSettings}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="3" Margin="0,0,0,10"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -290,25 +294,6 @@
                                 <CheckBox x:Name="ReverseMouvment" Content="{x:Static res:Resources.Perm_ReverseMove}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
                                 <CheckBox x:Name="ViewOperation" Content="{x:Static res:Resources.Perm_ViewOps}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
                                 <CheckBox x:Name="ViewMouvment" Content="{x:Static res:Resources.Perm_ViewMoves}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Management & Settings -->
-                    <Border x:Name="ManagementSection" Style="{StaticResource RoleSectionStyle}">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,12">
-                                <TextBlock Text="{x:Static res:Resources.Perm_Management}" FontWeight="SemiBold" FontSize="15" Foreground="#1F2937" VerticalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button Content="{x:Static res:Resources.Perm_Activate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#10B981" Foreground="White" Margin="0,0,4,0" Click="ActiverManagement_Click"/>
-                                    <Button Content="{x:Static res:Resources.Perm_Deactivate}" Style="{StaticResource SmallToggleButtonStyle}" Background="#EF4444" Foreground="White" Click="DesactiverManagement_Click"/>
-                                </StackPanel>
-                            </Grid>
-                            <Grid>
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <CheckBox x:Name="ViewProjectManagment" Content="{x:Static res:Resources.Perm_ViewProjMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
-                                <CheckBox x:Name="ViewSettings" Content="{x:Static res:Resources.Perm_ViewSettings}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -470,12 +455,11 @@
                             </Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <CheckBox x:Name="AccessFacturation" Content="{x:Static res:Resources.Perm_AccessInvoicing}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" Checked="AccessFacturation_Checked" Unchecked="AccessFacturation_Unchecked"/>
-                                <CheckBox x:Name="CreateFacture" Content="{x:Static res:Resources.Perm_CreateInvoice}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
-                                <CheckBox x:Name="HistoriqueFacture" Content="{x:Static res:Resources.Perm_InvoiceHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
-                                <CheckBox x:Name="HistoryCheck" Content="{x:Static res:Resources.Perm_CheckHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
-                                <CheckBox x:Name="FactureEnregistrees" Content="{x:Static res:Resources.Perm_SavedInvoices}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="2" Margin="0,0,0,10"/>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="CreateFacture" Content="{x:Static res:Resources.Perm_CreateInvoice}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="HistoriqueFacture" Content="{x:Static res:Resources.Perm_InvoiceHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="HistoryCheck" Content="{x:Static res:Resources.Perm_CheckHistory}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="FactureEnregistrees" Content="{x:Static res:Resources.Perm_SavedInvoices}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -492,10 +476,9 @@
                             </Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <CheckBox x:Name="AccessLivraison" Content="{x:Static res:Resources.Perm_AccessDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" Checked="AccessLivraison_Checked" Unchecked="AccessLivraison_Unchecked"/>
-                                <CheckBox x:Name="CreationLivraison" Content="{x:Static res:Resources.Perm_CreateDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
-                                <CheckBox x:Name="GestionLivreur" Content="{x:Static res:Resources.Perm_DeliveryMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="1" Margin="0,0,0,10"/>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <CheckBox x:Name="CreationLivraison" Content="{x:Static res:Resources.Perm_CreateDelivery}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10"/>
+                                <CheckBox x:Name="GestionLivreur" Content="{x:Static res:Resources.Perm_DeliveryMgmt}" Style="{StaticResource ModernCheckBoxStyle}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,10"/>
                             </Grid>
                         </StackPanel>
                     </Border>

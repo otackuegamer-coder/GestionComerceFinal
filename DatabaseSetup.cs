@@ -7,9 +7,16 @@ namespace Superete
 {
     public static class DatabaseSetup
     {
-        private const string DATABASE_NAME = "GESTIONCOMERCE";
-        private const string MASTER_CONNECTION ="Server=localhost\\SQLEXPRESS;Database=GESTIONCOMERCEP;Trusted_Connection=True;";
-        private const string APP_CONNECTION = "Server=localhost\\SQLEXPRESS;Database=GESTIONCOMERCEP;Trusted_Connection=True;";
+        private const string DATABASE_NAME = "GESTIONCOMERCEP";
+
+        // Detected at first call — null until IsSqlServerAvailable() succeeds
+        private static string _detectedServer = null;
+
+        private static string MasterConnection =>
+            $"Server={_detectedServer ?? "localhost\\SQLEXPRESS"};Database=master;Trusted_Connection=True;Connection Timeout=5;";
+
+        private static string AppConnection =>
+            $"Server={_detectedServer ?? "localhost\\SQLEXPRESS"};Database={DATABASE_NAME};Trusted_Connection=True;Connection Timeout=5;";
 
         /// <summary>
         /// Checks if database exists and creates it if not
@@ -33,32 +40,21 @@ namespace Superete
                     return false;
                 }
 
-                // Check if database exists
+                // Check if database exists — create if missing
                 if (!DatabaseExists())
                 {
-                    // Try to restore from backup
-                    if (RestoreDatabaseFromBackup())
+                    if (!RestoreDatabaseFromBackup() && !CreateEmptyDatabase())
                     {
-                        MessageBox.Show("Database setup completed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        return true;
-                    }
-                    else
-                    {
-                        // If backup restore fails, create empty database
-                        if (CreateEmptyDatabase())
-                        {
-                            MessageBox.Show("Database created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                            return true;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Failed to setup database. Please contact support.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return false;
-                        }
+                        MessageBox.Show("Failed to setup database. Please contact support.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return false;
                     }
                 }
 
-                return true; // Database already exists
+                // Check if tables exist — run init_db.sql if the DB is empty (sqlcmd may have failed)
+                if (!TablesExist())
+                    RunInitScript();
+
+                return true;
             }
             catch (Exception ex)
             {
@@ -69,37 +65,127 @@ namespace Superete
 
         private static bool IsSqlServerAvailable()
         {
-            try
+            // Try common SQL Server instance names in order
+            string[] candidates =
             {
-                using (SqlConnection conn = new SqlConnection(MASTER_CONNECTION))
+                "localhost\\SQLEXPRESS",
+                "localhost",
+                "(local)\\SQLEXPRESS",
+                "(local)",
+                ".\\SQLEXPRESS",
+                ".",
+            };
+
+            foreach (var server in candidates)
+            {
+                try
                 {
-                    conn.Open();
-                    return true;
+                    var cs = $"Server={server};Database=master;Trusted_Connection=True;Connection Timeout=3;";
+                    using (var conn = new SqlConnection(cs))
+                    {
+                        conn.Open();
+                        _detectedServer = server;
+                        return true;
+                    }
                 }
+                catch { }
             }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
 
         private static bool DatabaseExists()
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(MASTER_CONNECTION))
+                using (var conn = new SqlConnection(MasterConnection))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand($"SELECT database_id FROM sys.databases WHERE Name = '{DATABASE_NAME}'", conn))
+                    using (var cmd = new SqlCommand(
+                        $"SELECT database_id FROM sys.databases WHERE Name = '{DATABASE_NAME}'", conn))
+                        return cmd.ExecuteScalar() != null;
+                }
+            }
+            catch { return false; }
+        }
+
+        private static bool TablesExist()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(AppConnection))
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand(
+                        "SELECT COUNT(1) FROM sys.tables WHERE type='U'", conn))
+                        return (int)cmd.ExecuteScalar() > 0;
+                }
+            }
+            catch { return false; }
+        }
+
+        // All permissions = 1, used on dev machine where init_db.sql still has the placeholder.
+        // Count must match the 64 columns in the Role INSERT in init_db.sql.
+        private const string AllPermissions =
+            "1,1,1,1,1,1," + // CreateClient..ViewClient
+            "1,1,1,1,1,1," + // CreateFournisseur..ViewFournisseur
+            "1,1,1,1,"      + // ReverseOperation..ViewMouvment
+            "1,"            + // ViewProjectManagment
+            "1,1,1,1,1,"   + // ViewSettings..AddUsers
+            "1,1,1,"        + // ViewRoles..DeleteRoles
+            "1,1,1,1,"      + // ViewFamilly..AddFamilly
+            "1,1,1,1,"      + // AddArticle..ViewArticle
+            "1,1,1,1,"      + // Repport,Ticket,SolderFournisseur,SolderClient
+            "1,1,1,"        + // ViewFactureSettings,ModifyFactureSettings,ViewFacture
+            "1,1,1,1,"      + // ViewPaymentMethod..DeletePaymentMethod
+            "1,1,1,1,"      + // ViewApropos..ViewShutDown
+            "1,1,1,1,"      + // ViewClientsPage..ViewVente
+            "1,1,1,1,"      + // CashClient,ViewCreditClient,ViewCreditFournisseur,CashFournisseur
+            "1,1,1,1,1,"   + // AccessFacturation..FactureEnregistrees
+            "1,1,1";          // AccessLivraison,CreationLivraison,GestionLivreur
+
+        // Runs init_db.sql (deployed alongside the exe by the installer).
+        // Splits by GO so SqlCommand can execute each batch independently.
+        private static void RunInitScript()
+        {
+            try
+            {
+                var scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "init_db.sql");
+                if (!File.Exists(scriptPath)) return;
+
+                var script = File.ReadAllText(scriptPath, System.Text.Encoding.UTF8);
+                // Replace placeholder with all-1s when running on dev machine
+                // (installed clients get the processed version from the installer)
+                script = script.Replace("{{ROLE_PERMISSION_VALUES}}", AllPermissions);
+
+                // Split batches on GO lines (case-insensitive, any surrounding whitespace)
+                var batches = System.Text.RegularExpressions.Regex.Split(
+                    script, @"^\s*GO\s*$",
+                    System.Text.RegularExpressions.RegexOptions.Multiline |
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                // Use master connection so USE statements in the script work
+                using (var conn = new SqlConnection(MasterConnection))
+                {
+                    conn.Open();
+                    foreach (var batch in batches)
                     {
-                        object result = cmd.ExecuteScalar();
-                        return result != null;
+                        var sql = batch.Trim();
+                        if (string.IsNullOrWhiteSpace(sql)) continue;
+                        try
+                        {
+                            using (var cmd = new SqlCommand(sql, conn) { CommandTimeout = 120 })
+                                cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[RunInitScript] batch failed: {ex.Message}");
+                        }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                System.Diagnostics.Debug.WriteLine($"[RunInitScript] error: {ex.Message}");
             }
         }
 
@@ -115,7 +201,7 @@ namespace Superete
                     return false; // No backup file found
                 }
 
-                using (SqlConnection conn = new SqlConnection(MASTER_CONNECTION))
+                using (SqlConnection conn = new SqlConnection(MasterConnection))
                 {
                     conn.Open();
 
@@ -173,7 +259,7 @@ namespace Superete
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(MASTER_CONNECTION))
+                using (SqlConnection conn = new SqlConnection(MasterConnection))
                 {
                     conn.Open();
                     string createDb = $"CREATE DATABASE [{DATABASE_NAME}]";
@@ -254,7 +340,7 @@ namespace Superete
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(APP_CONNECTION))
+                using (SqlConnection conn = new SqlConnection(AppConnection))
                 {
                     conn.Open();
                     string[] migrations = new[]
@@ -400,6 +486,24 @@ namespace Superete
                             SELECT 1 FROM sys.columns
                             WHERE object_id = OBJECT_ID('Article') AND name = 'FournisseurID')
                           ALTER TABLE Article ADD FournisseurID INT NULL",
+
+                        // Livraison table — add columns that may be missing from older schema versions
+                        @"IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='Etat')
+                          ALTER TABLE Livraison ADD Etat BIT NULL DEFAULT 1",
+
+                        @"IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='DateCreation')
+                          ALTER TABLE Livraison ADD DateCreation DATETIME NULL DEFAULT GETDATE()",
+
+                        @"IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='DateCommande')
+                          ALTER TABLE Livraison ADD DateCommande DATETIME NULL DEFAULT GETDATE()",
+
+                        @"IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='PaiementStatut')
+                          ALTER TABLE Livraison ADD PaiementStatut NVARCHAR(50) NULL DEFAULT 'non_paye'",
+
+                        @"IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='TotalCommande')
+                          ALTER TABLE Livraison ADD TotalCommande DECIMAL(10,2) NOT NULL DEFAULT 0",
+
+                        @"UPDATE Livraison SET Etat=1 WHERE Etat IS NULL",
 
                         // Article.FournisseurID — make nullable so null supplier doesn't violate NOT NULL.
                         // The DROP + re-add of FK is needed on SQL Server if a FK constraint exists on this column.

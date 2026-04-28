@@ -86,6 +86,44 @@ namespace GestionComerce.Main
                     }
                 }
             }
+
+            // ── Client licence: hide pages not purchased ──────────────────────
+            try
+            {
+                var _dbgDir = AppDomain.CurrentDomain.BaseDirectory;
+                var _dbgJson = System.IO.Path.Combine(_dbgDir, "client.json");
+                var _jsonRaw = System.IO.File.Exists(_dbgJson)
+                    ? System.IO.File.ReadAllText(_dbgJson)
+                    : "(not found)";
+                var _regGuid = Microsoft.Win32.Registry.GetValue(
+                    @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography",
+                    "MachineGuid", "") as string ?? "";
+                System.IO.File.WriteAllText(@"C:\zenix_debug.txt",
+                    "BaseDir=" + _dbgDir + "\r\n" +
+                    "JsonPath=" + _dbgJson + "\r\n" +
+                    "JsonExists=" + System.IO.File.Exists(_dbgJson) + "\r\n" +
+                    "JsonRaw=" + _jsonRaw + "\r\n" +
+                    "RegistryMachineGuid=" + _regGuid + "\r\n" +
+                    "IsConfigured=" + ClientConfig.IsConfigured + "\r\n" +
+                    "ClientId=" + ClientConfig.ClientId + "\r\n" +
+                    "Pages=" + string.Join(",", ClientConfig.AllowedPages) + "\r\n");
+            }
+            catch { }
+
+            // Always restrict — AllowedPages returns [] when client.json is missing,
+            // tampered, or bound to a different machine. Only falls back to all pages in dev.
+            var allowed = new System.Collections.Generic.HashSet<string>(
+                ClientConfig.AllowedPages, StringComparer.OrdinalIgnoreCase);
+
+            if (!allowed.Contains("Vente"))          { VenteBtn.IsEnabled = false;            SetButtonGrayedOut(VenteBtn);            VenteBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Facturation"))    { FacturationBtn.IsEnabled = false;       SetButtonGrayedOut(FacturationBtn);       FacturationBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Inventaire"))     { InventoryBtn.IsEnabled = false;         SetButtonGrayedOut(InventoryBtn);         InventoryBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Clients"))        { ClientBtn.IsEnabled = false;            SetButtonGrayedOut(ClientBtn);            ClientBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Fournisseurs"))   { FournisseurBtn.IsEnabled = false;       SetButtonGrayedOut(FournisseurBtn);       FournisseurBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Livraison"))      { LivraisonBtn.IsEnabled = false;         SetButtonGrayedOut(LivraisonBtn);         LivraisonBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Comptabilité"))   { AccountabilityBtn.IsEnabled = false;    SetButtonGrayedOut(AccountabilityBtn);    AccountabilityBtn.Visibility = Visibility.Collapsed; AccountabilityPanel.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Projets"))        { ProjectManagmentBtn.IsEnabled = false;  SetButtonGrayedOut(ProjectManagmentBtn);  ProjectManagmentBtn.Visibility = Visibility.Collapsed; }
+            if (!allowed.Contains("Paramètres"))     { SettingsBtn.IsEnabled = false;          SetButtonGrayedOut(SettingsBtn);          SettingsBtn.Visibility = Visibility.Collapsed; }
         }
 
         // Helper method to set button appearance when disabled
