@@ -29,7 +29,7 @@ namespace GestionComerce
         // Computed (unchanged)
         public string NomComplet { get { return string.Format("{0} {1}", Prenom, Nom); } }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/livreurs";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/livreurs";
 
         // GET all livreurs (actifSeulement has no matching API filter — API returns all, filter client-side)
         public async Task<List<Livreur>> GetLivreursAsync(bool actifSeulement = true)
@@ -152,7 +152,7 @@ namespace GestionComerce
         {
             try
             {
-                var url = string.Format("http://localhost:5050/api/livraisons?livreurId={0}", this.LivreurID);
+                var url = string.Format(ApiConfig.BaseUrl + "/api/livraisons?livreurId={0}", this.LivreurID);
                 if (!string.IsNullOrWhiteSpace(statutFilter))
                     url += string.Format("&statut={0}", Uri.EscapeDataString(statutFilter));
                 return await MainWindow.ApiClient.GetFromJsonAsync<List<Livraison>>(url)

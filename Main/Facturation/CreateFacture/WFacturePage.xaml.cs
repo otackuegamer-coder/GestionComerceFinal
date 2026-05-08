@@ -225,7 +225,7 @@ namespace GestionComerce.Main.Facturation.CreateFacture
             }
 
             StackPanel footerPanel = CreateFooterPanel();
-            Canvas.SetTop(footerPanel, isCheckType ? 680 : 980);
+            Canvas.SetTop(footerPanel, isCheckType ? 680 : 962);
             mainCanvas.Children.Add(footerPanel);
             PopulateFooterData(footerPanel);
 
@@ -1910,26 +1910,27 @@ namespace GestionComerce.Main.Facturation.CreateFacture
 
                     foreach (Canvas canvas in allCanvases)
                     {
+                        double canvasH = canvas.Height > 0 ? canvas.Height : 1050;
                         FixedPage fixedPage = new FixedPage
                         {
                             Width = 720,
-                            Height = 1000,
+                            Height = canvasH,
                             Background = Brushes.White
                         };
 
-                        canvas.Measure(new Size(720, 1000));
-                        canvas.Arrange(new Rect(0, 0, 720, 1000));
+                        canvas.Measure(new Size(720, canvasH));
+                        canvas.Arrange(new Rect(0, 0, 720, canvasH));
                         canvas.UpdateLayout();
 
                         RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
-                            720, 1000, 96d, 96d, PixelFormats.Pbgra32);
+                            720, (int)canvasH, 96d, 96d, PixelFormats.Pbgra32);
                         renderBitmap.Render(canvas);
 
                         Image img = new Image
                         {
                             Source = renderBitmap,
                             Width = 720,
-                            Height = 1000,
+                            Height = canvasH,
                             Stretch = Stretch.Fill
                         };
                         fixedPage.Children.Add(img);

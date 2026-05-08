@@ -138,7 +138,7 @@ namespace GestionComerce
             TotalAfterRemise = TotalTTC - Remise;
         }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/facture/invoices";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/facture/invoices";
 
         // ── CREATE ────────────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@
         xmlns:p="clr-namespace:GestionComerce.Resources"
         Title="{x:Static p:Resources.AddRecurrence_WindowTitle}"
         Width="450"
-        Height="280"
+        Height="360"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="#F8F9FA"

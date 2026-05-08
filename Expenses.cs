@@ -59,7 +59,7 @@ namespace GestionComerce
             get { return DueDate.ToString("dd/MM/yyyy"); }
         }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/expenses";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/expenses";
 
         // GET all expenses
         public static async Task<List<Expenses>> GetAllAsync()

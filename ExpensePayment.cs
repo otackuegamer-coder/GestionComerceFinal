@@ -34,7 +34,7 @@ namespace GestionComerce
         public string FormattedAmount { get { return PaymentAmount.ToString("C"); } }
         public string FormattedDate { get { return PaymentDate.ToString("dd/MM/yyyy"); } }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/expenses";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/expenses";
 
         // GET all payments for a specific expense
         public static async Task<List<ExpensePayment>> GetByExpenseId(int expenseId)

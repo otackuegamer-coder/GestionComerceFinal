@@ -81,7 +81,7 @@ namespace GestionComerce.Models
         [JsonPropertyName("updatedDate")]
         public DateTime UpdatedDate { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/checks";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/checks";
 
         public CheckHistory()
         {

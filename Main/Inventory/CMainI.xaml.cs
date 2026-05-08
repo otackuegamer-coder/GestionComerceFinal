@@ -269,9 +269,10 @@ namespace GestionComerce.Main.Inventory
                         ArticlesContainer.Children.Clear();
                         UpdateTotalStats();
 
+                        int initialLoad = isCardLayout ? 3 * GetCPR() : 15;
                         int articlesToLoad;
                         if (resetPagination || previousCount == 0)
-                            articlesToLoad = Math.Min(articlesPerPage, filteredArticles.Count);
+                            articlesToLoad = Math.Min(initialLoad, filteredArticles.Count);
                         else
                             articlesToLoad = Math.Min(previousCount, filteredArticles.Count);
 
@@ -300,18 +301,45 @@ namespace GestionComerce.Main.Inventory
             }
         }
 
+        private int GetCPR()
+        {
+            switch (currentIconSize)
+            {
+                case "Grandes": return 6;
+                case "Petites": return 11;
+                default:        return 7; // Moyennes
+            }
+        }
+
         private void LoadMoreArticles()
         {
-            int articlesToLoad = Math.Min(articlesPerPage, filteredArticles.Count - currentlyLoadedCount);
+            int step = isCardLayout ? GetCPR() : 5;
+            int articlesToLoad = Math.Min(step, filteredArticles.Count - currentlyLoadedCount);
             currentlyLoadedCount += articlesToLoad;
             RefreshCurrentView();
         }
 
         private void UpdateViewMoreButtonVisibility()
         {
-            if (ViewMoreButton != null)
-                ViewMoreButton.Visibility = (currentlyLoadedCount < filteredArticles.Count)
-                    ? Visibility.Visible : Visibility.Collapsed;
+            if (ViewMoreButton == null) return;
+
+            int remaining = filteredArticles.Count - currentlyLoadedCount;
+            ViewMoreButton.Visibility = remaining > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+            if (remaining > 0 && ViewMoreLabel != null)
+            {
+                int nextBatch = isCardLayout ? Math.Min(GetCPR(), remaining) : Math.Min(5, remaining);
+                int remainingRows = isCardLayout
+                    ? (int)Math.Ceiling((double)remaining / GetCPR())
+                    : remaining;
+
+                if (isCardLayout)
+                    ViewMoreLabel.Text = remainingRows == 1
+                        ? $"Voir la dernière ligne ({remaining} article{(remaining > 1 ? "s" : "")})"
+                        : $"Voir 1 ligne de plus  —  {remainingRows} ligne{(remainingRows > 1 ? "s" : "")} restante{(remainingRows > 1 ? "s" : "")}";
+                else
+                    ViewMoreLabel.Text = $"Voir {nextBatch} article{(nextBatch > 1 ? "s" : "")} de plus  —  {remaining} restant{(remaining > 1 ? "s" : "")}";
+            }
         }
 
         private void LayoutToggleButton_Click(object sender, RoutedEventArgs e)

@@ -42,7 +42,7 @@ namespace GestionComerce
         [JsonPropertyName("remise")]
         public decimal? Remise { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/clients";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/clients";
 
         // GET all active clients
         public async Task<List<Client>> GetClientsAsync()

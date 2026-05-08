@@ -78,7 +78,7 @@ namespace GestionComerce
         [JsonPropertyName("creationLivraison")] public bool CreationLivraison { get; set; }
         [JsonPropertyName("gestionLivreur")] public bool GestionLivreur { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/roles";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/roles";
 
         // GET all roles
         public async Task<List<Role>> GetRolesAsync()

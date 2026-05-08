@@ -174,7 +174,7 @@ namespace GestionComerce
         [JsonPropertyName("fournisseurId")]
         public int? FournisseurID { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/inventory/articles";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/inventory/articles";
 
         // GET active articles (optionally filter by familleId)
         public async Task<List<Article>> GetArticlesAsync(int? familleId = null)
@@ -184,15 +184,6 @@ namespace GestionComerce
                 var url = familleId.HasValue ? $"{BaseUrl}?familleId={familleId.Value}" : BaseUrl;
                 var articles = await MainWindow.ApiClient.GetFromJsonAsync<List<Article>>(url)
                                ?? new List<Article>();
-
-                // ── TEMPORARY DEBUG ──────────────────────────────────────────
-                foreach (var art in articles)
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        $"[IMG DEBUG] Article '{art.ArticleName}' (ID={art.ArticleID}) " +
-                        $"→ ArticleImage is {(art.ArticleImage == null ? "NULL" : $"{art.ArticleImage.Length} bytes")}");
-                }
-                // ── END DEBUG ────────────────────────────────────────────────
 
                 return articles;
             }

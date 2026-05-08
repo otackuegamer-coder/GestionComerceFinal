@@ -32,14 +32,14 @@ namespace GestionComerce
 {
     public partial class MainWindow : Window
     {
-        public static readonly HttpClient ApiClient = new HttpClient();
+        public static readonly HttpClient ApiClient = new HttpClient(new SessionHandler());
         private Login loginPage;
 
         // ── Connection monitor ────────────────────────────────────────────────
         // Change this URL to any lightweight endpoint your API exposes.
         // A HEAD request to the root or /ping is ideal.
         // Using the FactureController base because it's already in the project.
-        private const string HealthCheckUrl = "http://localhost:5050/api/facture";
+        private static readonly string HealthCheckUrl = ApiConfig.BaseUrl + "/api/facture";
         private ConnectionMonitor _connectionMonitor;
 
         public MainWindow()
@@ -286,6 +286,42 @@ namespace GestionComerce
                 this.lp = lp;
                 this.credits = credits;
 
+                // Populate session info used by other parts of the app
+                AppSession.MaxUsers      = u.MaxUsers > 0 ? u.MaxUsers : int.MaxValue;
+                AppSession.DaysRemaining = u.DaysRemaining;
+
+                // Resolve allowed pages: subscription server pages take priority over
+                // OTC client.json; falls back to all pages when neither is set.
+                if (u.AllowedPages != null && u.AllowedPages.Length > 0)
+                    AppSession.AllowedPages = u.AllowedPages;
+                else if (ClientConfig.IsOtcMode)
+                    AppSession.AllowedPages = ClientConfig.AllowedPages;
+                else
+                    AppSession.AllowedPages = ClientConfig.AllKnownPages;
+
+                // Wire the session-invalidation callback so that if this user logs in
+                // from another machine, the next API response kicks them back to login.
+                SessionHandler.OnSessionInvalidated = () =>
+                {
+                    AppSession.Clear();
+                    MessageBox.Show(
+                        "Votre compte a été connecté sur un autre appareil.\nVous avez été déconnecté automatiquement.",
+                        "Session expirée",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    load_Login();
+                };
+
+                // Warn when subscription is close to expiry (≤ 7 days)
+                if (u.DaysRemaining.HasValue && u.DaysRemaining.Value <= 7 && u.DaysRemaining.Value > 0)
+                {
+                    MessageBox.Show(
+                        $"Votre abonnement expire dans {u.DaysRemaining.Value} jour(s).\nPensez à le renouveler pour éviter toute interruption.",
+                        "Abonnement bientôt expiré",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                }
+
                 MainGrid.Children.Clear();
                 CMain mainPage = new CMain(this, u);
                 mainPage.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -434,7 +470,21 @@ namespace GestionComerce
             if (result == null || !result.HasUpdate) return;
 
             _pendingUpdate = result;
-            Dispatcher.Invoke(() => ShowUpdateBanner(result.Version ?? ""));
+            Dispatcher.Invoke(() =>
+            {
+                var answer = MessageBox.Show(
+                    $"Une nouvelle version ({result.Version}) est disponible.\n\n" +
+                    "Voulez-vous mettre à jour maintenant ?\n" +
+                    "(Vous pouvez aussi le faire plus tard depuis Paramètres → Préférences)",
+                    "Mise à jour disponible",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (answer == MessageBoxResult.Yes)
+                    _ = StartUpdateDownloadAsync(result.DownloadUrl!, result.Version ?? "");
+                else
+                    ShowUpdateBanner(result.Version ?? ""); // keep the banner visible for later
+            });
         }
 
         /// <summary>

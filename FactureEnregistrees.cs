@@ -74,7 +74,7 @@ namespace GestionComerce.Main.Facturation
             UpdatedDate = DateTime.Now;
         }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/facture/enregistrees";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/facture/enregistrees";
 
         // ── GET ALL ───────────────────────────────────────────────────────────
 

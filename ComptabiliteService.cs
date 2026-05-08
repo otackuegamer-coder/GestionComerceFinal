@@ -11,7 +11,7 @@ namespace GestionComerce
 {
     public class ComptabiliteService
     {
-        private static readonly string BaseUrl = "http://localhost:5050/api/accounting";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/accounting";
 
         // ── JOURNAL — CREATE ─────────────────────────────────────────────────
 
@@ -343,14 +343,13 @@ namespace GestionComerce
         }
 
 
-        // ── GenererBilan (sync wrapper for BilanView) ─────────────────────────────
-        public BilanDTO GenererBilan(DateTime asOf)
+        // ── GenererBilan ──────────────────────────────────────────────────────────
+        public async Task<BilanDTO> GenererBilanAsync(DateTime asOf)
         {
             try
             {
                 string url = string.Format("{0}/bilan?asOf={1:yyyy-MM-dd}", BaseUrl, asOf);
-                var task = MainWindow.ApiClient.GetFromJsonAsync<BilanDTO>(url);
-                return task.GetAwaiter().GetResult() ?? new BilanDTO();
+                return await MainWindow.ApiClient.GetFromJsonAsync<BilanDTO>(url) ?? new BilanDTO();
             }
             catch (Exception ex)
             {
@@ -359,15 +358,15 @@ namespace GestionComerce
             }
         }
 
-        // ── GenererDashboardFinancier (sync wrapper for DashboardFinancierView) ───
-        public DashboardFinancierDTO GenererDashboardFinancier(DateTime dateDebut, DateTime dateFin)
+        // ── GenererDashboardFinancier ─────────────────────────────────────────────
+        public async Task<DashboardFinancierDTO> GenererDashboardFinancierAsync(DateTime dateDebut, DateTime dateFin)
         {
             try
             {
                 string url = string.Format("{0}/dashboard?from={1:yyyy-MM-dd}&to={2:yyyy-MM-dd}",
                     BaseUrl, dateDebut, dateFin);
-                var task = MainWindow.ApiClient.GetFromJsonAsync<DashboardFinancierDTO>(url);
-                return task.GetAwaiter().GetResult() ?? new DashboardFinancierDTO();
+                return await MainWindow.ApiClient.GetFromJsonAsync<DashboardFinancierDTO>(url)
+                       ?? new DashboardFinancierDTO();
             }
             catch (Exception ex)
             {

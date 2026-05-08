@@ -19,10 +19,10 @@ namespace Superete.Main.Comptabilite.Views
             InitializeComponent();
             currentUser = u;
             comptabiliteService = new ComptabiliteService();
-            LoadDashboard();
+            Loaded += async (_, __) => await LoadDashboardAsync();
         }
 
-        private void LoadDashboard()
+        private async System.Threading.Tasks.Task LoadDashboardAsync()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Superete.Main.Comptabilite.Views
                 DateTime dateDebut = new DateTime(DateTime.Now.Year, 1, 1);
                 DateTime dateFin = DateTime.Now;
 
-                DashboardFinancierDTO dashboard = comptabiliteService.GenererDashboardFinancier(dateDebut, dateFin);
+                DashboardFinancierDTO dashboard = await comptabiliteService.GenererDashboardFinancierAsync(dateDebut, dateFin);
 
                 // Update UI
                 TxtTotalVentes.Text = string.Format("{0:N2} DH", dashboard.TotalVentes);
@@ -90,9 +90,9 @@ namespace Superete.Main.Comptabilite.Views
             bar.BeginAnimation(FrameworkElement.WidthProperty, animation);
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadDashboard();
+            await LoadDashboardAsync();
         }
 
         private void OpenJournal_Click(object sender, RoutedEventArgs e)

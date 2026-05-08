@@ -83,13 +83,13 @@ namespace Superete.Main.Comptabilite.Views
             _user = u;
             _service = new ComptabiliteService();
             DateBilan.SelectedDate = DateTime.Now;
-            LoadBilan();
+            Loaded += async (_, __) => await LoadBilanAsync();
         }
 
         // ─────────────────────────────────────────────────────
         //  LOAD
         // ─────────────────────────────────────────────────────
-        private void LoadBilan()
+        private async System.Threading.Tasks.Task LoadBilanAsync()
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Superete.Main.Comptabilite.Views
                 DateTime date = DateBilan.SelectedDate ?? DateTime.Now;
                 TxtExercice.Text = date.Year.ToString();
 
-                _bilan = BuildBilanCGNC(date);
+                _bilan = await BuildBilanCGNCAsync(date);
 
                 ActifPanel.Children.Clear();
                 PassifPanel.Children.Clear();
@@ -137,9 +137,9 @@ namespace Superete.Main.Comptabilite.Views
         // ─────────────────────────────────────────────────────
         //  BUILD CGNC STRUCTURE
         // ─────────────────────────────────────────────────────
-        private BilanCGNCDTO BuildBilanCGNC(DateTime date)
+        private async System.Threading.Tasks.Task<BilanCGNCDTO> BuildBilanCGNCAsync(DateTime date)
         {
-            var raw = _service.GenererBilan(date);
+            var raw = await _service.GenererBilanAsync(date);
 
             decimal SumA(params string[] prefixes)
             {
@@ -498,9 +498,9 @@ namespace Superete.Main.Comptabilite.Views
         // ─────────────────────────────────────────────────────
         //  EVENTS
         // ─────────────────────────────────────────────────────
-        private void DateBilan_Changed(object sender, SelectionChangedEventArgs e)
+        private async void DateBilan_Changed(object sender, SelectionChangedEventArgs e)
         {
-            LoadBilan();
+            await LoadBilanAsync();
         }
 
         // ─────────────────────────────────────────────────────

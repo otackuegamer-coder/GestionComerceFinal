@@ -39,7 +39,7 @@ namespace GestionComerce
         [JsonPropertyName("footerText")]
         public string FooterText { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/facture/settings";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/facture/settings";
 
         private static FactureSettings GetDefaults()
         {

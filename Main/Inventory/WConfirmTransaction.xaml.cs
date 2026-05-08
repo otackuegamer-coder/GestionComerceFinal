@@ -760,7 +760,211 @@ namespace GestionComerce.Main.Inventory
                 //Add Multiple Articles
                 if (ama != null)
                 {
-                    // ... (keep your existing code for multiple articles) ...
+                    if (s == 0) // Cash
+                    {
+                        Operation operation = new Operation();
+                        operation.PaymentMethodID = methodID;
+                        operation.OperationType = "AchatCa";
+                        operation.PrixOperation = FinalTotall;
+                        if (Remise.Text != "") operation.Remise = Convert.ToDecimal(Remise.Text);
+                        operation.UserID = ama.main.u.UserID;
+                        operation.FournisseurID = ama.fo?.FournisseurID;
+                        int operationId = await operation.InsertOperationAsync();
+
+                        for (int i = 0; i < ama.ArticlesContainer.Children.Count; i++)
+                        {
+                            if (ama.ArticlesContainer.Children[i] is CSingleRowArticle csra)
+                            {
+                                if (!int.TryParse(csra.Quantite.Text.Replace("x", ""), out int qte) || qte <= 0) continue;
+                                int articleId;
+                                if (csra.s == 7)
+                                {
+                                    articleId = await csra.a.InsertArticleAsync();
+                                    csra.a.ArticleID = articleId;
+                                }
+                                else
+                                {
+                                    csra.a.Quantite += qte;
+                                    await csra.a.UpdateArticleAsync();
+                                    articleId = csra.a.ArticleID;
+                                }
+                                OperationArticle ofa = new OperationArticle();
+                                ofa.ArticleID = articleId;
+                                ofa.OperationID = operationId;
+                                ofa.QteArticle = qte;
+                                await ofa.InsertOperationArticleAsync();
+                            }
+                        }
+
+                        Article articleService = new Article();
+                        List<Article> refreshedArticles = await articleService.GetArticlesAsync();
+                        ama.main.la = refreshedArticles;
+                        ama.main.LoadArticles(refreshedArticles);
+
+                        WCongratulations wc = new WCongratulations("Opération réussie", "Articles ajoutés avec succès", 1);
+                        wc.ShowDialog();
+                        ama.Close();
+                        await CommitSavedInvoiceAsync();
+                        this.Close();
+                        return;
+                    }
+                    else if (s == 1) // Half credit
+                    {
+                        if (Convert.ToDecimal(CreditInput.Text) == 0)
+                        {
+                            MessageBox.Show("Doneer un valeur de credit.");
+                            return;
+                        }
+
+                        int creditId = 0;
+                        bool creditExists = false;
+                        Credit Credit = new Credit();
+                        List<Credit> lff = await Credit.GetCreditsAsync();
+                        foreach (Credit ff in lff)
+                        {
+                            if (ff.FournisseurID == ama.fo?.FournisseurID)
+                            {
+                                ff.Total += Convert.ToDecimal(CreditInput.Text);
+                                await ff.UpdateCreditAsync();
+                                creditExists = true;
+                                creditId = ff.CreditID;
+                                break;
+                            }
+                        }
+                        if (!creditExists)
+                        {
+                            Credit newCredit = new Credit();
+                            newCredit.FournisseurID = ama.fo?.FournisseurID;
+                            newCredit.Total = Convert.ToDecimal(CreditInput.Text);
+                            creditId = await newCredit.InsertCreditAsync();
+                        }
+
+                        Operation operation = new Operation();
+                        operation.PaymentMethodID = methodID;
+                        operation.OperationType = "Achat50";
+                        operation.PrixOperation = FinalTotall;
+                        operation.CreditValue = Convert.ToDecimal(CreditInput.Text);
+                        operation.CreditID = creditId;
+                        if (Remise.Text != "") operation.Remise = Convert.ToDecimal(Remise.Text);
+                        operation.UserID = ama.main.u.UserID;
+                        operation.FournisseurID = ama.fo?.FournisseurID;
+                        int operationId = await operation.InsertOperationAsync();
+
+                        for (int i = 0; i < ama.ArticlesContainer.Children.Count; i++)
+                        {
+                            if (ama.ArticlesContainer.Children[i] is CSingleRowArticle csra)
+                            {
+                                if (!int.TryParse(csra.Quantite.Text.Replace("x", ""), out int qte) || qte <= 0) continue;
+                                int articleId;
+                                if (csra.s == 7)
+                                {
+                                    articleId = await csra.a.InsertArticleAsync();
+                                    csra.a.ArticleID = articleId;
+                                }
+                                else
+                                {
+                                    csra.a.Quantite += qte;
+                                    await csra.a.UpdateArticleAsync();
+                                    articleId = csra.a.ArticleID;
+                                }
+                                OperationArticle ofa = new OperationArticle();
+                                ofa.ArticleID = articleId;
+                                ofa.OperationID = operationId;
+                                ofa.QteArticle = qte;
+                                await ofa.InsertOperationArticleAsync();
+                            }
+                        }
+
+                        Article articleService = new Article();
+                        List<Article> refreshedArticles = await articleService.GetArticlesAsync();
+                        ama.main.la = refreshedArticles;
+                        ama.main.LoadArticles(refreshedArticles);
+
+                        WCongratulations wc = new WCongratulations("Opération réussie", "Articles ajoutés avec succès", 1);
+                        wc.ShowDialog();
+                        ama.Close();
+                        await CommitSavedInvoiceAsync();
+                        this.Close();
+                        return;
+                    }
+                    else // Full credit
+                    {
+                        int creditId = 0;
+                        bool creditExists = false;
+                        Credit Credit = new Credit();
+                        List<Credit> lcc = await Credit.GetCreditsAsync();
+                        Operation operation = new Operation();
+                        operation.PaymentMethodID = methodID;
+                        decimal creditAmount = Remise.Text != ""
+                            ? FinalTotall - Convert.ToDecimal(Remise.Text)
+                            : FinalTotall;
+
+                        foreach (Credit cf in lcc)
+                        {
+                            if (cf.FournisseurID == ama.fo?.FournisseurID)
+                            {
+                                cf.Total += creditAmount;
+                                operation.CreditValue = creditAmount;
+                                await cf.UpdateCreditAsync();
+                                creditExists = true;
+                                creditId = cf.CreditID;
+                                break;
+                            }
+                        }
+                        if (!creditExists)
+                        {
+                            Credit newCredit = new Credit();
+                            newCredit.FournisseurID = ama.fo?.FournisseurID;
+                            newCredit.Total = creditAmount;
+                            operation.CreditValue = creditAmount;
+                            creditId = await newCredit.InsertCreditAsync();
+                        }
+
+                        operation.OperationType = "AchatCr";
+                        operation.PrixOperation = FinalTotall;
+                        operation.CreditID = creditId;
+                        if (Remise.Text != "") operation.Remise = Convert.ToDecimal(Remise.Text);
+                        operation.UserID = ama.main.u.UserID;
+                        operation.FournisseurID = ama.fo?.FournisseurID;
+                        int operationId = await operation.InsertOperationAsync();
+
+                        for (int i = 0; i < ama.ArticlesContainer.Children.Count; i++)
+                        {
+                            if (ama.ArticlesContainer.Children[i] is CSingleRowArticle csra)
+                            {
+                                if (!int.TryParse(csra.Quantite.Text.Replace("x", ""), out int qte) || qte <= 0) continue;
+                                int articleId;
+                                if (csra.s == 7)
+                                {
+                                    articleId = await csra.a.InsertArticleAsync();
+                                    csra.a.ArticleID = articleId;
+                                }
+                                else
+                                {
+                                    csra.a.Quantite += qte;
+                                    await csra.a.UpdateArticleAsync();
+                                    articleId = csra.a.ArticleID;
+                                }
+                                OperationArticle ofa = new OperationArticle();
+                                ofa.ArticleID = articleId;
+                                ofa.OperationID = operationId;
+                                ofa.QteArticle = qte;
+                                await ofa.InsertOperationArticleAsync();
+                            }
+                        }
+
+                        Article articleService = new Article();
+                        List<Article> refreshedArticles = await articleService.GetArticlesAsync();
+                        ama.main.la = refreshedArticles;
+                        ama.main.LoadArticles(refreshedArticles);
+
+                        WCongratulations wc = new WCongratulations("Opération réussie", "Articles ajoutés avec succès", 1);
+                        wc.ShowDialog();
+                        ama.Close();
+                        await CommitSavedInvoiceAsync();
+                        this.Close();
+                        return;
+                    }
                 }
 
                 WCongratulations wCongratulations2 = new WCongratulations("Opération réussie", "Opération a ete effectue avec succes", 1);

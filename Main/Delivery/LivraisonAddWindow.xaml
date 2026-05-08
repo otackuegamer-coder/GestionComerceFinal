@@ -786,8 +786,199 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- Section: Articles Libres                              -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <TextBlock Text="Articles Libres (optionnel)"
+                               FontFamily="Segoe UI"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="#1E293B"
+                               Margin="0,8,0,16"/>
+
+                    <Border Background="#F0FDF4"
+                            BorderBrush="#86EFAC"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="16"
+                            Margin="0,0,0,24">
+                        <StackPanel>
+                            <TextBlock Text="Ajoutez des articles personnalisés (hors stock) à cette livraison."
+                                       FontFamily="Segoe UI"
+                                       FontSize="13"
+                                       Foreground="#166534"
+                                       Margin="0,0,0,12"/>
+
+                            <!-- Input row -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Désignation (stock ou libre)" Style="{StaticResource LabelStyle}"/>
+                                    <Grid>
+                                        <TextBox x:Name="TxtLibreNom"
+                                                 Style="{StaticResource ModernTextBoxStyle}"
+                                                 Height="40"
+                                                 MaxLength="200"
+                                                 TextChanged="TxtLibreNom_TextChanged"
+                                                 LostFocus="TxtLibreNom_LostFocus"/>
+                                        <Popup x:Name="ArticleSuggestPopup"
+                                               PlacementTarget="{Binding ElementName=TxtLibreNom}"
+                                               Placement="Bottom"
+                                               StaysOpen="False"
+                                               AllowsTransparency="True">
+                                            <Border Background="White"
+                                                    BorderBrush="#CBD5E1"
+                                                    BorderThickness="1"
+                                                    MaxHeight="200"
+                                                    MinWidth="340">
+                                                <Border.Effect>
+                                                    <DropShadowEffect BlurRadius="16" ShadowDepth="2" Opacity="0.12"/>
+                                                </Border.Effect>
+                                                <ListBox x:Name="ArticleSuggestList"
+                                                         BorderThickness="0"
+                                                         FontFamily="Segoe UI"
+                                                         FontSize="13"
+                                                         SelectionChanged="ArticleSuggestList_SelectionChanged">
+                                                    <ListBox.ItemContainerStyle>
+                                                        <Style TargetType="ListBoxItem">
+                                                            <Setter Property="Padding" Value="10,7"/>
+                                                            <Setter Property="Cursor" Value="Hand"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#F0FDF4"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ListBox.ItemContainerStyle>
+                                                    <ListBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0"
+                                                                           Text="{Binding ArticleName}"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="#1E293B"
+                                                                           VerticalAlignment="Center"/>
+                                                                <TextBlock Grid.Column="1"
+                                                                           Text="{Binding Quantite, StringFormat='Qté: {0}'}"
+                                                                           Foreground="#64748B"
+                                                                           FontSize="11"
+                                                                           Margin="12,0,0,0"
+                                                                           VerticalAlignment="Center"/>
+                                                                <TextBlock Grid.Column="2"
+                                                                           Text="{Binding PrixVente, StringFormat='{}{0:N2} DH'}"
+                                                                           Foreground="#16A34A"
+                                                                           FontWeight="SemiBold"
+                                                                           Margin="12,0,0,0"
+                                                                           VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ListBox.ItemTemplate>
+                                                </ListBox>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Qté" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox x:Name="TxtLibreQte"
+                                             Style="{StaticResource ModernTextBoxStyle}"
+                                             Height="40"
+                                             MaxLength="4"
+                                             Text="1"
+                                             PreviewTextInput="NumericOnly_PreviewTextInput"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Text="Prix unit. (DH)" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox x:Name="TxtLibrePrix"
+                                             Style="{StaticResource ModernTextBoxStyle}"
+                                             Height="40"
+                                             MaxLength="12"
+                                             Text="0.00"
+                                             PreviewTextInput="DecimalOnly_PreviewTextInput"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="6" VerticalAlignment="Bottom">
+                                    <Button x:Name="BtnAddLibre"
+                                            Click="BtnAddLibre_Click"
+                                            Height="40"
+                                            Padding="16,0"
+                                            Background="#16A34A"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Content="+ Ajouter">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="8"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#15803D"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Articles list -->
+                            <Border x:Name="LibreListContainer"
+                                    Visibility="Collapsed"
+                                    Margin="0,12,0,0">
+                                <StackPanel>
+                                    <!-- Header row -->
+                                    <Grid Background="#DCFCE7" Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Désignation" FontWeight="SemiBold" FontSize="12" Foreground="#166534" Padding="8,6"/>
+                                        <TextBlock Grid.Column="1" Text="Qté"         FontWeight="SemiBold" FontSize="12" Foreground="#166534" Padding="8,6" TextAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="Prix unit."  FontWeight="SemiBold" FontSize="12" Foreground="#166534" Padding="8,6" TextAlignment="Right"/>
+                                        <TextBlock Grid.Column="3" Text="Total"       FontWeight="SemiBold" FontSize="12" Foreground="#166634" Padding="8,6" TextAlignment="Right"/>
+                                        <TextBlock Grid.Column="4" Text=""            FontSize="12" Padding="8,6"/>
+                                    </Grid>
+                                    <StackPanel x:Name="LibreArticlesPanel"/>
+                                    <!-- Total -->
+                                    <Border BorderBrush="#86EFAC" BorderThickness="0,1,0,0" Margin="0,4,0,0" Padding="0,8,0,0">
+                                        <TextBlock x:Name="TxtLibreTotal"
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="14"
+                                                   FontWeight="Bold"
+                                                   Foreground="#16A34A"
+                                                   HorizontalAlignment="Right"
+                                                   Margin="0,0,8,0"/>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Section: Information Client -->
-                    <TextBlock Text="{x:Static res:Resources.ClientInformation}" 
+                    <TextBlock Text="{x:Static res:Resources.ClientInformation}"
                                FontFamily="Segoe UI"
                                FontSize="18"
                                FontWeight="Bold"
@@ -803,14 +994,16 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="{x:Static res:Resources.ClientNameRequired}" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtClientNom" 
-                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                            <TextBox x:Name="TxtClientNom"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     MaxLength="100"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="{x:Static res:Resources.PhoneRequired}" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtClientTelephone" 
-                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                            <TextBox x:Name="TxtClientTelephone"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     MaxLength="20"/>
                         </StackPanel>
                     </Grid>
 
@@ -823,9 +1016,10 @@
                                Margin="0,24,0,16"/>
 
                     <TextBlock Text="{x:Static res:Resources.AddressRequired}" Style="{StaticResource LabelStyle}"/>
-                    <TextBox x:Name="TxtAdresse" 
+                    <TextBox x:Name="TxtAdresse"
                              Style="{StaticResource ModernTextBoxStyle}"
                              Height="66"
+                             MaxLength="255"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              VerticalContentAlignment="Top"
@@ -843,14 +1037,16 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="{x:Static res:Resources.City}" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtVille" 
-                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                            <TextBox x:Name="TxtVille"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     MaxLength="100"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="{x:Static res:Resources.PostalCode}" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtCodePostal" 
-                                     Style="{StaticResource ModernTextBoxStyle}"/>
+                            <TextBox x:Name="TxtCodePostal"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     MaxLength="10"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="4">
@@ -975,9 +1171,10 @@
                     <TextBlock Text="{x:Static res:Resources.NotesInstructions}" 
                                Style="{StaticResource LabelStyle}"
                                Margin="0,16,0,8"/>
-                    <TextBox x:Name="TxtNotes" 
+                    <TextBox x:Name="TxtNotes"
                              Style="{StaticResource ModernTextBoxStyle}"
                              Height="80"
+                             MaxLength="1000"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              VerticalContentAlignment="Top"

@@ -19,7 +19,7 @@ namespace GestionComerce
         [JsonPropertyName("nbrArticles")]
         public int NbrArticle { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/inventory/familles";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/inventory/familles";
 
         // GET all active familles
         public async Task<List<Famille>> GetFamillesAsync()

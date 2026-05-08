@@ -774,15 +774,16 @@
                                 Click="ViewMoreButton_Click"
                                 Margin="8,12,8,8"
                                 Visibility="Collapsed">
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="M19 9L12 16L5 9"
-                                      Stroke="{StaticResource TextSecondary}"
-                                      StrokeThickness="2"
-                                      Width="18" Height="18"
-                                      Margin="0,0,10,0" Stretch="Fill"/>
-                                <TextBlock Text="{x:Static res:Resources.ViewMoreArticles}" 
-                                           FontWeight="Medium" 
-                                           FontSize="14"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="▾"
+                                           FontSize="18"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,8,0"/>
+                                <TextBlock x:Name="ViewMoreLabel"
+                                           Text="Voir la ligne suivante"
+                                           FontWeight="Medium"
+                                           FontSize="14"
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

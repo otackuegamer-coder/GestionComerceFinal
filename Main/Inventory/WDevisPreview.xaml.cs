@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Superete;
@@ -18,19 +18,31 @@ namespace GestionComerce.Main.Inventory
         private List<Fournisseur> allFournisseurs;
         private DevisConfiguration config;
         private Facture companyInfo;
+        private string _devisNumber;
         private const int ARTICLES_PER_PAGE = 20;
+
+        // ── Palette ───────────────────────────────────────────────────────────
+        private static readonly Color CNavy  = Color.FromRgb(30,  58,  95);
+        private static readonly Color CBlue  = Color.FromRgb(59,  130, 246);
+        private static readonly Color CLBlue = Color.FromRgb(239, 246, 255);
+        private static readonly Color CDark  = Color.FromRgb(30,  41,  59);
+        private static readonly Color CMuted = Color.FromRgb(100, 116, 139);
+        private static readonly Color CBdr   = Color.FromRgb(226, 232, 240);
+        private static readonly Color CAlt   = Color.FromRgb(248, 250, 252);
+
+        private static SolidColorBrush B(Color c) => new SolidColorBrush(c);
+        private static LinearGradientBrush GH(Color a, Color b) => new LinearGradientBrush(a, b, 0);
+        private static Border Gap(double h) => new Border { Height = h };
 
         public WDevisPreview(List<Article> articles, List<Famille> familles,
             List<Fournisseur> fournisseurs, DevisConfiguration configuration)
         {
             InitializeComponent();
-            this.selectedArticles = articles;
-            this.allFamilles = familles;
-            this.allFournisseurs = fournisseurs;
-            this.config = configuration;
-
+            selectedArticles = articles;
+            allFamilles      = familles;
+            allFournisseurs  = fournisseurs;
+            config           = configuration;
             ArticleCountText.Text = $"({articles.Count} article{(articles.Count > 1 ? "s" : "")})";
-
             LoadCompanyInfo();
         }
 
@@ -38,603 +50,758 @@ namespace GestionComerce.Main.Inventory
         {
             try
             {
-                Facture f = new Facture();
-                companyInfo = await f.GetFactureAsync();
+                companyInfo = await new Facture().GetFactureAsync();
                 GenerateDevis();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement des informations: {ex.Message}",
+                MessageBox.Show($"Erreur lors du chargement: {ex.Message}",
                     "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void GenerateDevis()
         {
+            _devisNumber = $"DEV-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
             DevisContent.Children.Clear();
 
-            // Calculate number of pages needed
-            int totalPages = (int)Math.Ceiling((double)selectedArticles.Count / ARTICLES_PER_PAGE);
+            int totalPages = Math.Max(1, (int)Math.Ceiling((double)selectedArticles.Count / ARTICLES_PER_PAGE));
 
-            for (int pageNum = 1; pageNum <= totalPages; pageNum++)
+            for (int p = 1; p <= totalPages; p++)
             {
-                // Add page break between pages
-                if (pageNum > 1)
-                {
-                    Border pageBreak = new Border
+                if (p > 1)
+                    DevisContent.Children.Add(new Border
                     {
-                        Height = 30,
-                        Background = new SolidColorBrush(Color.FromRgb(243, 244, 246)),
-                        Margin = new Thickness(0, 10, 0, 10)
-                    };
-                    DevisContent.Children.Add(pageBreak);
-                }
+                        Height = 40,
+                        Background = B(Color.FromRgb(243, 244, 246)),
+                        Margin = new Thickness(0, 12, 0, 12)
+                    });
 
-                StackPanel page = CreatePage(pageNum, totalPages);
-                DevisContent.Children.Add(page);
+                DevisContent.Children.Add(BuildPage(p, totalPages));
             }
         }
 
-        private StackPanel CreatePage(int pageNum, int totalPages)
+        // ── Page ──────────────────────────────────────────────────────────────
+
+        private StackPanel BuildPage(int pageNum, int totalPages)
         {
             StackPanel page = new StackPanel();
 
-            // Header Section
-            Grid header = CreateHeader(pageNum, totalPages);
-            page.Children.Add(header);
-
-            // Separator
+            // Top gradient accent bar
             page.Children.Add(new Border
             {
-                Height = 2,
-                Background = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                Margin = new Thickness(0, 20, 0, 20)
+                Height = 8,
+                Background = GH(CNavy, CBlue)
             });
 
-            // Client Info (only on first page)
-            if (pageNum == 1 && config.ShowClientSection &&
-                !string.IsNullOrWhiteSpace(config.ClientName))
+            StackPanel body = new StackPanel { Margin = new Thickness(52, 40, 52, 40) };
+
+            body.Children.Add(BuildHeader(pageNum));
+            body.Children.Add(Gap(28));
+            body.Children.Add(new Border { Height = 1, Background = GH(CNavy, CBlue) });
+            body.Children.Add(Gap(28));
+
+            if (pageNum == 1 && config.ShowClientSection && !string.IsNullOrWhiteSpace(config.ClientName))
             {
-                Grid clientInfo = CreateClientSection();
-                page.Children.Add(clientInfo);
-                page.Children.Add(new Border { Height = 20 });
+                body.Children.Add(BuildClientCard());
+                body.Children.Add(Gap(24));
             }
 
-            // Articles Table
-            Grid articlesTable = CreateArticlesTable(pageNum);
-            page.Children.Add(articlesTable);
+            body.Children.Add(BuildArticlesTable(pageNum));
 
-            // Totals (only on last page)
             if (pageNum == totalPages)
             {
-                page.Children.Add(new Border { Height = 20 });
-                Grid totals = CreateTotalsSection();
-                page.Children.Add(totals);
+                body.Children.Add(Gap(32));
+                body.Children.Add(BuildTotalsSection());
 
-                // Notes and Payment Terms
-                if (config.ShowNotes || config.ShowPaymentTerms)
+                bool hasNotes    = config.ShowNotes && !string.IsNullOrWhiteSpace(config.Notes);
+                bool hasPayment  = config.ShowPaymentTerms && !string.IsNullOrWhiteSpace(config.PaymentTerms);
+                if (hasNotes || hasPayment)
                 {
-                    page.Children.Add(new Border { Height = 20 });
-                    StackPanel footer = CreateFooterSection();
-                    page.Children.Add(footer);
+                    body.Children.Add(Gap(24));
+                    body.Children.Add(BuildFooterSection());
                 }
             }
 
-            // Page number at bottom
-            TextBlock pageNumber = new TextBlock
+            body.Children.Add(Gap(36));
+            body.Children.Add(new TextBlock
             {
                 Text = $"Page {pageNum} / {totalPages}",
-                FontSize = 10,
-                Foreground = new SolidColorBrush(Color.FromRgb(148, 163, 184)),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 20, 0, 0)
-            };
-            page.Children.Add(pageNumber);
+                FontSize = 9,
+                Foreground = B(CMuted),
+                HorizontalAlignment = HorizontalAlignment.Center
+            });
 
+            page.Children.Add(body);
             return page;
         }
 
-        private Grid CreateHeader(int pageNum, int totalPages)
+        // ── Header ────────────────────────────────────────────────────────────
+
+        private Grid BuildHeader(int pageNum)
         {
-            Grid header = new Grid();
-            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            // Proportional columns: company takes ~56%, DEVIS card ~44%
+            // Both scale together on any page width or print scale
+            Grid g = new Grid();
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.56, GridUnitType.Star) });
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0.44, GridUnitType.Star) });
 
-            // Left side - Company Info
-            StackPanel leftPanel = new StackPanel();
+            // ── Company panel (left) ──────────────────────────────────────────
+            StackPanel company = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
 
-            // Logo
             if (config.ShowLogo && !string.IsNullOrWhiteSpace(companyInfo?.LogoPath) &&
                 File.Exists(companyInfo.LogoPath))
             {
                 try
                 {
-                    Image logo = new Image
+                    company.Children.Add(new Image
                     {
                         Source = new BitmapImage(new Uri(companyInfo.LogoPath, UriKind.Absolute)),
-                        Width = 120,
-                        Height = 60,
+                        Width = 130, Height = 60,
                         Stretch = Stretch.Uniform,
                         HorizontalAlignment = HorizontalAlignment.Left,
-                        Margin = new Thickness(0, 0, 0, 12)
-                    };
-                    leftPanel.Children.Add(logo);
+                        Margin = new Thickness(0, 0, 0, 14)
+                    });
                 }
                 catch { }
             }
 
             if (config.ShowCompanyName && !string.IsNullOrWhiteSpace(companyInfo?.Name))
+                company.Children.Add(new TextBlock
+                {
+                    Text = companyInfo.Name,
+                    FontSize = 20, FontWeight = FontWeights.Bold,
+                    Foreground = B(CNavy),
+                    Margin = new Thickness(0, 0, 0, 10)
+                });
+
+            void AddInfo(bool show, string lbl, string val)
             {
-                leftPanel.Children.Add(CreateText(companyInfo.Name, 18, true));
+                if (!show || string.IsNullOrWhiteSpace(val)) return;
+                StackPanel row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 2, 0, 2) };
+                row.Children.Add(new TextBlock { Text = lbl + ": ", FontSize = 10, FontWeight = FontWeights.SemiBold, Foreground = B(CMuted) });
+                row.Children.Add(new TextBlock { Text = val,         FontSize = 10, Foreground = B(CDark) });
+                company.Children.Add(row);
             }
 
-            if (config.ShowICE && !string.IsNullOrWhiteSpace(companyInfo?.ICE))
+            AddInfo(config.ShowICE,        "ICE",     companyInfo?.ICE);
+            AddInfo(config.ShowVAT,        "TVA",     companyInfo?.VAT);
+            AddInfo(config.ShowCompanyId,  "RC",      companyInfo?.CompanyId);
+            AddInfo(config.ShowEtatJuridic,"Forme",   companyInfo?.EtatJuridic);
+            AddInfo(config.ShowSiege,      "Siège",   companyInfo?.SiegeEntreprise);
+            AddInfo(config.ShowTelephone,  "Tél",     companyInfo?.Telephone);
+            AddInfo(config.ShowAdresse,    "Adresse", companyInfo?.Adresse);
+
+            // Wrap company info in a card so the left column is visually filled
+            Border companyCard = new Border
             {
-                leftPanel.Children.Add(CreateText($"ICE: {companyInfo.ICE}", 11));
-            }
+                Background = B(CAlt),
+                BorderBrush = B(CBdr),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(12),
+                Padding = new Thickness(20, 18, 20, 18),
+                Child = company,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            Grid.SetColumn(companyCard, 0);
+            g.Children.Add(companyCard);
 
-            if (config.ShowVAT && !string.IsNullOrWhiteSpace(companyInfo?.VAT))
-            {
-                leftPanel.Children.Add(CreateText($"TVA: {companyInfo.VAT}", 11));
-            }
-
-            if (config.ShowCompanyId && !string.IsNullOrWhiteSpace(companyInfo?.CompanyId))
-            {
-                leftPanel.Children.Add(CreateText($"ID: {companyInfo.CompanyId}", 11));
-            }
-
-            if (config.ShowEtatJuridic && !string.IsNullOrWhiteSpace(companyInfo?.EtatJuridic))
-            {
-                leftPanel.Children.Add(CreateText($"Forme juridique: {companyInfo.EtatJuridic}", 11));
-            }
-
-            if (config.ShowSiege && !string.IsNullOrWhiteSpace(companyInfo?.SiegeEntreprise))
-            {
-                leftPanel.Children.Add(CreateText($"Siège: {companyInfo.SiegeEntreprise}", 11));
-            }
-
-            if (config.ShowTelephone && !string.IsNullOrWhiteSpace(companyInfo?.Telephone))
-            {
-                leftPanel.Children.Add(CreateText($"Tél: {companyInfo.Telephone}", 11));
-            }
-
-            if (config.ShowAdresse && !string.IsNullOrWhiteSpace(companyInfo?.Adresse))
-            {
-                leftPanel.Children.Add(CreateText($"Adresse: {companyInfo.Adresse}", 11));
-            }
-
-            Grid.SetColumn(leftPanel, 0);
-            header.Children.Add(leftPanel);
-
-            // Right side - Devis Info (only on first page)
+            // ── DEVIS card (right, first page only) ───────────────────────────
             if (pageNum == 1)
             {
-                StackPanel rightPanel = new StackPanel
+                Border card = new Border
                 {
-                    HorizontalAlignment = HorizontalAlignment.Right
+                    Background = B(CLBlue),
+                    BorderBrush = B(CBlue),
+                    BorderThickness = new Thickness(2),
+                    CornerRadius = new CornerRadius(12),
+                    Padding = new Thickness(22, 20, 22, 20),
+                    VerticalAlignment = VerticalAlignment.Top
                 };
 
-                TextBlock devisTitle = new TextBlock
-                {
-                    Text = "DEVIS",
-                    FontSize = 28,
-                    FontWeight = FontWeights.Bold,
-                    Foreground = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                    Margin = new Thickness(0, 0, 0, 12)
-                };
-                rightPanel.Children.Add(devisTitle);
+                StackPanel right = new StackPanel();
 
-                if (config.ShowDevisNumber)
+                // "DEVIS" badge
+                right.Children.Add(new Border
                 {
-                    string devisNumber = $"DEV-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000, 9999)}";
-                    rightPanel.Children.Add(CreateText($"N°: {devisNumber}", 12, true));
+                    Background = B(CNavy),
+                    CornerRadius = new CornerRadius(8),
+                    Padding = new Thickness(0, 10, 0, 10),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Margin = new Thickness(0, 0, 0, 16),
+                    Child = new TextBlock
+                    {
+                        Text = "DEVIS",
+                        FontSize = 22, FontWeight = FontWeights.Bold,
+                        Foreground = Brushes.White,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        TextAlignment = TextAlignment.Center
+                    }
+                });
+
+                void AddRow(string lbl, string val, bool bold = false)
+                {
+                    Grid row = new Grid { Margin = new Thickness(0, 5, 0, 0) };
+                    row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                    TextBlock l = new TextBlock { Text = lbl + ":", FontSize = 10, Foreground = B(CMuted), VerticalAlignment = VerticalAlignment.Center };
+                    TextBlock v = new TextBlock
+                    {
+                        Text = val, FontSize = bold ? 12 : 10,
+                        FontWeight = bold ? FontWeights.Bold : FontWeights.Normal,
+                        Foreground = bold ? B(CNavy) : B(CDark),
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    Grid.SetColumn(l, 0); Grid.SetColumn(v, 1);
+                    row.Children.Add(l); row.Children.Add(v);
+                    right.Children.Add(row);
                 }
 
-                if (config.ShowDevisDate)
-                {
-                    rightPanel.Children.Add(CreateText($"Date: {DateTime.Now:dd/MM/yyyy}", 12));
-                }
+                if (config.ShowDevisNumber) AddRow("N°",             _devisNumber, true);
+                if (config.ShowDevisDate)   AddRow("Date",           DateTime.Now.ToString("dd/MM/yyyy"));
+                if (config.ShowValidity)    AddRow("Valable jusqu'au",
+                    DateTime.Now.AddDays(config.ValidityDays).ToString("dd/MM/yyyy"));
 
-                if (config.ShowValidity)
-                {
-                    DateTime validUntil = DateTime.Now.AddDays(config.ValidityDays);
-                    rightPanel.Children.Add(CreateText($"Valable jusqu'au: {validUntil:dd/MM/yyyy}", 12));
-                }
-
-                Grid.SetColumn(rightPanel, 1);
-                header.Children.Add(rightPanel);
+                card.Child = right;
+                Grid.SetColumn(card, 2);
+                g.Children.Add(card);
             }
 
-            return header;
+            return g;
         }
 
-        private Grid CreateClientSection()
+        // ── Client Card ───────────────────────────────────────────────────────
+
+        private Border BuildClientCard()
         {
-            Grid clientGrid = new Grid
+            Border outer = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(239, 246, 255))
+                BorderBrush = B(CBdr), BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Background = B(CAlt)
             };
 
-            Border border = new Border
-            {
-                BorderBrush = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(16)
-            };
+            Grid g = new Grid();
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5) });
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            StackPanel clientPanel = new StackPanel();
+            Border bar = new Border { Background = B(CBlue), CornerRadius = new CornerRadius(10, 0, 0, 10) };
+            Grid.SetColumn(bar, 0);
 
-            TextBlock title = new TextBlock
+            StackPanel info = new StackPanel { Margin = new Thickness(18, 14, 18, 14) };
+
+            info.Children.Add(new TextBlock
             {
-                Text = "CLIENT",
-                FontSize = 14,
-                FontWeight = FontWeights.Bold,
-                Foreground = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-            clientPanel.Children.Add(title);
+                Text = "DESTINATAIRE",
+                FontSize = 9, FontWeight = FontWeights.Bold,
+                Foreground = B(CBlue),
+                Margin = new Thickness(0, 0, 0, 6)
+            });
 
             if (!string.IsNullOrWhiteSpace(config.ClientName))
-            {
-                clientPanel.Children.Add(CreateText(config.ClientName, 12, true));
-            }
+                info.Children.Add(new TextBlock
+                {
+                    Text = config.ClientName,
+                    FontSize = 13, FontWeight = FontWeights.Bold,
+                    Foreground = B(CDark), Margin = new Thickness(0, 0, 0, 4)
+                });
 
             if (!string.IsNullOrWhiteSpace(config.ClientICE))
-            {
-                clientPanel.Children.Add(CreateText($"ICE: {config.ClientICE}", 11));
-            }
+                info.Children.Add(new TextBlock { Text = $"ICE: {config.ClientICE}", FontSize = 10, Foreground = B(CMuted) });
 
             if (!string.IsNullOrWhiteSpace(config.ClientAddress))
-            {
-                clientPanel.Children.Add(CreateText($"Adresse: {config.ClientAddress}", 11));
-            }
+                info.Children.Add(new TextBlock
+                {
+                    Text = config.ClientAddress, FontSize = 10, Foreground = B(CMuted),
+                    TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0)
+                });
 
-            border.Child = clientPanel;
-            clientGrid.Children.Add(border);
-
-            return clientGrid;
+            Grid.SetColumn(info, 1);
+            g.Children.Add(bar);
+            g.Children.Add(info);
+            outer.Child = g;
+            return outer;
         }
 
-        private Grid CreateArticlesTable(int pageNum)
+        // ── Articles Table ────────────────────────────────────────────────────
+
+        private Grid BuildArticlesTable(int pageNum)
         {
             int startIdx = (pageNum - 1) * ARTICLES_PER_PAGE;
-            int endIdx = Math.Min(startIdx + ARTICLES_PER_PAGE, selectedArticles.Count);
+            int endIdx   = Math.Min(startIdx + ARTICLES_PER_PAGE, selectedArticles.Count);
+
+            // (header, width, rightAlign)
+            var cols = new List<(string h, GridLength w, bool r)>();
+            if (config.ShowCode)         cols.Add(("Code",        new GridLength(58),                  false));
+            if (config.ShowArticleName)  cols.Add(("Article",     new GridLength(1, GridUnitType.Star), false));
+            if (config.ShowFamille)      cols.Add(("Famille",     new GridLength(80),                  false));
+            if (config.ShowFournisseur)  cols.Add(("Fournisseur", new GridLength(90),                  false));
+            if (config.ShowMarque)       cols.Add(("Marque",      new GridLength(72),                  false));
+            if (config.ShowLot)          cols.Add(("N° Lot",      new GridLength(72),                  false));
+            if (config.ShowBonLivraison) cols.Add(("Bon Liv.",    new GridLength(72),                  false));
+            if (config.ShowExpiration)   cols.Add(("Expiration",  new GridLength(82),                  false));
+            if (config.ShowQuantity)     cols.Add(("Qté",         new GridLength(44),                  true));
+            if (config.ShowUnitPrice)    cols.Add(("P.U. HT",    new GridLength(82),                  true));
+            if (config.ShowTVA)          cols.Add(("TVA %",       new GridLength(55),                  true));
+            if (config.ShowTotalPrice)   cols.Add(("Total HT",    new GridLength(88),                  true));
+
+            if (cols.Count == 0) return new Grid();
 
             Grid table = new Grid();
+            foreach (var c in cols)
+                table.ColumnDefinitions.Add(new ColumnDefinition { Width = c.w });
 
-            // Define columns based on configuration
-            List<string> columnHeaders = new List<string>();
-            List<GridLength> columnWidths = new List<GridLength>();
-
-            if (config.ShowCode) { columnHeaders.Add("Code"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowArticleName) { columnHeaders.Add("Article"); columnWidths.Add(new GridLength(2, GridUnitType.Star)); }
-            if (config.ShowFamille) { columnHeaders.Add("Famille"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowFournisseur) { columnHeaders.Add("Fournisseur"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowMarque) { columnHeaders.Add("Marque"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowLot) { columnHeaders.Add("N° Lot"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowBonLivraison) { columnHeaders.Add("Bon Liv."); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowExpiration) { columnHeaders.Add("Expiration"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowQuantity) { columnHeaders.Add("Qté"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowUnitPrice) { columnHeaders.Add("P.U. HT"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowTVA) { columnHeaders.Add("TVA %"); columnWidths.Add(GridLength.Auto); }
-            if (config.ShowTotalPrice) { columnHeaders.Add("Total HT"); columnWidths.Add(GridLength.Auto); }
-
-            // Create columns for table
-            foreach (var width in columnWidths)
-            {
-                table.ColumnDefinitions.Add(new ColumnDefinition { Width = width });
-            }
-
-            // Header row
+            // ── Header row ────────────────────────────────────────────────────
             table.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            Border headerBorder = new Border
+            Grid hGrid = MakeRowGrid(cols);
+            for (int i = 0; i < cols.Count; i++)
             {
-                Background = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                Padding = new Thickness(8, 10, 8, 10)
-            };
-
-            Grid headerGrid = new Grid();
-            // Create NEW column definitions for headerGrid
-            foreach (var width in columnWidths)
-            {
-                headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = width });
-            }
-
-            for (int i = 0; i < columnHeaders.Count; i++)
-            {
-                TextBlock headerText = new TextBlock
+                TextBlock hCell = new TextBlock
                 {
-                    Text = columnHeaders[i],
-                    FontSize = 11,
-                    FontWeight = FontWeights.Bold,
+                    Text = cols[i].h,
+                    FontSize = 10, FontWeight = FontWeights.Bold,
                     Foreground = Brushes.White,
-                    Padding = new Thickness(4, 0, 4, 0)
+                    Padding = new Thickness(10, 0, 10, 0),
+                    HorizontalAlignment = cols[i].r ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                    TextAlignment      = cols[i].r ? TextAlignment.Right        : TextAlignment.Left
                 };
-                Grid.SetColumn(headerText, i);
-                headerGrid.Children.Add(headerText);
+                Grid.SetColumn(hCell, i);
+                hGrid.Children.Add(hCell);
             }
 
-            headerBorder.Child = headerGrid;
-            Grid.SetRow(headerBorder, 0);
-            Grid.SetColumnSpan(headerBorder, columnHeaders.Count);
-            table.Children.Add(headerBorder);
+            Border hBorder = new Border
+            {
+                Background = B(CNavy),
+                Padding = new Thickness(0, 12, 0, 12),
+                CornerRadius = new CornerRadius(8, 8, 0, 0),
+                Child = hGrid
+            };
+            Grid.SetRow(hBorder, 0);
+            Grid.SetColumnSpan(hBorder, cols.Count);
+            table.Children.Add(hBorder);
 
-            // Data rows
+            // ── Data rows ─────────────────────────────────────────────────────
+            bool isLastPage = (pageNum * ARTICLES_PER_PAGE >= selectedArticles.Count);
+
             for (int idx = startIdx; idx < endIdx; idx++)
             {
-                Article article = selectedArticles[idx];
-                int rowIndex = idx - startIdx + 1;
+                Article art = selectedArticles[idx];
+                int rowIdx  = idx - startIdx + 1;
+                bool isLast = (idx == endIdx - 1) && isLastPage;
+                bool alt    = rowIdx % 2 == 0;
+
                 table.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-                Border rowBorder = new Border
+                Grid dGrid = MakeRowGrid(cols);
+                int col = 0;
+
+                decimal qty = config.ArticleQuantities.TryGetValue(art.ArticleID, out decimal q) ? q : art.Quantite;
+
+                if (config.ShowCode)         AddCell(dGrid, art.Code.ToString(),                                     col++, false, false);
+                if (config.ShowArticleName)  AddCell(dGrid, art.ArticleName ?? "",                                   col++, false, false);
+                if (config.ShowFamille)      AddCell(dGrid, GetFamilleName(art.FamillyID),                            col++, false, false);
+                if (config.ShowFournisseur)  AddCell(dGrid, GetFournisseurName(art.FournisseurID ?? 0),               col++, false, false);
+                if (config.ShowMarque)       AddCell(dGrid, art.marque ?? "",                                         col++, false, false);
+                if (config.ShowLot)          AddCell(dGrid, art.numeroLot ?? "",                                      col++, false, false);
+                if (config.ShowBonLivraison) AddCell(dGrid, art.bonlivraison ?? "",                                   col++, false, false);
+                if (config.ShowExpiration)   AddCell(dGrid, art.DateExpiration.HasValue
+                                                 ? art.DateExpiration.Value.ToString("dd/MM/yy") : "—",               col++, false, false);
+                if (config.ShowQuantity)     AddCell(dGrid, qty.ToString("0.##"),                                     col++, false, true);
+                if (config.ShowUnitPrice)    AddCell(dGrid, $"{art.PrixVente:N2} DH",                                 col++, false, true);
+                if (config.ShowTVA)          AddCell(dGrid, $"{art.tva:0.##}%",                                       col++, false, true);
+                if (config.ShowTotalPrice)   AddCell(dGrid, $"{art.PrixVente * qty:N2} DH",                           col++, true,  true);
+
+                Border dBorder = new Border
                 {
-                    Background = rowIndex % 2 == 0 ?
-                        new SolidColorBrush(Color.FromRgb(248, 250, 252)) : Brushes.White,
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240)),
-                    BorderThickness = new Thickness(0, 0, 0, 1),
-                    Padding = new Thickness(8, 8, 8, 8)
+                    Background = alt ? B(CAlt) : Brushes.White,
+                    BorderBrush = B(CBdr),
+                    BorderThickness = isLast ? new Thickness(0, 0, 0, 0) : new Thickness(0, 0, 0, 1),
+                    CornerRadius = isLast ? new CornerRadius(0, 0, 8, 8) : new CornerRadius(0),
+                    Padding = new Thickness(0, 10, 0, 10),
+                    Child = dGrid
                 };
-
-                Grid rowGrid = new Grid();
-                // Create NEW column definitions for each rowGrid
-                foreach (var width in columnWidths)
-                {
-                    rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = width });
-                }
-
-                int colIdx = 0;
-                if (config.ShowCode)
-                {
-                    AddCellText(rowGrid, article.Code.ToString(), colIdx++);
-                }
-                if (config.ShowArticleName)
-                {
-                    AddCellText(rowGrid, article.ArticleName ?? "", colIdx++);
-                }
-                if (config.ShowFamille)
-                {
-                    AddCellText(rowGrid, GetFamilleName(article.FamillyID), colIdx++);
-                }
-                if (config.ShowFournisseur)
-                {
-                    AddCellText(rowGrid, GetFournisseurName(article.FournisseurID ?? 0), colIdx++);
-                }
-                if (config.ShowMarque)
-                {
-                    AddCellText(rowGrid, article.marque ?? "", colIdx++);
-                }
-                if (config.ShowLot)
-                {
-                    AddCellText(rowGrid, article.numeroLot ?? "", colIdx++);
-                }
-                if (config.ShowBonLivraison)
-                {
-                    AddCellText(rowGrid, article.bonlivraison ?? "", colIdx++);
-                }
-                if (config.ShowExpiration)
-                {
-                    string expDate = article.DateExpiration.HasValue ?
-                        article.DateExpiration.Value.ToString("dd/MM/yyyy") : "-";
-                    AddCellText(rowGrid, expDate, colIdx++);
-                }
-                if (config.ShowQuantity)
-                {
-                    AddCellText(rowGrid, article.Quantite.ToString(), colIdx++);
-                }
-                if (config.ShowUnitPrice)
-                {
-                    AddCellText(rowGrid, $"{article.PrixVente:F2} DH", colIdx++);
-                }
-                if (config.ShowTVA)
-                {
-                    AddCellText(rowGrid, $"{article.tva}%", colIdx++);
-                }
-                if (config.ShowTotalPrice)
-                {
-                    decimal total = article.PrixVente * article.Quantite;
-                    AddCellText(rowGrid, $"{total:F2} DH", colIdx++, true);
-                }
-
-                rowBorder.Child = rowGrid;
-                Grid.SetRow(rowBorder, rowIndex);
-                Grid.SetColumnSpan(rowBorder, columnHeaders.Count);
-                table.Children.Add(rowBorder);
+                Grid.SetRow(dBorder, rowIdx);
+                Grid.SetColumnSpan(dBorder, cols.Count);
+                table.Children.Add(dBorder);
             }
 
-            return table;
+            // Outer rounded border wrapper
+            Border tableBorder = new Border
+            {
+                BorderBrush = B(CBdr), BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8)
+            };
+            tableBorder.Child = table;
+
+            // Wrap in a Grid so we can return Grid type
+            Grid wrapper = new Grid();
+            wrapper.Children.Add(tableBorder);
+            return wrapper;
         }
 
-        private void AddCellText(Grid grid, string text, int column, bool isBold = false)
+        private Grid MakeRowGrid(List<(string h, GridLength w, bool r)> cols)
         {
-            TextBlock cellText = new TextBlock
+            Grid g = new Grid();
+            foreach (var c in cols)
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = c.w });
+            return g;
+        }
+
+        private void AddCell(Grid grid, string text, int col, bool bold, bool rightAlign)
+        {
+            TextBlock tb = new TextBlock
             {
                 Text = text,
                 FontSize = 10,
-                FontWeight = isBold ? FontWeights.Bold : FontWeights.Normal,
-                Padding = new Thickness(4, 0, 4, 0),
-                TextWrapping = TextWrapping.Wrap
+                FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal,
+                Foreground = bold ? B(CNavy) : B(CDark),
+                Padding = new Thickness(10, 0, 10, 0),
+                TextWrapping = TextWrapping.Wrap,
+                HorizontalAlignment = rightAlign ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+                TextAlignment      = rightAlign ? TextAlignment.Right        : TextAlignment.Left
             };
-            Grid.SetColumn(cellText, column);
-            grid.Children.Add(cellText);
+            Grid.SetColumn(tb, col);
+            grid.Children.Add(tb);
         }
 
-        private Grid CreateTotalsSection()
+        // ── Totals ────────────────────────────────────────────────────────────
+
+        private Grid BuildTotalsSection()
         {
-            Grid totalsGrid = new Grid
+            decimal subtotal = 0, totalTVA = 0;
+            foreach (Article art in selectedArticles)
             {
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Width = 300
-            };
-
-            totalsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            totalsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
-
-            // Calculate totals
-            decimal subtotal = 0;
-            decimal totalTVA = 0;
-
-            foreach (Article article in selectedArticles)
-            {
-                decimal articleTotal = article.PrixVente * article.Quantite;
-                subtotal += articleTotal;
-                totalTVA += (articleTotal * article.tva / 100);
+                decimal qty = config.ArticleQuantities.TryGetValue(art.ArticleID, out decimal q) ? q : art.Quantite;
+                decimal ht  = art.PrixVente * qty;
+                subtotal  += ht;
+                totalTVA  += ht * art.tva / 100m;
             }
-
             decimal grandTotal = subtotal + totalTVA;
 
-            int rowIdx = 0;
+            // Full-width Grid: left=spacer, right=card (320px)
+            Grid outer = new Grid();
+            outer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            outer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(320) });
 
-            if (config.ShowSubtotal)
+            Border card = new Border
             {
-                totalsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                AddTotalRow(totalsGrid, "Sous-total HT:", $"{subtotal:F2} DH", rowIdx++, false);
+                BorderBrush = B(CBdr), BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Background = Brushes.White
+            };
+
+            StackPanel sp = new StackPanel();
+
+            // Title strip
+            sp.Children.Add(new Border
+            {
+                Background = B(CAlt),
+                CornerRadius = new CornerRadius(10, 10, 0, 0),
+                Padding = new Thickness(20, 12, 20, 12),
+                Child = new TextBlock
+                {
+                    Text = "RÉCAPITULATIF",
+                    FontSize = 9, FontWeight = FontWeights.Bold,
+                    Foreground = B(CMuted)
+                }
+            });
+
+            sp.Children.Add(new Border { Height = 1, Background = B(CBdr) });
+
+            // Line rows
+            StackPanel lines = new StackPanel { Margin = new Thickness(20, 14, 20, 14) };
+
+            void AddLine(string lbl, string val, bool accent = false)
+            {
+                Grid row = new Grid { Margin = new Thickness(0, 5, 0, 5) };
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                TextBlock l = new TextBlock { Text = lbl, FontSize = 12, Foreground = B(CMuted) };
+                TextBlock v = new TextBlock
+                {
+                    Text = val, FontSize = 12,
+                    FontWeight = accent ? FontWeights.SemiBold : FontWeights.Normal,
+                    Foreground = B(CDark),
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+                Grid.SetColumn(l, 0); Grid.SetColumn(v, 1);
+                row.Children.Add(l); row.Children.Add(v);
+                lines.Children.Add(row);
             }
 
-            if (config.ShowTVATotal)
-            {
-                totalsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                AddTotalRow(totalsGrid, "Total TVA:", $"{totalTVA:F2} DH", rowIdx++, false);
-            }
+            if (config.ShowSubtotal)  AddLine("Sous-total HT", $"{subtotal:N2} DH");
+            if (config.ShowTVATotal)  AddLine("Total TVA",     $"{totalTVA:N2} DH");
 
+            sp.Children.Add(lines);
+
+            // Grand total band
             if (config.ShowGrandTotal)
             {
-                totalsGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                AddTotalRow(totalsGrid, "TOTAL TTC:", $"{grandTotal:F2} DH", rowIdx++, true);
+                sp.Children.Add(new Border { Height = 1, Background = B(CBdr) });
+
+                Grid gtRow = new Grid { Margin = new Thickness(0) };
+                gtRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                gtRow.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                TextBlock gtL = new TextBlock
+                {
+                    Text = "TOTAL TTC",
+                    FontSize = 14, FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                TextBlock gtV = new TextBlock
+                {
+                    Text = $"{grandTotal:N2} DH",
+                    FontSize = 16, FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Grid.SetColumn(gtL, 0); Grid.SetColumn(gtV, 1);
+                gtRow.Children.Add(gtL); gtRow.Children.Add(gtV);
+
+                sp.Children.Add(new Border
+                {
+                    Background = B(CNavy),
+                    CornerRadius = new CornerRadius(0, 0, 10, 10),
+                    Padding = new Thickness(20, 16, 20, 16),
+                    Child = gtRow
+                });
             }
 
-            Border totalsBorder = new Border
-            {
-                BorderBrush = new SolidColorBrush(Color.FromRgb(59, 130, 246)),
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(16),
-                Background = new SolidColorBrush(Color.FromRgb(239, 246, 255))
-            };
-            totalsBorder.Child = totalsGrid;
-
-            Grid container = new Grid();
-            container.Children.Add(totalsBorder);
-            return container;
+            card.Child = sp;
+            Grid.SetColumn(card, 1);
+            outer.Children.Add(card);
+            return outer;
         }
 
-        private void AddTotalRow(Grid grid, string label, string value, int row, bool isBold)
-        {
-            TextBlock labelText = new TextBlock
-            {
-                Text = label,
-                FontSize = isBold ? 14 : 12,
-                FontWeight = isBold ? FontWeights.Bold : FontWeights.SemiBold,
-                Margin = new Thickness(0, 4, 0, 4)
-            };
-            Grid.SetRow(labelText, row);
-            Grid.SetColumn(labelText, 0);
-            grid.Children.Add(labelText);
+        // ── Footer ────────────────────────────────────────────────────────────
 
-            TextBlock valueText = new TextBlock
-            {
-                Text = value,
-                FontSize = isBold ? 14 : 12,
-                FontWeight = isBold ? FontWeights.Bold : FontWeights.SemiBold,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0, 4, 0, 4),
-                Foreground = isBold ? new SolidColorBrush(Color.FromRgb(59, 130, 246)) : Brushes.Black
-            };
-            Grid.SetRow(valueText, row);
-            Grid.SetColumn(valueText, 1);
-            grid.Children.Add(valueText);
-        }
-
-        private StackPanel CreateFooterSection()
+        private StackPanel BuildFooterSection()
         {
             StackPanel footer = new StackPanel();
 
-            if (config.ShowPaymentTerms && !string.IsNullOrWhiteSpace(config.PaymentTerms))
+            bool hasPayment = config.ShowPaymentTerms && !string.IsNullOrWhiteSpace(config.PaymentTerms);
+            bool hasNotes   = config.ShowNotes && !string.IsNullOrWhiteSpace(config.Notes);
+
+            if (hasPayment && hasNotes)
             {
-                Border paymentBorder = new Border
-                {
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240)),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(8),
-                    Padding = new Thickness(16),
-                    Background = new SolidColorBrush(Color.FromRgb(248, 250, 252)),
-                    Margin = new Thickness(0, 0, 0, 12)
-                };
+                // Side by side
+                Grid twoCol = new Grid();
+                twoCol.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                twoCol.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(20) });
+                twoCol.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                StackPanel paymentPanel = new StackPanel();
-                paymentPanel.Children.Add(CreateText("Conditions de paiement:", 12, true));
-                paymentPanel.Children.Add(CreateText(config.PaymentTerms, 11));
+                Border pc = MakeFooterCard("CONDITIONS DE PAIEMENT", config.PaymentTerms, CBlue, Color.FromRgb(239, 246, 255));
+                Border nc = MakeFooterCard("NOTES / REMARQUES",       config.Notes,        Color.FromRgb(180, 120, 20), Color.FromRgb(255, 251, 235));
 
-                paymentBorder.Child = paymentPanel;
-                footer.Children.Add(paymentBorder);
+                Grid.SetColumn(pc, 0); Grid.SetColumn(nc, 2);
+                twoCol.Children.Add(pc); twoCol.Children.Add(nc);
+                footer.Children.Add(twoCol);
             }
-
-            if (config.ShowNotes && !string.IsNullOrWhiteSpace(config.Notes))
+            else
             {
-                Border notesBorder = new Border
-                {
-                    BorderBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240)),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(8),
-                    Padding = new Thickness(16),
-                    Background = new SolidColorBrush(Color.FromRgb(254, 252, 232))
-                };
-
-                StackPanel notesPanel = new StackPanel();
-                notesPanel.Children.Add(CreateText("Notes / Remarques:", 12, true));
-                notesPanel.Children.Add(CreateText(config.Notes, 11));
-
-                notesBorder.Child = notesPanel;
-                footer.Children.Add(notesBorder);
+                if (hasPayment)
+                    footer.Children.Add(MakeFooterCard("CONDITIONS DE PAIEMENT", config.PaymentTerms,
+                        CBlue, Color.FromRgb(239, 246, 255)));
+                if (hasNotes)
+                    footer.Children.Add(MakeFooterCard("NOTES / REMARQUES", config.Notes,
+                        Color.FromRgb(180, 120, 20), Color.FromRgb(255, 251, 235)));
             }
 
             return footer;
         }
 
-        private TextBlock CreateText(string text, double fontSize, bool isBold = false)
+        private Border MakeFooterCard(string title, string text, Color barColor, Color bgColor)
         {
-            return new TextBlock
+            Border outer = new Border
             {
-                Text = text,
-                FontSize = fontSize,
-                FontWeight = isBold ? FontWeights.Bold : FontWeights.Normal,
-                Margin = new Thickness(0, 0, 0, 4),
-                TextWrapping = TextWrapping.Wrap
+                BorderBrush = B(CBdr), BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Background = B(bgColor)
             };
+
+            Grid g = new Grid();
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5) });
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            Border bar = new Border { Background = B(barColor), CornerRadius = new CornerRadius(10, 0, 0, 10) };
+            Grid.SetColumn(bar, 0);
+
+            StackPanel sp = new StackPanel { Margin = new Thickness(16, 14, 16, 14) };
+            sp.Children.Add(new TextBlock
+            {
+                Text = title,
+                FontSize = 9, FontWeight = FontWeights.Bold,
+                Foreground = B(barColor),
+                Margin = new Thickness(0, 0, 0, 8)
+            });
+            sp.Children.Add(new TextBlock
+            {
+                Text = text, FontSize = 11,
+                Foreground = B(CDark),
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            Grid.SetColumn(sp, 1);
+            g.Children.Add(bar);
+            g.Children.Add(sp);
+            outer.Child = g;
+            return outer;
         }
+
+        // ── Helpers ───────────────────────────────────────────────────────────
 
         private string GetFamilleName(int familleId)
         {
-            foreach (var famille in allFamilles)
-            {
-                if (famille.FamilleID == familleId)
-                    return famille.FamilleName;
-            }
+            foreach (var f in allFamilles)
+                if (f.FamilleID == familleId) return f.FamilleName;
             return "";
         }
 
         private string GetFournisseurName(int fournisseurId)
         {
-            foreach (var fournisseur in allFournisseurs)
-            {
-                if (fournisseur.FournisseurID == fournisseurId)
-                    return fournisseur.Nom;
-            }
+            foreach (var f in allFournisseurs)
+                if (f.FournisseurID == fournisseurId) return f.Nom;
             return "";
+        }
+
+        // ── Toolbar actions ───────────────────────────────────────────────────
+
+        private async void SaveDevis_Click(object sender, RoutedEventArgs e)
+        {
+            SaveDevisButton.IsEnabled = false;
+            SaveDevisButton.Content   = "Enregistrement...";
+
+            try
+            {
+                decimal subtotal = 0, totalTVA = 0;
+                foreach (var art in selectedArticles)
+                {
+                    decimal qty = config.ArticleQuantities.TryGetValue(art.ArticleID, out decimal q) ? q : art.Quantite;
+                    decimal ht  = art.PrixVente * qty;
+                    subtotal  += ht;
+                    totalTVA  += ht * art.tva / 100m;
+                }
+                decimal grandTotal = subtotal + totalTVA;
+
+                var invoice = new Invoice
+                {
+                    InvoiceNumber    = _devisNumber,
+                    InvoiceDate      = DateTime.Now,
+                    InvoiceType      = "Devis",
+                    ClientName       = config.ShowClientSection ? config.ClientName    : "",
+                    ClientICE        = config.ShowClientSection ? config.ClientICE     : "",
+                    ClientAddress    = config.ShowClientSection ? config.ClientAddress  : "",
+                    UserName         = companyInfo?.Name,
+                    UserICE          = companyInfo?.ICE,
+                    UserVAT          = companyInfo?.VAT,
+                    UserPhone        = companyInfo?.Telephone,
+                    UserAddress      = companyInfo?.Adresse,
+                    UserEtatJuridique= companyInfo?.EtatJuridic,
+                    UserIdSociete    = companyInfo?.CompanyId,
+                    UserSiegeEntreprise = companyInfo?.SiegeEntreprise,
+                    TotalHT          = subtotal,
+                    TotalTVA         = totalTVA,
+                    TotalTTC         = grandTotal,
+                    TotalAfterRemise = grandTotal,
+                    Description      = config.ShowNotes ? config.Notes : "",
+                    EtatFacture      = 1
+                };
+
+                var svc = new Invoice();
+                int invoiceId = await svc.CreateInvoiceAsync(invoice);
+                if (invoiceId <= 0)
+                {
+                    SaveDevisButton.IsEnabled = true;
+                    SaveDevisButton.Content   = "💾 Enregistrer";
+                    return;
+                }
+
+                foreach (var art in selectedArticles)
+                {
+                    decimal qty = config.ArticleQuantities.TryGetValue(art.ArticleID, out decimal q2) ? q2 : art.Quantite;
+                    decimal ht  = art.PrixVente * qty;
+                    decimal tva = ht * art.tva / 100m;
+
+                    await svc.AddInvoiceArticleAsync(new Invoice.InvoiceArticle
+                    {
+                        InvoiceID    = invoiceId,
+                        ArticleID    = art.ArticleID,
+                        ArticleName  = art.ArticleName ?? art.Code.ToString(),
+                        PrixUnitaire = art.PrixVente,
+                        Quantite     = qty,
+                        TVA          = art.tva,
+                        TotalHT      = ht,
+                        MontantTVA   = tva,
+                        TotalTTC     = ht + tva
+                    });
+                }
+
+                SaveDevisButton.Content = "✓ Enregistré";
+                MessageBox.Show(
+                    $"Devis {_devisNumber} enregistré avec succès!\nAccessible dans Historique Facture.",
+                    "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                SaveDevisButton.IsEnabled = true;
+                SaveDevisButton.Content   = "💾 Enregistrer";
+                MessageBox.Show($"Erreur lors de l'enregistrement: {ex.Message}",
+                    "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // A4 at 96 dpi: 794 × 1123 px
+        private const double A4_W = 793.7;
+        private const double A4_H = 1122.5;
+
+        private void PrintToDialog(PrintDialog pd)
+        {
+            double pageW = pd.PrintableAreaWidth;
+            double pageH = pd.PrintableAreaHeight;
+
+            var savedEffect = PrintArea.Effect;
+            PrintArea.Effect = null;
+
+            double scale = Math.Min(pageW / PrintArea.ActualWidth,
+                                    pageH / PrintArea.ActualHeight);
+            if (scale > 1.0) scale = 1.0;
+
+            PrintArea.LayoutTransform = new ScaleTransform(scale, scale);
+            PrintArea.Measure(new Size(pageW, pageH));
+            PrintArea.Arrange(new Rect(0, 0, pageW, pageH));
+
+            pd.PrintVisual(PrintArea, $"Devis {_devisNumber}");
+
+            PrintArea.LayoutTransform = null;
+            PrintArea.Effect = savedEffect;
+            PrintArea.InvalidateMeasure();
+            PrintArea.UpdateLayout();
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                PrintDialog printDialog = new PrintDialog();
-                if (printDialog.ShowDialog() == true)
+                PrintDialog pd = new PrintDialog();
+                try
                 {
-                    printDialog.PrintVisual(PrintArea, "Devis");
-                    MessageBox.Show("Impression lancée avec succès!", "Succès",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    pd.PrintTicket.PageMediaSize = new System.Printing.PageMediaSize(
+                        System.Printing.PageMediaSizeName.ISOA4);
+                    pd.PrintTicket.PageOrientation = System.Printing.PageOrientation.Portrait;
                 }
+                catch { /* ignore if System.Printing not available */ }
+
+                if (pd.ShowDialog() != true) return;
+                PrintToDialog(pd);
+                MessageBox.Show("Impression lancée avec succès!", "Succès",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -645,13 +812,31 @@ namespace GestionComerce.Main.Inventory
 
         private void SavePDF_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("La fonctionnalité d'export PDF nécessite une bibliothèque externe comme iTextSharp ou PdfSharp.\n\nVous pouvez utiliser 'Imprimer' et choisir 'Microsoft Print to PDF' comme imprimante.",
-                "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                PrintDialog pd = new PrintDialog();
+                try
+                {
+                    pd.PrintTicket.PageMediaSize = new System.Printing.PageMediaSize(
+                        System.Printing.PageMediaSizeName.ISOA4);
+                    pd.PrintTicket.PageOrientation = System.Printing.PageOrientation.Portrait;
+                }
+                catch { /* ignore if System.Printing not available */ }
+
+                MessageBox.Show(
+                    "Dans la fenêtre d'impression, choisissez\n'Microsoft Print to PDF' comme imprimante\npour enregistrer le devis au format A4.",
+                    "Enregistrer PDF", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                if (pd.ShowDialog() != true) return;
+                PrintToDialog(pd);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur: {ex.Message}", "Erreur",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        private void Close_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }

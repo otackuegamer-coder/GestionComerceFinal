@@ -103,6 +103,21 @@
 
         <!-- Main Content -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+            <!-- Article Quantities Section -->
+            <Border Style="{StaticResource SectionBorder}">
+                <StackPanel>
+                    <TextBlock Text="Quantités par Article" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimary}" Margin="0,0,0,12"/>
+
+                    <!-- Header row background -->
+                    <Border Background="{StaticResource PrimaryBlue}" CornerRadius="6" Padding="4,6">
+                        <StackPanel x:Name="ArticleQuantityPanel"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -313,6 +328,7 @@
                     </Border>
                 </StackPanel>
             </Grid>
+            </StackPanel>
         </ScrollViewer>
 
         <!-- Actions -->

@@ -85,7 +85,7 @@ namespace GestionComerce.Main.Inventory
                 Fournisseur.Text = "Nouvelle Article";
             }
         }
-        public Article a; List<Article> la;public CMainI Main; CSingleRowFamilly sf; int s;public WExistingArticles ea; WNouveauStock ns;
+        public Article a; List<Article> la;public CMainI Main; CSingleRowFamilly sf; public int s;public WExistingArticles ea; WNouveauStock ns;
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {

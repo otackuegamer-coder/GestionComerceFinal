@@ -27,9 +27,9 @@ namespace GestionComerce
         public bool Reversed { get; set; }
 
         // Set these once at app startup:
-        //   Operation.ApiBaseUrl = "http://localhost:5050";
+        //   Operation.ApiBaseUrl = ApiConfig.BaseUrl;
         //   Operation.BearerToken = "<token from /api/auth/login>";
-        public static string ApiBaseUrl { get; set; } = "http://localhost:5050";
+        public static string ApiBaseUrl { get; set; } = ApiConfig.BaseUrl;
         public static string BearerToken { get; set; } = string.Empty;
 
         private static readonly JsonSerializerOptions _json = new JsonSerializerOptions

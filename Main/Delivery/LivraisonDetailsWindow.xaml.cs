@@ -150,9 +150,9 @@ namespace GestionComerce.Main.Delivery
         {
             try
             {
-                Operation op = new Operation { OperationID = livraison.OperationID };
+                Operation op = new Operation { OperationID = livraison.OperationID ?? 0 };
                 var operations = await op.GetOperationsAsync();
-                operation = operations.FirstOrDefault(o => o.OperationID == livraison.OperationID);
+                operation = operations.FirstOrDefault(o => o.OperationID == (livraison.OperationID ?? 0));
 
                 if (operation != null)
                 {
@@ -646,12 +646,12 @@ namespace GestionComerce.Main.Delivery
         {
             try
             {
-                OperationArticle opArticle = new OperationArticle { OperationID = livraison.OperationID };
+                OperationArticle opArticle = new OperationArticle { OperationID = livraison.OperationID ?? 0 };
                 var allOpArticles = await opArticle.GetOperationArticlesAsync();
 
                 // Get articles for this operation
                 var operationArticles = allOpArticles
-                    .Where(oa => oa.OperationID == livraison.OperationID && !oa.Reversed)
+                    .Where(oa => oa.OperationID == (livraison.OperationID ?? 0) && !oa.Reversed)
                     .ToList();
 
                 // Load article details

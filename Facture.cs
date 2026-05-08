@@ -84,7 +84,7 @@ namespace Superete
         [JsonPropertyName("agencyCode")]
         public string AgencyCode { get; set; } = "";
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/facture/info";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/facture/info";
 
         // GET active facture info
         public async Task<Facture> GetFactureAsync()
@@ -92,7 +92,7 @@ namespace Superete
             try
             {
                 var result = await MainWindow.ApiClient
-                    .GetFromJsonAsync<Facture>("http://localhost:5050/api/facture/info");
+                    .GetFromJsonAsync<Facture>(ApiConfig.BaseUrl + "/api/facture/info");
                 return result ?? new Facture();
             }
             catch

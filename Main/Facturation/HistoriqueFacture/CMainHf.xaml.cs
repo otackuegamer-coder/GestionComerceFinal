@@ -368,9 +368,9 @@ namespace GestionComerce.Main.Facturation.HistoriqueFacture
                 }
 
                 // Load the associated operation
-                Operation opObj = new Operation { OperationID = livraison.OperationID };
+                Operation opObj = new Operation { OperationID = livraison.OperationID ?? 0 };
                 var operations = await opObj.GetOperationsAsync();
-                var operation = operations.FirstOrDefault(o => o.OperationID == livraison.OperationID);
+                var operation = operations.FirstOrDefault(o => o.OperationID == (livraison.OperationID ?? 0));
 
                 if (operation == null)
                 {

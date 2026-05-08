@@ -445,10 +445,14 @@
 
                                         <Button Grid.Row="2"
                                                 Name="SelectImageButton"
-                                                Content="{x:Static res:Resources.SelectImage}"
                                                 Style="{StaticResource PrimaryButtonStyle}"
-                                                Height="40"
-                                                Click="SelectImageButton_Click"/>
+                                                MinHeight="40"
+                                                Height="Auto"
+                                                Click="SelectImageButton_Click">
+                                            <TextBlock Text="{x:Static res:Resources.SelectImage}"
+                                                       TextWrapping="Wrap"
+                                                       TextAlignment="Center"/>
+                                        </Button>
                                     </Grid>
                                 </StackPanel>
                             </Grid>

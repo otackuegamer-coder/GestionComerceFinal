@@ -110,17 +110,36 @@ namespace GestionComerce.Main.Settings
 
                 u.Etat = 1;
                 int id = await u.InsertUserAsync(MainWindow.ApiClient);
+
+                if (id == -1)
+                {
+                    MessageBox.Show(
+                        "Vous avez atteint le nombre maximum d'utilisateurs autorisé par votre abonnement.\n\n" +
+                        "Veuillez mettre à niveau votre abonnement pour pouvoir ajouter d'autres utilisateurs.",
+                        "Limite d'utilisateurs atteinte",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (id == 0)
+                {
+                    WCongratulations wFail = new WCongratulations("Ajout échoué", "L'ajout n'a pas été effectué", 0);
+                    wFail.ShowDialog();
+                    return;
+                }
+
                 u.UserID = id;
                 newU.Add(u);
                 CUM.Load_users();
 
-                WCongratulations wCongratulations = new WCongratulations("Ajout avec succès", "l'ajout a ete effectue avec succes", 1);
+                WCongratulations wCongratulations = new WCongratulations("Ajout avec succès", "L'ajout a été effectué avec succès", 1);
                 wCongratulations.ShowDialog();
                 this.Close();
             }
             catch (Exception ex)
             {
-                WCongratulations wCongratulations = new WCongratulations("Ajout échoué", "l'ajout n'a pas ete effectue ", 0);
+                WCongratulations wCongratulations = new WCongratulations("Ajout échoué", "L'ajout n'a pas été effectué", 0);
                 wCongratulations.ShowDialog();
             }
         }

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -30,7 +30,7 @@ namespace GestionComerce
 
         public bool Etat { get; set; } = true;
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/credits";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/credits";
 
         // GET all active credits (optionally filter by clientId or fournisseurId)
         public async Task<List<Credit>> GetCreditsAsync(int? clientId = null, int? fournisseurId = null)
@@ -53,7 +53,7 @@ namespace GestionComerce
             }
         }
 
-        // POST — insert new credit
+        // POST ï¿½ insert new credit
         public async Task<int> InsertCreditAsync()
         {
             try
@@ -82,7 +82,7 @@ namespace GestionComerce
             }
         }
 
-        // PUT — update existing credit
+        // PUT ï¿½ update existing credit
         public async Task<int> UpdateCreditAsync()
         {
             try
@@ -107,7 +107,7 @@ namespace GestionComerce
             }
         }
 
-        // DELETE — soft delete + nulls related operation rows
+        // DELETE ï¿½ soft delete + nulls related operation rows
         public async Task<int> DeleteCreditAsync()
         {
             try

@@ -68,8 +68,8 @@ namespace GestionComerce.Main.Facturation
 
         // ── API base URL ──────────────────────────────────────────────────────
 
-        private const string BaseInvoiceUrl = "http://localhost:5050/api/facture/enregistrees";
-        private const string BaseArticleUrl = "http://localhost:5050/api/facture/enregistrees/articles";
+        private static readonly string BaseInvoiceUrl = ApiConfig.BaseUrl + "/api/facture/enregistrees";
+        private static readonly string BaseArticleUrl = ApiConfig.BaseUrl + "/api/facture/enregistrees/articles";
 
         // ════════════════════════════════════════════════════════════════════
         // CREATE

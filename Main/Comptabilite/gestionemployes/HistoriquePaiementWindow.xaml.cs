@@ -145,7 +145,7 @@ namespace Superete.Main.Comptabilite
         {
             try
             {
-                allSalaires = salaireService.GetByEmploye(employe.EmployeID);
+                allSalaires = salaireService.GetByEmploye(employe.EmployeID) ?? new List<SalaireModel>();
 
                 // Populate year filter
                 cmbFiltreAnnee.Items.Clear();

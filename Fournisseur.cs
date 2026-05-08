@@ -36,7 +36,7 @@ namespace GestionComerce
         [JsonPropertyName("code")]
         public string Code { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/fournisseurs";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/fournisseurs";
 
         // GET all active fournisseurs
         public async Task<List<Fournisseur>> GetFournisseursAsync()

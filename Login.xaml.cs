@@ -147,6 +147,11 @@ namespace GestionComerce
 
                     if (loggedUser != null)
                     {
+                        // Store subscription credentials for the session so the API can
+                        // pass them to ZenixAuthApi when checking the max-users limit.
+                        AppSession.SubscriptionUsername = username;
+                        AppSession.SubscriptionPassword = password;
+
                         main.load_main(loggedUser);
                     }
                     else

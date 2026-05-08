@@ -73,6 +73,14 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="SaveDevisButton"
+                            Content="💾 Enregistrer"
+                            Style="{StaticResource ToolbarButton}"
+                            Click="SaveDevis_Click">
+                        <Button.Background>
+                            <SolidColorBrush Color="#F59E0B"/>
+                        </Button.Background>
+                    </Button>
                     <Button Content="{x:Static res:Resources.PrintButton}"
                             Style="{StaticResource ToolbarButton}"
                             Click="Print_Click">
@@ -95,18 +103,20 @@
         </Border>
 
         <!-- Preview Area -->
-        <ScrollViewer Grid.Row="1" 
+        <ScrollViewer Grid.Row="1"
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
-                      Background="#2C3E50"
-                      Padding="40">
+                      Background="#1E2A3A"
+                      Padding="32">
             <Border x:Name="PrintArea"
                     Background="White"
-                    CornerRadius="8">
-                <Border.Resources>
-                    <DropShadowEffect x:Key="ShadowLg" BlurRadius="40" ShadowDepth="0" Color="#000000" Opacity="0.2"/>
-                </Border.Resources>
-                <StackPanel x:Name="DevisContent" />
+                    CornerRadius="10"
+                    MaxWidth="794"
+                    HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="48" ShadowDepth="0" Color="#000000" Opacity="0.25"/>
+                </Border.Effect>
+                <StackPanel x:Name="DevisContent" HorizontalAlignment="Stretch" />
             </Border>
         </ScrollViewer>
     </Grid>

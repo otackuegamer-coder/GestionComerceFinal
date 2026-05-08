@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GestionComerce.Main.Inventory
 {
@@ -10,6 +11,8 @@ namespace GestionComerce.Main.Inventory
         private List<Article> selectedArticles;
         private List<Famille> allFamilles;
         private List<Fournisseur> allFournisseurs;
+        // TextBoxes for per-article quantity input: ArticleID → TextBox
+        private Dictionary<int, TextBox> quantityBoxes = new Dictionary<int, TextBox>();
 
         public WDevisCustomization(List<Article> articles, List<Famille> familles, List<Fournisseur> fournisseurs)
         {
@@ -17,6 +20,86 @@ namespace GestionComerce.Main.Inventory
             this.selectedArticles = articles;
             this.allFamilles = familles;
             this.allFournisseurs = fournisseurs;
+            BuildQuantityTable();
+        }
+
+        private void BuildQuantityTable()
+        {
+            quantityBoxes.Clear();
+            ArticleQuantityPanel.Children.Clear();
+
+            // Header row
+            Grid header = new Grid { Margin = new Thickness(0, 0, 0, 4) };
+            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+
+            AddHeaderCell(header, "Article", 0);
+            AddHeaderCell(header, "Stock", 1);
+            AddHeaderCell(header, "Qté Devis", 2);
+            AddHeaderCell(header, "Prix Unit.", 3);
+            ArticleQuantityPanel.Children.Add(header);
+
+            // One row per article
+            foreach (var article in selectedArticles)
+            {
+                Grid row = new Grid { Margin = new Thickness(0, 2, 0, 2) };
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+
+                AddCell(row, article.ArticleName ?? article.Code.ToString(), 0);
+                AddCell(row, article.Quantite.ToString("0.##"), 1, "#64748B");
+
+                TextBox qtyBox = new TextBox
+                {
+                    Text = "1",
+                    Height = 30,
+                    Padding = new Thickness(6, 4, 6, 4),
+                    FontSize = 13,
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(203, 213, 225)),
+                    BorderThickness = new Thickness(1),
+                    Margin = new Thickness(4, 0, 4, 0)
+                };
+                Grid.SetColumn(qtyBox, 2);
+                row.Children.Add(qtyBox);
+                quantityBoxes[article.ArticleID] = qtyBox;
+
+                AddCell(row, $"{article.PrixVente:N2} DH", 3);
+                ArticleQuantityPanel.Children.Add(row);
+            }
+        }
+
+        private void AddHeaderCell(Grid grid, string text, int col)
+        {
+            TextBlock tb = new TextBlock
+            {
+                Text = text,
+                FontSize = 12,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = Brushes.White,
+                Padding = new Thickness(6, 4, 6, 4)
+            };
+            Grid.SetColumn(tb, col);
+            grid.Children.Add(tb);
+        }
+
+        private void AddCell(Grid grid, string text, int col, string hexColor = null)
+        {
+            TextBlock tb = new TextBlock
+            {
+                Text = text,
+                FontSize = 12,
+                Padding = new Thickness(6, 4, 6, 4),
+                VerticalAlignment = VerticalAlignment.Center,
+                Foreground = hexColor != null
+                    ? new SolidColorBrush((Color)ColorConverter.ConvertFromString(hexColor))
+                    : Brushes.Black
+            };
+            Grid.SetColumn(tb, col);
+            grid.Children.Add(tb);
         }
 
         private void ClientSection_CheckChanged(object sender, RoutedEventArgs e)
@@ -105,6 +188,19 @@ namespace GestionComerce.Main.Inventory
                 PaymentTerms = PaymentTermsTextBox.Text
             };
 
+            // Collect per-article quantities from the input table
+            var quantities = new Dictionary<int, decimal>();
+            foreach (var article in selectedArticles)
+            {
+                if (quantityBoxes.TryGetValue(article.ArticleID, out TextBox box) &&
+                    decimal.TryParse(box.Text, out decimal qty) && qty > 0)
+                    quantities[article.ArticleID] = qty;
+                else
+                    quantities[article.ArticleID] = 1;
+            }
+            config.ArticleQuantities = quantities;
+            config.ClientName = ClientNameTextBox.Text;
+
             // Open preview window
             WDevisPreview previewWindow = new WDevisPreview(
                 selectedArticles, allFamilles, allFournisseurs, config);
@@ -173,5 +269,8 @@ namespace GestionComerce.Main.Inventory
         public string Notes { get; set; }
         public bool ShowPaymentTerms { get; set; }
         public string PaymentTerms { get; set; }
+
+        // Per-article quantities entered by user (ArticleID → quantity)
+        public Dictionary<int, decimal> ArticleQuantities { get; set; } = new Dictionary<int, decimal>();
     }
 }

@@ -21,7 +21,7 @@ namespace GestionComerce
         [JsonPropertyName("isActive")]
         public bool IsActive { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/expenses/categories";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/expenses/categories";
 
         // GET all active categories (async)
         public static async Task<List<ExpenseCategories>> GetAllActiveAsync()

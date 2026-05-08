@@ -11,7 +11,7 @@ namespace GestionComerce
     public class Livraison
     {
         [JsonPropertyName("livraisonId")] public int LivraisonID { get; set; }
-        [JsonPropertyName("operationId")] public int OperationID { get; set; }
+        [JsonPropertyName("operationId")] public int? OperationID { get; set; }
         [JsonPropertyName("clientId")] public int? ClientID { get; set; }
         [JsonPropertyName("clientNom")] public string ClientNom { get; set; } = string.Empty;
         [JsonPropertyName("clientTelephone")] public string ClientTelephone { get; set; } = string.Empty;
@@ -34,7 +34,7 @@ namespace GestionComerce
         public bool Etat { get; set; } = true;
         public DateTime DateCreation { get; set; }
 
-        private static readonly string BaseUrl = "http://localhost:5050/api/livraisons";
+        private static readonly string BaseUrl = ApiConfig.BaseUrl + "/api/livraisons";
 
         // GET all livraisons (optionally filter by statut and/or livreurId)
         public async Task<List<Livraison>> GetLivraisonsAsync(string statutFilter = null, int? livreurIdFilter = null)

@@ -57,12 +57,17 @@ GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Users')
 CREATE TABLE [Users] (
-    [UserID]   INT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    [UserName] NVARCHAR(100) NOT NULL,
-    [Code]     NVARCHAR(50)  NOT NULL,
-    [RoleID]   INT           NULL,
-    [Etat]     BIT           NULL
+    [UserID]       INT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    [UserName]     NVARCHAR(100) NOT NULL,
+    [Code]         NVARCHAR(50)  NOT NULL,
+    [RoleID]       INT           NULL,
+    [Etat]         BIT           NULL,
+    [SessionToken] NVARCHAR(32)  NULL
 );
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'SessionToken')
+    ALTER TABLE Users ADD SessionToken NVARCHAR(32) NULL;
 GO
 
 IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Familly')
@@ -401,6 +406,10 @@ BEGIN
         ALTER TABLE [Livraison] ADD [PaiementStatut] NVARCHAR(50) NULL DEFAULT 'non_paye';
     IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='TotalCommande')
         ALTER TABLE [Livraison] ADD [TotalCommande] DECIMAL(10,2) NOT NULL DEFAULT 0;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='Notes')
+        ALTER TABLE [Livraison] ADD [Notes] NVARCHAR(MAX) NULL;
+    IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('Livraison') AND name='ModePaiement')
+        ALTER TABLE [Livraison] ADD [ModePaiement] NVARCHAR(50) NULL;
     -- Update existing rows so Etat=1 (active) where it was null
     UPDATE [Livraison] SET [Etat]=1 WHERE [Etat] IS NULL;
 END
@@ -538,7 +547,7 @@ CREATE TABLE [ExpenseCategories] (
     [CategoryID]   INT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
     [CategoryName] NVARCHAR(50)  NOT NULL,
     [Description]  NVARCHAR(200) NULL,
-    [IsActive]     BIT           NULL
+    [IsActive]     BIT           NOT NULL DEFAULT 1
 );
 GO
 
@@ -563,10 +572,10 @@ CREATE TABLE [ExpensePaymentHistory] (
     [PaymentID]      INT           IDENTITY(1,1) NOT NULL PRIMARY KEY,
     [ExpenseID]      INT           NULL,
     [PaymentAmount]  DECIMAL(18,2) NOT NULL,
-    [PaymentDate]    DATE          NOT NULL,
+    [PaymentDate]    DATE          NOT NULL DEFAULT GETDATE(),
     [PaymentMethod]  NVARCHAR(50)  NULL,
     [Notes]          NVARCHAR(500) NULL,
-    [CreatedDate]    DATETIME      NULL
+    [CreatedDate]    DATETIME      NOT NULL DEFAULT GETDATE()
 );
 GO
 

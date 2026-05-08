@@ -60,6 +60,8 @@ namespace GestionComerce.Main
 
         private void Logout_Click_1(object sender, RoutedEventArgs e)
         {
+            AppSession.Clear();
+            SessionHandler.OnSessionInvalidated = null;
             main.main.load_Login();
             this.Close();
         }
